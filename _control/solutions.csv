@@ -22,9 +22,9 @@ polars,groupby
 polars,join
 arrow,groupby
 arrow,join
+vaex,groupby
+vaex,join
 duckdb,groupby
 duckdb,join
 duckdb-latest,groupby
 duckdb-latest,join
-vaex,groupby
-vaex,join
