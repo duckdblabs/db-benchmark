@@ -10,7 +10,7 @@ import vaex
 exec(open("./_helpers/helpers.py").read())
 
 ver = vaex.__version__['vaex-core']
-git = '-'
+git = ""
 task = "join"
 solution = "vaex"
 fun = ".join"
