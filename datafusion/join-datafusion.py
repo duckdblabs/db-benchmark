@@ -23,7 +23,7 @@ def ans_shape(batches):
     
     return rows, cols
 
-ver = "6.0.0"
+ver = df.__version__
 task = "join"
 git = ""
 solution = "datafusion"
