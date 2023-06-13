@@ -125,6 +125,22 @@ write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_row
 del ans
 gc.collect()
 
+question = "median v3 sd v3 by id4 id5" # q6
+gc.collect()
+t_start = timeit.default_timer()
+ans = ctx.sql("SELECT id4, id5, MEDIAN(v3) AS median_v3, stddev(v3) AS sd_v3 FROM tbl GROUP BY id4, id5").collect()
+shape = ans_shape(ans)
+print(shape, flush=True)
+t = timeit.default_timer() - t_start
+m = memory_usage()
+t_start = timeit.default_timer()
+df = ctx.create_dataframe([ans])
+chk = df.aggregate([], [f.sum(col("v3_median"),f.sum(col("sd_v3") )]).collect()[0].column(0)[0]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=shape[0], out_cols=shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk([chk]), chk_time_sec=chkt, on_disk=on_disk)
+del ans
+gc.collect()
+
 question = "max v1 - min v2 by id3" # q7
 gc.collect()
 t_start = timeit.default_timer()
@@ -152,6 +168,22 @@ m = memory_usage()
 t_start = timeit.default_timer()
 df = ctx.create_dataframe([ans])
 chk = df.aggregate([], [f.sum(col("v3"))]).collect()[0].column(0)[0]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=shape[0], out_cols=shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk([chk]), chk_time_sec=chkt, on_disk=on_disk)
+del ans
+gc.collect()
+
+question = "regression v1 v2 by id2 id4" # q9
+gc.collect()
+t_start = timeit.default_timer()
+ans = ctx.sql("SELECT id4, id5, MEDIAN(v3) AS median_v3, stddev(v3) AS sd_v3 FROM tbl GROUP BY id4, id5").collect()
+shape = ans_shape(ans)
+print(shape, flush=True)
+t = timeit.default_timer() - t_start
+m = memory_usage()
+t_start = timeit.default_timer()
+df = ctx.create_dataframe([ans])
+chk = df.aggregate([], [f.sum(col("v3_median"))]).collect()[0].column(0)[0]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=shape[0], out_cols=shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk([chk]), chk_time_sec=chkt, on_disk=on_disk)
 del ans
