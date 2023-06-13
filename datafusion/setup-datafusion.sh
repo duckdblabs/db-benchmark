@@ -1,11 +1,7 @@
 #!/bin/bash
 set -e
 
-# install dependencies
-sudo apt-get update -qq
-sudo apt-get install -y python3.6-dev virtualenv
-
-virtualenv datafusion/py-datafusion --python=/usr/bin/python3.6
+virtualenv datafusion/py-datafusion --python=/usr/bin/python3.10
 source datafusion/py-datafusion/bin/activate
 
 python -m pip install --upgrade psutil datafusion
@@ -15,13 +11,12 @@ deactivate
 ./datafusion/upg-datafusion.sh
 
 # check
-# source datafusion/py-datafusion/bin/activate
-# python
-# import datafusion as df
-# df.__version__
-# quit()
-# deactivate
-echo "0.4.0"
+source datafusion/py-datafusion/bin/activate
+python3
+import datafusion as df
+df.__version__
+quit()
+deactivate
 
 # fix: print(ans.head(3), flush=True): UnicodeEncodeError: 'ascii' codec can't encode characters in position 14-31: ordinal not in range(128)
 vim datafusion/py-datafusion/bin/activate
