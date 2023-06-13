@@ -228,7 +228,7 @@ groupby.syntax.dict = {list(
     "sum v1 mean v3 by id3" = "SELECT id3, SUM(v1) AS v1, AVG(v3) AS v3 FROM x GROUP BY id3",
     "mean v1:v3 by id4" = "SELECT id4, AVG(v1) AS v1, AVG(v2) AS v2, AVG(v3) AS v3 FROM x GROUP BY id4",
     "sum v1:v3 by id6" = "SELECT id6, SUM(v1) AS v1, SUM(v2) AS v2, SUM(v3) AS v3 FROM x GROUP BY id6",
-    "median v3 sd v3 by id4 id5" = "",
+    "median v3 sd v3 by id4 id5" = "SELECT id4, id5, MEDIAN(v3) AS median_v3, stddev(v3) AS sd_v3 FROM tbl GROUP BY id4, id5",
     "max v1 - min v2 by id3" = "SELECT id3, MAX(v1) - MIN(v2) AS range_v1_v2 FROM x GROUP BY id3",
     "largest two v3 by id6" = "SELECT id6, v3 from (SELECT id6, v3, row_number() OVER (PARTITION BY id6 ORDER BY v3 DESC) AS row FROM x) t WHERE row <= 2",
     "regression v1 v2 by id2 id4" = "",
@@ -249,8 +249,7 @@ groupby.query.exceptions = {list(
   "arrow"      =  list("Expression row_number() <= 2L not supported in Arrow; pulling data into R" = "max v1 - min v2 by id3", "Expression cor(v1, v2, ... is not supported in arrow; pulling data into R" = "regression v1 v2 by id2 id4"),
   "duckdb"     =  list(),
   "duckdb-latest"     =  list(),
-  "datafusion" =  list("not yet implemented: datafusion#1486" = "median v3 sd v3 by id4 id5",
-                       "not yet implemented: datafusion#1486" = "regression v1 v2 by id2 id4"),
+  "datafusion" =  list("not yet implemented: datafusion#1486" = "regression v1 v2 by id2 id4"),
 )}
 groupby.data.exceptions = {list(                                                             # exceptions as of run 1575727624
   "data.table" = {list(
