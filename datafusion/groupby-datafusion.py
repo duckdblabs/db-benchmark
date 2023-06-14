@@ -128,7 +128,7 @@ gc.collect()
 question = "median v3 sd v3 by id4 id5" # q6
 gc.collect()
 t_start = timeit.default_timer()
-ans = ctx.sql("SELECT id4, id5, MEDIAN(v3) AS median_v3, stddev(v3) AS sd_v3 FROM tbl GROUP BY id4, id5").collect()
+ans = ctx.sql("SELECT id4, id5, MEDIAN(v3) AS median_v3, STDDEV(v3) AS sd_v3 FROM tbl GROUP BY id4, id5").collect()
 shape = ans_shape(ans)
 print(shape, flush=True)
 t = timeit.default_timer() - t_start
@@ -176,7 +176,7 @@ gc.collect()
 question = "regression v1 v2 by id2 id4" # q9
 gc.collect()
 t_start = timeit.default_timer()
-ans = ctx.sql("SELECT id4, id5, MEDIAN(v3) AS median_v3, stddev(v3) AS sd_v3 FROM tbl GROUP BY id4, id5").collect()
+ans = ctx.sql("SELECT id2, id4, POW(CORR(v1, v2), 2) AS r2 FROM tbl GROUP BY id2, id4").collect()
 shape = ans_shape(ans)
 print(shape, flush=True)
 t = timeit.default_timer() - t_start
