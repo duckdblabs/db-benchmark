@@ -589,7 +589,6 @@ plot(d, "polars", 1e9, "join")
 ```
 
 ### arrow {.tabset .tabset-fade .tabset-pills}
-### datafusion {.tabset .tabset-fade .tabset-pills}
 
 #### groupby {.tabset .tabset-fade .tabset-pills}
 
