@@ -37,7 +37,7 @@ print("loading dataset %s" % data_name, flush=True)
 
 data = pacsv.read_csv(src_grp, convert_options=pacsv.ConvertOptions(auto_dict_encode=True))
 
-ctx = df.ExecutionContext()
+ctx = df.SessionContext()
 ctx.register_record_batches("x", [data.to_batches()])
 
 in_rows = data.num_rows
@@ -141,7 +141,7 @@ for run in range(1, 2):
     m = memory_usage()
     t_start = timeit.default_timer()
     df = ctx.create_dataframe([ans])
-    chk = df.aggregate([], [f.sum(col("v3_median"),f.sum(col("sd_v3") )]).collect()[0].column(0)[0]
+    chk = df.aggregate([], [f.sum(col("v3_median"),f.sum(col("sd_v3")))]).collect()[0].column(0)[0]
     chkt = timeit.default_timer() - t_start
     write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=shape[0], out_cols=shape[1], solution=solution, version=ver, git=git, fun=fun, run=run, time_sec=t, mem_gb=m, cache=cache, chk=make_chk([chk]), chk_time_sec=chkt, on_disk=on_disk)
     del ans

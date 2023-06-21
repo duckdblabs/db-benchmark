@@ -40,7 +40,7 @@ if len(src_jn_y) != 3:
 
 print("loading datasets " + data_name + ", " + y_data_name[0] + ", " + y_data_name[2] + ", " + y_data_name[2], flush=True)
 
-ctx = df.ExecutionContext()
+ctx = df.SessionContext()
 
 x_data = pacsv.read_csv(src_jn_x, convert_options=pacsv.ConvertOptions(auto_dict_encode=True))
 ctx.register_record_batches("x", [x_data.to_batches()])
