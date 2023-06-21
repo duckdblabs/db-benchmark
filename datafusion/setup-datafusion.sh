@@ -4,7 +4,7 @@ set -e
 virtualenv datafusion/py-datafusion --python=/usr/bin/python3.10
 source datafusion/py-datafusion/bin/activate
 
-python -m pip install --upgrade psutil datafusion
+python -m pip install --upgrade psutil datafusion pandas
 
 # build
 deactivate
