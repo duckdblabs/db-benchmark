@@ -1,4 +1,6 @@
 # Rscript _data/rollfun-datagen.R 1e6 0 0 1
+# Rscript _data/rollfun-datagen.R 1e7 0 0 1
+# Rscript _data/rollfun-datagen.R 1e8 0 0 1
 
 args = commandArgs(TRUE)
 
@@ -21,7 +23,6 @@ DT[["id1"]] = seq.int(N)                     ## index, do we need it as POSIXct/
 ## uneven idx
 DT[["id2"]] = sort(sample(N*1.1, N))         ## index dense
 DT[["id3"]] = sort(sample(N*2, N))           ## index sparse
-## TODO change to cumprod
 DT[["v1"]] =  cumprod(rnorm(N, 1, 0.005))    ## more risky asset
 DT[["v2"]] =  cumprod(rnorm(N, 1, 0.001))    ## less risky asset
 DT[["weights"]] = rnorm(n=N, m=1, sd=0.1)
