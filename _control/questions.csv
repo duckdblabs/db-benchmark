@@ -19,3 +19,13 @@ groupby2014,sum v1 by id1:id2,basic
 groupby2014,sum v1 mean v3 by id3,basic
 groupby2014,mean v1:v3 by id4,basic
 groupby2014,sum v1:v3 by id6,basic
+rollfun,rolling mean,basic
+rollfun,window small,basic
+rollfun,window big,basic
+rollfun,multi vars cols,basic
+rollfun,median,basic
+rollfun,weighted,advanced
+rollfun,uneven dense,advanced
+rollfun,uneven sparse,advanced
+rollfun,regression,advanced
+rollfun,udf,advanced

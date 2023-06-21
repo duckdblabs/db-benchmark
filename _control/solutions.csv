@@ -2,6 +2,7 @@ solution,task
 data.table,groupby
 data.table,join
 data.table,groupby2014
+data.table,rollfun
 dplyr,groupby
 dplyr,join
 dplyr,groupby2014

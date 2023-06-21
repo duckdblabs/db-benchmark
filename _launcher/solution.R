@@ -133,6 +133,8 @@ data.desc = function(task, nrow, k, na, sort) {
     prefix = "J1"
   } else if (task=="groupby2014") {
     prefix = "G0"
+  } else if (task=="rollfun") {
+    prefix = "R1"
   } else {
     stop("undefined task in solution.R data.desc function")
   }
