@@ -163,8 +163,11 @@ rm(ans)
 #print(tail(ans, 3))
 #rm(ans)
 
-udf = mean ## TODO think about interesting UDF
-
+## compound distance
+udf = function(x) {
+  tmp <- range(x)
+  tmp[2L]/tmp[1L]
+}
 question = "udf" # q10
 t = system.time(print(length(ans<-frollapply(x$v1, w, udf, simplify=unlist))))[["elapsed"]]
 m = memory_usage()
