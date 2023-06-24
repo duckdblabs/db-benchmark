@@ -1,22 +1,17 @@
 #!/usr/bin/env Rscript
 
-if (!dir.exists("./datatable/r-datatable-adapt/data.table")) {
-  cat("# data.table adapt branch library does not exist, installing\n")
-  stopifnot(requireNamespace("remotes", quietly=TRUE))
-  dir.create("./datatable/r-datatable-adapt", showWarnings=FALSE)
-  remotes::install_github("Rdatatable/data.table@adapt", force=TRUE, lib="./datatable/r-datatable-adapt")
-}
-
-cat("# rollfun-datatable.R\n")
+cat("# rollfun-dplyr (slider).R\n")
 
 source("./_helpers/helpers.R")
 
-suppressPackageStartupMessages(library("data.table", lib.loc="./datatable/r-datatable-adapt"))
-setDTthreads(0L)
-ver = packageVersion("data.table")
-git = data.table:::.git(quiet=TRUE)
+stopifnot(requireNamespace(c("bit64","data.table"), quietly=TRUE)) # used in chk to sum numeric columns and data loading
+.libPaths("./dplyr/r-dplyr") # tidyverse/dplyr#4641
+suppressPackageStartupMessages(library("dplyr", lib.loc="./dplyr/r-dplyr", warn.conflicts=FALSE))
+suppressPackageStartupMessages(library("slider", lib.loc="./dplyr/r-dplyr", warn.conflicts=FALSE))
+ver = packageVersion("dplyr")
+git = "" # uses stable version now #124
 task = "rollfun"
-solution = "data.table"
+solution = "dplyr"
 cache = TRUE
 on_disk = FALSE
 
@@ -24,26 +19,25 @@ data_name = Sys.getenv("SRC_DATANAME")
 src_grp = file.path("data", paste(data_name, "csv", sep="."))
 cat(sprintf("loading dataset %s\n", data_name))
 
-x = fread(src_grp, showProgress=FALSE, stringsAsFactors=TRUE, na.strings="")
+x = as_tibble(data.table::fread(src_grp, showProgress=FALSE, stringsAsFactors=TRUE, na.strings="", data.table=FALSE))
 print(nrow(x))
 
 # window size
-w = nrow(x)/1e3
-wsmall = nrow(x)/1e4
-wbig = nrow(x)/1e2
+w = nrow(x)/1e3L
+wsmall = nrow(x)/1e4L
+wbig = nrow(x)/1e2L
 
 task_init = proc.time()[["elapsed"]]
 cat("rolling...\n")
 
-fun = "frollmean"
-
 question = "rolling mean" # q1
-t = system.time(print(length(ans<-frollmean(x$v1, w))))[["elapsed"]]
+fun = "slide_mean"
+t = system.time(print(length(ans<-slide_mean(x$v1, before=w-1L, complete=TRUE))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
-t = system.time(print(length(ans<-frollmean(x$v1, w))))[["elapsed"]]
+t = system.time(print(length(ans<-slide_mean(x$v1, before=w-1L, complete=TRUE))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
@@ -52,12 +46,13 @@ print(tail(ans, 3))
 rm(ans)
 
 question = "window small" # q2
-t = system.time(print(length(ans<-frollmean(x$v1, wsmall))))[["elapsed"]]
+fun = "slide_mean"
+t = system.time(print(length(ans<-slide_mean(x$v1, before=wsmall-1L, complete=TRUE))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
-t = system.time(print(length(ans<-frollmean(x$v1, wsmall))))[["elapsed"]]
+t = system.time(print(length(ans<-slide_mean(x$v1, before=wsmall-1L, complete=TRUE))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
@@ -66,12 +61,13 @@ print(tail(ans, 3))
 rm(ans)
 
 question = "window big" # q3
-t = system.time(print(length(ans<-frollmean(x$v1, wbig))))[["elapsed"]]
+fun = "slide_mean"
+t = system.time(print(length(ans<-slide_mean(x$v1, before=wbig-1L, complete=TRUE))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
-t = system.time(print(length(ans<-frollmean(x$v1, wbig))))[["elapsed"]]
+t = system.time(print(length(ans<-slide_mean(x$v1, before=wbig-1L, complete=TRUE))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
@@ -80,12 +76,19 @@ print(tail(ans, 3))
 rm(ans)
 
 question = "multi vars cols" # q4
-t = system.time(print(length(ans<-frollmean(list(x$v1, x$v2), c(w-50L, w+50L)))))[["elapsed"]]
+fun = "slide_mean"
+t = system.time(print(length(ans<-list(
+  slide_mean(x$v1, before=w-51L, complete=TRUE), slide_mean(x$v1, before=w+49L, complete=TRUE),
+  slide_mean(x$v2, before=w-51L, complete=TRUE), slide_mean(x$v2, before=w+49L, complete=TRUE)
+))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-lapply(ans, sum, na.rm=TRUE))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans[[1L]]), out_cols=length(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
-t = system.time(print(length(ans<-frollmean(list(x$v1, x$v2), c(w-50L, w+50L)))))[["elapsed"]]
+t = system.time(print(length(ans<-list(
+  slide_mean(x$v1, before=w-51L, complete=TRUE), slide_mean(x$v1, before=w+49L, complete=TRUE),
+  slide_mean(x$v2, before=w-51L, complete=TRUE), slide_mean(x$v2, before=w+49L, complete=TRUE)
+))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-lapply(ans, sum, na.rm=TRUE))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans[[1L]]), out_cols=length(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
@@ -94,12 +97,13 @@ print(lapply(ans, tail, 3))
 rm(ans)
 
 #question = "median" # q5 ## not yet implemeneted
-#t = system.time(print(length(ans<-frollmedian(x$v1, w))))[["elapsed"]]
+#fun = "slide_median"
+#t = system.time(print(length(ans<-slide_median(x$v1, before=w-1L, complete=TRUE))))[["elapsed"]]
 #m = memory_usage()
 #chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
 #write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun="frollmedian", time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 #rm(ans)
-#t = system.time(print(length(ans<-frollmedian(x$v1, w))))[["elapsed"]]
+#t = system.time(print(length(ans<-slide_median(x$v1, before=w-1L, complete=TRUE))))[["elapsed"]]
 #m = memory_usage()
 #chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
 #write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun="frollmedian", time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
@@ -108,12 +112,13 @@ rm(ans)
 #rm(ans)
 
 #question = "weighted" # q6 ## not yet implemeneted
-#t = system.time(print(length(ans<-frollmean(x$v1, w, w=x$weights))))[["elapsed"]]
+#fun = "slide_mean"
+#t = system.time(print(length(ans<-slide_mean(x$v1, before=w-1L, complete=TRUE, w=x$weights))))[["elapsed"]]
 #m = memory_usage()
 #chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
 #write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 #rm(ans)
-##t = system.time(print(length(ans<-frollmean(x$v1, w, w=x$weights))))[["elapsed"]]
+#t = system.time(print(length(ans<-slide_mean(x$v1, before=w-1L, complete=TRUE, w=x$weights))))[["elapsed"]]
 #m = memory_usage()
 #chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
 #write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
@@ -122,12 +127,13 @@ rm(ans)
 #rm(ans)
 
 question = "uneven dense" # q7
-t = system.time(print(length(ans<-frollmean(x$v1, frolladapt(x$id2, w), adaptive=TRUE))))[["elapsed"]]
+fun = "slide_index_mean"
+t = system.time(print(length(ans<-slide_index_mean(x$v1, i=x$id2, before=w-1L, complete=TRUE))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
-t = system.time(print(length(ans<-frollmean(x$v1, frolladapt(x$id2, w), adaptive=TRUE))))[["elapsed"]]
+t = system.time(print(length(ans<-slide_index_mean(x$v1, i=x$id2, before=w-1L, complete=TRUE))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
@@ -136,12 +142,13 @@ print(tail(ans, 3))
 rm(ans)
 
 question = "uneven sparse" # q8
-t = system.time(print(length(ans<-frollmean(x$v1, frolladapt(x$id3, w), adaptive=TRUE))))[["elapsed"]]
+fun = "slide_index_mean"
+t = system.time(print(length(ans<-slide_index_mean(x$v1, i=x$id3, before=w-1L, complete=TRUE))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
-t = system.time(print(length(ans<-frollmean(x$v1, frolladapt(x$id3, w), adaptive=TRUE))))[["elapsed"]]
+t = system.time(print(length(ans<-slide_index_mean(x$v1, i=x$id3, before=w-1L, complete=TRUE))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
@@ -149,13 +156,15 @@ print(head(ans, 3))
 print(tail(ans, 3))
 rm(ans)
 
-#question = "regression" # q9 ## not yet implemeneted
-#t = system.time(print(length(ans<-frollmean(x[,c("v1","v2")], c(w-50L, w+50L)))))[["elapsed"]]
+#question = "regression" # q9 ## Killed, UDF simply does not scale
+#fun = "slide"
+#t = system.time(print(length(ans<-slide(select(x, v1, v2), ~lm(v2 ~ v1, data=.x), .before=w-1L, .complete=TRUE))))[["elapsed"]]
 #m = memory_usage()
+#TODO
 #chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
 #write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 #rm(ans)
-#t = system.time(print(length(ans<-frollmean(x[,c("v1","v2")], c(w-50L, w+50L)))))[["elapsed"]]
+#t = system.time(print(length(ans<-slide(select(x, v1, v2), ~lm(v2 ~ v1, data=.x), .before=w-1L, .complete=TRUE))))[["elapsed"]]
 #m = memory_usage()
 #chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
 #write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
@@ -169,12 +178,13 @@ rm(ans)
 #  tmp <- range(x)
 #  tmp[2L]/tmp[1L]
 #}
-#t = system.time(print(length(ans<-frollapply(x$v1, w, udf, simplify=unlist))))[["elapsed"]]
+#fun = "slide"
+#t = system.time(print(length(ans<-slide_dbl(x$v1, udf, .before=w-1L, .complete=TRUE))))[["elapsed"]]
 #m = memory_usage()
 #chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
 #write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 #rm(ans)
-#t = system.time(print(length(ans<-frollapply(x$v1, w, udf, simplify=unlist))))[["elapsed"]]
+#t = system.time(print(length(ans<-slide_dbl(x$v1, udf, .before=w-1L, .complete=TRUE))))[["elapsed"]]
 #m = memory_usage()
 #chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
 #write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
