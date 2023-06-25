@@ -1,4 +1,4 @@
-source("report.R")
+source("_report/report.R")
 d = time_logs()
 
 # this script meant to detect some inconsistencies within a solution results and between solutions results

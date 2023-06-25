@@ -21,7 +21,11 @@ get_data_levels = function() {
   in_rows = c("1e7","1e8","1e9")
   k_na_sort = "1e2_0_0"
   groupby2014 = paste("G0", paste(rep(in_rows, each=length(k_na_sort)), k_na_sort, sep="_"), sep="_")
-  list(groupby=groupby, join=join, groupby2014=groupby2014)
+  ## rollfun
+  in_rows = c("1e6","1e7","1e8")
+  k_na_sort = "NA_0_1"
+  rollfun = paste("R1", paste(rep(in_rows, each=length(k_na_sort)), k_na_sort, sep="_"), sep="_")
+  list(groupby=groupby, join=join, groupby2014=groupby2014, rollfun=rollfun)
 }
 get_excluded_batch = function() {
   c(
