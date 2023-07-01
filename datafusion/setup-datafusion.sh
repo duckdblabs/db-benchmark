@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-virtualenv datafusion/py-datafusion --python=/usr/bin/python3.10
+virtualenv datafusion/py-datafusion --python=python3
 source datafusion/py-datafusion/bin/activate
 
 python -m pip install --upgrade psutil datafusion pandas
