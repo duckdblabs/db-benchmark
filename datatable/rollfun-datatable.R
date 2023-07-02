@@ -37,7 +37,7 @@ cat("rolling...\n")
 
 fun = "frollmean"
 
-question = "rolling mean" # q1
+question = "mean" # q1
 t = system.time(print(length(ans<-frollmean(x$v1, w))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
@@ -79,19 +79,23 @@ print(head(ans, 3))
 print(tail(ans, 3))
 rm(ans)
 
-question = "multi vars cols" # q4
-t = system.time(print(length(ans<-frollmean(list(x$v1, x$v2), c(w-50L, w+50L)))))[["elapsed"]]
+fun = "frollmin"
+
+question = "min" # q4
+t = system.time(print(length(ans<-frollmin(x$v1, w))))[["elapsed"]]
 m = memory_usage()
-chkt = system.time(chk<-lapply(ans, sum, na.rm=TRUE))[["elapsed"]]
-write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans[[1L]]), out_cols=length(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
-t = system.time(print(length(ans<-frollmean(list(x$v1, x$v2), c(w-50L, w+50L)))))[["elapsed"]]
+t = system.time(print(length(ans<-frollmin(x$v1, w))))[["elapsed"]]
 m = memory_usage()
-chkt = system.time(chk<-lapply(ans, sum, na.rm=TRUE))[["elapsed"]]
-write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans[[1L]]), out_cols=length(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
-print(lapply(ans, head, 3))
-print(lapply(ans, tail, 3))
+chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
+write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+print(head(ans, 3))
+print(tail(ans, 3))
 rm(ans)
+
+#fun = "frollmedian"
 
 #question = "median" # q5 ## not yet implemeneted
 #t = system.time(print(length(ans<-frollmedian(x$v1, w))))[["elapsed"]]
@@ -107,7 +111,23 @@ rm(ans)
 #print(tail(ans, 3))
 #rm(ans)
 
-#question = "weighted" # q6 ## not yet implemeneted
+fun = "frollmean"
+
+question = "multiroll" # q6
+t = system.time(print(length(ans<-frollmean(list(x$v1, x$v2), c(w-50L, w+50L)))))[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-lapply(ans, sum, na.rm=TRUE))[["elapsed"]]
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans[[1L]]), out_cols=length(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+rm(ans)
+t = system.time(print(length(ans<-frollmean(list(x$v1, x$v2), c(w-50L, w+50L)))))[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-lapply(ans, sum, na.rm=TRUE))[["elapsed"]]
+write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans[[1L]]), out_cols=length(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+print(lapply(ans, head, 3))
+print(lapply(ans, tail, 3))
+rm(ans)
+
+#question = "weighted" # q7 ## not yet implemeneted
 #t = system.time(print(length(ans<-frollmean(x$v1, w, w=x$weights))))[["elapsed"]]
 #m = memory_usage()
 #chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
@@ -121,7 +141,9 @@ rm(ans)
 #print(tail(ans, 3))
 #rm(ans)
 
-question = "uneven dense" # q7
+fun = "frollmean"
+
+question = "uneven dense" # q8
 t = system.time(print(length(ans<-frollmean(x$v1, frolladapt(x$id2, w), adaptive=TRUE))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
@@ -135,7 +157,7 @@ print(head(ans, 3))
 print(tail(ans, 3))
 rm(ans)
 
-question = "uneven sparse" # q8
+question = "uneven sparse" # q9
 t = system.time(print(length(ans<-frollmean(x$v1, frolladapt(x$id3, w), adaptive=TRUE))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
@@ -149,32 +171,15 @@ print(head(ans, 3))
 print(tail(ans, 3))
 rm(ans)
 
-#question = "regression" # q9 ## not yet implemeneted
-#t = system.time(print(length(ans<-frollmean(x[,c("v1","v2")], c(w-50L, w+50L)))))[["elapsed"]]
-#m = memory_usage()
-#chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
-#write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
-#rm(ans)
-#t = system.time(print(length(ans<-frollmean(x[,c("v1","v2")], c(w-50L, w+50L)))))[["elapsed"]]
-#m = memory_usage()
-#chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
-#write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
-#print(head(ans, 3))
-#print(tail(ans, 3))
-#rm(ans)
+#fun = "frollreg"
 
-#question = "udf" # q10 ## UDF simply does not scale
-## compound distance
-#udf = function(x) {
-#  tmp <- range(x)
-#  tmp[2L]/tmp[1L]
-#}
-#t = system.time(print(length(ans<-frollapply(x$v1, w, udf, simplify=unlist))))[["elapsed"]]
+#question = "regression" # q10 ## not yet implemeneted
+#t = system.time(print(length(ans<-frollreg(list(x$v1, x$v2), w))))[["elapsed"]]
 #m = memory_usage()
 #chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
 #write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 #rm(ans)
-#t = system.time(print(length(ans<-frollapply(x$v1, w, udf, simplify=unlist))))[["elapsed"]]
+#t = system.time(print(length(ans<-frollreg(list(x$v1, x$v2), w))))[["elapsed"]]
 #m = memory_usage()
 #chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
 #write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
