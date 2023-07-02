@@ -1,0 +1,72 @@
+name: Regression
+on:
+  workflow_dispatch:
+  repository_dispatch:
+  pull_request:
+    paths-ignore:
+      - '**.md'
+      - '.github/workflows/**'
+      - '!.github/workflows/Regression.yml'
+      - '.github/config/uncovered_files.csv'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.head_ref || '' }}-${{ github.base_ref || '' }}-${{ github.ref != 'refs/heads/master' || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+ regression-test-benchmark-runner:
+  name: Regression Tests
+  runs-on: ubuntu-20.04
+  env:
+    CC: gcc-10
+    CXX: g++-10
+    GEN: ninja
+
+  steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Turn swap off
+      shell: bash
+      run: sudo swapoff -a
+
+    - name: Install libraries
+      shell: bash
+      run: ./_utils/setup-small.sh
+
+    - name: Install all solutions
+      shell: bash
+      run: source path.env && python3 _utils/install_all_solutions.py
+
+    - name: Generate 500mb datasets
+      shell: bash
+      run: ./_utils/generate-data-small.sh
+
+    - name: Run mini GroupBy benchmark
+      shell: bash
+      run: python3 _utils/prep_solutions.py --task=groupby && source path.env && TEST_RUN=true ./run.sh
+
+    - name: Run mini Join benchmark
+      shell: bash
+      run: python3 _utils/prep_solutions.py --task=join && source path.env && TEST_RUN=true ./run.sh
+
+    - name: Validate benchmark results
+      shell: bash
+      run: ./_utils/validate_no_errors.sh
+
+    - name: Create Archive
+      if: always()
+      shell: bash
+      run: zip -r out.zip out/
+
+    - uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: out
+        path: out.zip
+        if-no-files-found: error
