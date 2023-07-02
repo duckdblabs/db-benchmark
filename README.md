@@ -11,6 +11,7 @@ Contribution and feedback are very welcome!
   - [x] groupby
   - [x] join
   - [x] groupby2014
+  - [ ] rollfun
 
 # Solutions
 

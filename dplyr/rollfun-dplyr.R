@@ -11,7 +11,7 @@ suppressPackageStartupMessages(library("slider", lib.loc="./dplyr/r-dplyr", warn
 ver = packageVersion("dplyr")
 git = "" # uses stable version now #124
 task = "rollfun"
-solution = "dplyr"
+solution = "dplyr" ## could use tidyverse instead if we rename dplyr to tidyverse: duckdblabs/db-benchmark/pull/9#issuecomment-1610065100
 cache = TRUE
 on_disk = FALSE
 
