@@ -9,7 +9,7 @@ SKIPPED_SOLUTIONS = ["clickhouse", "dask", "juliadf", "juliads"]
 
 
 def print_usage():
-    print("Usage: python3 _utils/prep_solutions.py --task=[groupby|join]")
+    print("Usage: python3 _utils/prep_solutions.py --task=[groupby|join|rollfun]")
     exit(1)
 
 def parse_args():
@@ -19,7 +19,7 @@ def parse_args():
             task = arg.replace("--task=", "")
         else:
             print_usage()
-    if task == None or (task != "groupby" and task != "join"):
+    if task == None or (task != "groupby" and task != "join" and task != "rollfun"):
         print_usage()
     return task
 

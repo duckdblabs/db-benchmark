@@ -55,6 +55,10 @@ jobs:
       shell: bash
       run: python3 _utils/prep_solutions.py --task=join && source path.env && TEST_RUN=true ./run.sh
 
+    - name: Run mini Rollfun benchmark
+      shell: bash
+      run: python3 _utils/prep_solutions.py --task=rollfun && source path.env && TEST_RUN=true ./run.sh
+
     - name: Validate benchmark results
       shell: bash
       run: ./_utils/validate_no_errors.sh
