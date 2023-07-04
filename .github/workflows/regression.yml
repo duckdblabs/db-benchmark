@@ -47,6 +47,9 @@ jobs:
       shell: bash
       run: ./_utils/generate-data-small.sh
 
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+
     - name: Run mini GroupBy benchmark
       shell: bash
       run: python3 _utils/prep_solutions.py --task=groupby && source path.env && TEST_RUN=true ./run.sh
