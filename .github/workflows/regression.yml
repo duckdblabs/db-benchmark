@@ -64,6 +64,12 @@ jobs:
       shell: bash
       run: zip -r out.zip out/
 
+    # include this step to see what the latest versions are of every solution
+    - name: Print latest versions
+      if: always()
+      shell: bash
+      run: tail -n +1 */VERSION
+
     - uses: actions/upload-artifact@v3
       if: always()
       with:

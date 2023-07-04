@@ -1,4 +1,4 @@
-if [ $(grep "error" out/*.err | wc -l) = 0 ]
+if [ $(grep -i "error" out/*.err | wc -l) = 0 ]
 then
 	# no true errors found
 	exit 0;
