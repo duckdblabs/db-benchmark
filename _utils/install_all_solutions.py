@@ -21,6 +21,7 @@ def install_solutions():
     for solution in install_solutions:
         min_setup_file_name = f"./{solution}/min-setup-{solution}.sh"
         setup_file_name = f"./{solution}/setup-{solution}.sh"
+        print(f"Installing {solution}")
         if os.path.exists(min_setup_file_name):
             os.system(min_setup_file_name)
         elif os.path.exists(setup_file_name):

@@ -728,3 +728,45 @@ Report was generated on: `r format(Sys.time(), usetz=TRUE)`.
 ```{r status_set_success}
 cat("history\n", file=get_report_status_file(), append=TRUE)
 ```
+
+### datafusion {.tabset .tabset-fade .tabset-pills}
+
+#### groupby {.tabset .tabset-fade .tabset-pills}
+
+##### 0.5 GB
+
+```{r datafusion.groupby.1e7}
+plot(d, "datafusion", 1e7, "groupby")
+```
+
+##### 5 GB
+
+```{r datafusion.groupby.1e8}
+plot(d, "datafusion", 1e8, "groupby")
+```
+
+##### 50 GB {.active}
+
+```{r datafusion.groupby.1e9}
+plot(d, "datafusion", 1e9, "groupby")
+```
+
+#### join {.tabset .tabset-fade .tabset-pills}
+
+##### 0.5 GB
+
+```{r datafusion.join.1e7}
+plot(d, "datafusion", 1e7, "join")
+```
+
+##### 5 GB {.active}
+
+```{r datafusion.join.1e8}
+plot(d, "datafusion", 1e8, "join")
+```
+
+##### 50 GB
+
+```{r datafusion.join.1e9}
+plot(d, "datafusion", 1e9, "join")
+```
