@@ -241,7 +241,7 @@ t_start = timeit.default_timer()
 chk = ans.sum()
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=1, solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
-del ans, y
+del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = y.rolling(ws).mean()
@@ -277,7 +277,7 @@ t_start = timeit.default_timer()
 chk = ans.sum()
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=1, solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
-del ans, y
+del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = y.rolling(ws).mean()
