@@ -223,8 +223,6 @@ del ans
 #print(ans.tail(3), flush=True)
 #del ans
 
-## TODO
-
 question = "uneven dense" # q8
 ## we do not include below pre/post-processing in query timing because pandas has rich feature support related to unevenly spaced time series
 ## it just doesn't seem to support the most basic and most generic integer based index. and we do want to stick most generic approach for portability
