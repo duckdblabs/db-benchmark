@@ -2,9 +2,12 @@
 
 if (!dir.exists("./datatable/r-datatable-adapt/data.table")) {
   cat("# data.table adapt branch library does not exist, installing\n")
-  stopifnot(requireNamespace("remotes", quietly=TRUE))
+  #stopifnot(requireNamespace("remotes", quietly=TRUE))
   dir.create("./datatable/r-datatable-adapt", showWarnings=FALSE)
-  remotes::install_github("Rdatatable/data.table@adapt", force=TRUE, lib="./datatable/r-datatable-adapt")
+  #remotes::install_github("Rdatatable/data.table@adapt", force=TRUE, lib="./datatable/r-datatable-adapt")
+  ## https://github.com/duckdblabs/db-benchmark/actions/runs/5585092483/job/15159770868
+  ## install_github fails from GH Actions with HTTP error 401, therefore use standard R repo instead
+  install.packages("data.table", repos="https://jangorecki.github.io/data.table-adapt", lib="./datatable/r-datatable-adapt")
 }
 
 cat("# rollfun-datatable.R\n")
