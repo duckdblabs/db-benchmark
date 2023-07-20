@@ -10,6 +10,7 @@ dplyr,rollfun
 pandas,groupby
 pandas,join
 pandas,groupby2014
+pandas,rollfun
 pydatatable,groupby
 pydatatable,join
 spark,groupby
