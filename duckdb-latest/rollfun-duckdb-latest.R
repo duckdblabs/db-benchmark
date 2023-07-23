@@ -207,7 +207,7 @@ rm(sql)
 #rm(sql)
 
 question = "uneven dense" # q8
-sql = sprintf("CREATE TABLE ans AS SELECT avg(v1) OVER (ORDER BY id2 ROWS BETWEEN %d PRECEDING AND CURRENT ROW) AS v1 FROM x", w-1L)
+sql = sprintf("CREATE TABLE ans AS SELECT avg(v1) OVER (ORDER BY id2 RANGE BETWEEN %d PRECEDING AND CURRENT ROW) AS v1 FROM x", w-1L)
 t = system.time({
   dbExecute(con, sql)
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
@@ -229,7 +229,7 @@ invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 rm(sql)
 
 question = "uneven sparse" # q9
-sql = sprintf("CREATE TABLE ans AS SELECT avg(v1) OVER (ORDER BY id3 ROWS BETWEEN %d PRECEDING AND CURRENT ROW) AS v1 FROM x", w-1L)
+sql = sprintf("CREATE TABLE ans AS SELECT avg(v1) OVER (ORDER BY id3 RANGE BETWEEN %d PRECEDING AND CURRENT ROW) AS v1 FROM x", w-1L)
 t = system.time({
   dbExecute(con, sql)
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
