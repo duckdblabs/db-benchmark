@@ -56,7 +56,7 @@ question = "mean" # q1
 sql = sprintf("CREATE TABLE ans AS SELECT avg(v1) OVER (ORDER BY id1 ROWS BETWEEN %d PRECEDING AND CURRENT ROW) AS v1 FROM x", w-1L)
 t = system.time({
   dbExecute(con, sql)
-  print(c(dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
@@ -64,7 +64,7 @@ write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, o
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 t = system.time({
   dbExecute(con, sql)
-  print(c(dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
@@ -78,7 +78,7 @@ question = "window small" # q2
 sql = sprintf("CREATE TABLE ans AS SELECT avg(v1) OVER (ORDER BY id1 ROWS BETWEEN %d PRECEDING AND CURRENT ROW) AS v1 FROM x", wsmall-1L)
 t = system.time({
   dbExecute(con, sql)
-  print(c(dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
@@ -86,7 +86,7 @@ write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, o
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 t = system.time({
   dbExecute(con, sql)
-  print(c(dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
@@ -100,7 +100,7 @@ question = "window big" # q3
 sql = sprintf("CREATE TABLE ans AS SELECT avg(v1) OVER (ORDER BY id1 ROWS BETWEEN %d PRECEDING AND CURRENT ROW) AS v1 FROM x", wbig-1L)
 t = system.time({
   dbExecute(con, sql)
-  print(c(dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
@@ -108,7 +108,7 @@ write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, o
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 t = system.time({
   dbExecute(con, sql)
-  print(c(dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
@@ -122,7 +122,7 @@ question = "min" # q4
 sql = sprintf("CREATE TABLE ans AS SELECT MIN(v1) OVER (ORDER BY id1 ROWS BETWEEN %d PRECEDING AND CURRENT ROW) AS v1 FROM x", w-1L)
 t = system.time({
   dbExecute(con, sql)
-  print(c(dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
@@ -130,7 +130,7 @@ write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, o
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 t = system.time({
   dbExecute(con, sql)
-  print(c(dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
@@ -144,7 +144,7 @@ question = "median" # q5
 sql = sprintf("CREATE TABLE ans AS SELECT MEDIAN(v1) OVER (ORDER BY id1 ROWS BETWEEN %d PRECEDING AND CURRENT ROW) AS v1 FROM x", w-1L)
 t = system.time({
   dbExecute(con, sql)
-  print(c(dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
@@ -152,7 +152,7 @@ write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, o
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 t = system.time({
   dbExecute(con, sql)
-  print(c(dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
@@ -166,7 +166,7 @@ question = "multiroll" # q6
 sql = sprintf("CREATE TABLE ans AS SELECT avg(v1) OVER small AS v1_small, avg(v1) OVER big AS v1_big, avg(v2) OVER small AS v2_small, avg(v2) OVER small AS v2_big FROM x WINDOW small AS (ORDER BY id1 ROWS BETWEEN %d PRECEDING AND CURRENT ROW), big AS (ORDER BY id1 ROWS BETWEEN %d PRECEDING AND CURRENT ROW)", w-51L, w+49L)
 t = system.time({
   dbExecute(con, sql)
-  print(c(dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1_small) AS v1_small, sum(v1_big) AS v1_big, sum(v2_small) AS v2_small, sum(v2_big) AS v2_big FROM ans"))[["elapsed"]]
@@ -174,7 +174,7 @@ write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, o
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 t = system.time({
   dbExecute(con, sql)
-  print(c(dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1_small) AS v1_small, sum(v1_big) AS v1_big, sum(v2_small) AS v2_small, sum(v2_big) AS v2_big FROM ans"))[["elapsed"]]
@@ -188,7 +188,7 @@ rm(sql)
 #sql = sprintf("CREATE TABLE ans AS SELECT avg(v1) OVER (ORDER BY id1 ROWS BETWEEN %d PRECEDING AND CURRENT ROW) AS v1 FROM x", w-1L)
 #t = system.time({
 #  dbExecute(con, sql)
-#  print(c(dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+#  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 #})[["elapsed"]]
 #m = memory_usage()
 #chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
@@ -196,7 +196,7 @@ rm(sql)
 #invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 #t = system.time({
 #  dbExecute(con, sql)
-#  print(c(dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+#  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 #})[["elapsed"]]
 #m = memory_usage()
 #chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
@@ -210,7 +210,7 @@ question = "uneven dense" # q8
 sql = sprintf("CREATE TABLE ans AS SELECT avg(v1) OVER (ORDER BY id2 ROWS BETWEEN %d PRECEDING AND CURRENT ROW) AS v1 FROM x", w-1L)
 t = system.time({
   dbExecute(con, sql)
-  print(c(dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
@@ -218,7 +218,7 @@ write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, o
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 t = system.time({
   dbExecute(con, sql)
-  print(c(dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
@@ -232,7 +232,7 @@ question = "uneven sparse" # q9
 sql = sprintf("CREATE TABLE ans AS SELECT avg(v1) OVER (ORDER BY id3 ROWS BETWEEN %d PRECEDING AND CURRENT ROW) AS v1 FROM x", w-1L)
 t = system.time({
   dbExecute(con, sql)
-  print(c(dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
@@ -240,7 +240,7 @@ write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, o
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 t = system.time({
   dbExecute(con, sql)
-  print(c(dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
@@ -254,7 +254,7 @@ question = "regression" # q10
 sql = sprintf("CREATE TABLE ans AS SELECT regr_r2(v2, v1) OVER (ORDER BY id1 ROWS BETWEEN %d PRECEDING AND CURRENT ROW) AS r2 FROM x", w-1L)
 t = system.time({
   dbExecute(con, sql)
-  print(c(dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(r2) AS r2 FROM ans"))[["elapsed"]]
@@ -262,7 +262,7 @@ write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, o
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 t = system.time({
   dbExecute(con, sql)
-  print(c(dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(r2) AS r2 FROM ans"))[["elapsed"]]
