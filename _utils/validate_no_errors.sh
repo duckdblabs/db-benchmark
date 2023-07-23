@@ -1,6 +1,7 @@
 if [ $(grep -i "error" out/*.err | wc -l) = 0 ]
 then
-	# no true errors found
+	# no true errors found, print last line of each output script
+        tail -n 1 out/*.out
 	exit 0;
 fi
 # errors found
