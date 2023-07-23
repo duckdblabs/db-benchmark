@@ -272,6 +272,8 @@ print(dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT count(*) FROM ans
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 rm(sql)
 
+invisible(dbDisconnect(con, shutdown=TRUE))
+
 cat(sprintf("rolling finished, took %.0fs\n", proc.time()[["elapsed"]]-task_init))
 
 if( !interactive() ) q("no", status=0)
