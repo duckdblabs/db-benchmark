@@ -31,5 +31,6 @@ duckdb,groupby
 duckdb,join
 duckdb-latest,groupby
 duckdb-latest,join
+duckdb-latest,rollfun
 datafusion,groupby
 datafusion,join
