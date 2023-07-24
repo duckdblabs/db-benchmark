@@ -52,6 +52,7 @@ if (nrow(lld_unfinished)) {
 dt_groupby = lld[task=="groupby"][substr(data,1,2)=="G1"]
 dt_join = lld[task=="join"]
 dt_groupby2014 = lld[task=="groupby2014"]
+dt_rollfun = lld[task=="rollfun"]
 ```
 
 ```{r helpers}
@@ -95,6 +96,11 @@ loop_benchplot(dt_groupby, report_name="groupby", syntax.dict=groupby.syntax.dic
 ```{r report_join, message=FALSE}
 data_name = get_data_levels()[["join"]]
 loop_benchplot(dt_join, report_name="join", syntax.dict=join.syntax.dict, exceptions=join.exceptions, solution.dict=solution.dict, data_namev=data_name, q_groupv=c("basic"), title.txt.fun = header_title_fun, question.txt.fun = join_q_title_fun, cutoff = "spark", pending = "Modin")
+```
+
+```{r report_rollfun, message=FALSE}
+data_name = get_data_levels()[["rollfun"]]
+loop_benchplot(dt_rollfun, report_name="rollfun", syntax.dict=rollfun.syntax.dict, exceptions=rollfun.exceptions, solution.dict=solution.dict, data_namev=data_name, q_groupv=c("basic","advanced"), title.txt.fun = header_title_fun, question.txt.fun = rollfun_q_title_fun, cutoff = "spark", pending = character())
 ```
 
 ```{r report_groupby2014, message=FALSE}
@@ -175,6 +181,38 @@ loop_benchplot(dt_groupby2014, report_name="groupby2014", syntax.dict=groupby201
 ![](./join/J1_1e9_NA_0_0_advanced.png)
 -->
 
+### rollfun {.tabset .tabset-fade .tabset-pills}
+
+#### 0.05 GB
+
+##### **basic questions**
+
+![](./rollfun/R1_1e6_NA_0_1_basic.png)
+
+##### **advanced questions**
+
+![](./rollfun/R1_1e6_NA_0_1_advanced.png)
+
+#### 0.5 GB {.active}
+
+##### **basic questions**
+
+![](./rollfun/R1_1e7_NA_0_1_basic.png)
+
+##### **advanced questions**
+
+![](./rollfun/R1_1e7_NA_0_1_advanced.png)
+
+#### 5 GB
+
+##### **basic questions**
+
+![](./rollfun/R1_1e8_NA_0_1_basic.png)
+
+##### **advanced questions**
+
+![](./rollfun/R1_1e8_NA_0_1_advanced.png)
+
 ### groupby2014 {.tabset .tabset-fade .tabset-pills}
 
 #### 0.5 GB
@@ -236,6 +274,27 @@ rpivotTable::rpivotTable(
   aggregatorName = "Average",
   vals = "time_sec_1",
   height = "100%",
+  unusedAttrsVertical = TRUE
+)
+```
+
+### rollfun
+
+Timings are presented for a single dataset, no NAs (missing values).
+
+### rollfun timings
+
+```{r pivot_rollfunn}
+sdcols = c("solution","question_group","question","data","in_rows","k","na","sorted","time_sec_1","time_sec_2","version","git","chk_time_sec_1","na_time_sec","out_rows","out_cols")
+data = dt_rollfun[, .SD, .SDcols=sdcols]
+rpivotTable::rpivotTable(
+  data,
+  rows = c("in_rows","k","sorted","question"),
+  cols = "solution",
+  aggregatorName = "Average",
+  vals = "time_sec_1",
+  height = "100%",
+  sorters = make_sorters(data),
   unusedAttrsVertical = TRUE
 )
 ```

@@ -249,7 +249,7 @@ groupby.query.exceptions = {list(
   "arrow"      =  list("Expression row_number() <= 2L not supported in Arrow; pulling data into R" = "max v1 - min v2 by id3", "Expression cor(v1, v2, ... is not supported in arrow; pulling data into R" = "regression v1 v2 by id2 id4"),
   "duckdb"     =  list(),
   "duckdb-latest"     =  list(),
-  "datafusion" =  list(),
+  "datafusion" =  list()
 )}
 groupby.data.exceptions = {list(                                                             # exceptions as of run 1575727624
   "data.table" = {list(
@@ -468,7 +468,7 @@ join.data.exceptions = {list(                                                   
                         "J1_1e9_NA_5_0","J1_1e9_NA_0_1")                                  # q1 r1
   )},
   "polars" = {list(
-    "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1"),
+    "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")
   )},
   "arrow" = {list(
     "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1", "J1_1e8_NA_0_0", "J1_1e8_NA_5_0", "J1_1e8_NA_0_1" )#,
@@ -529,3 +529,95 @@ groupby2014.data.exceptions = {list(
   )}
 )}
 groupby2014.exceptions = task.exceptions(groupby2014.query.exceptions, groupby2014.data.exceptions)
+
+# rollfun ----
+
+rollfun_q_title_fun = function(x) {
+  stopifnot(c("question","iquestion","out_rows","out_cols","in_rows") %in% names(x),
+            uniqueN(x, by="iquestion")==nrow(x))
+  x[, sprintf("Query %s: \"%s\"",
+              iquestion, as.character(question)),
+    by = "iquestion"]$V1
+}
+rollfun.syntax.dict = {list(
+  "data.table" = {c(
+    "mean" = "frollmean(x$v1, w)",
+    "window small" = "frollmean(x$v1, wsmall)",
+    "window big" = "frollmean(x$v1, wbig)",
+    "min" = "frollmin(x$v1, w)",
+    "median" = "frollmedian(x$v1, w)",
+    "multiroll" = "frollmean(list(x$v1, x$v2), c(w-50L, w+50L))",
+    "weighted" = "",
+    "uneven dense" = "frollmean(x$v1, frolladapt(x$id2, w), adaptive=TRUE)",
+    "uneven sparse" = "frollmean(x$v1, frolladapt(x$id3, w), adaptive=TRUE)",
+    "regression" = ""
+  )},
+  "dplyr" = {c(
+    "mean" = "slide_mean(x$v1, before=w-1L, complete=TRUE)",
+    "window small" = "slide_mean(x$v1, before=wsmall-1L, complete=TRUE)",
+    "window big" = "slide_mean(x$v1, before=wbig-1L, complete=TRUE)",
+    "min" = "slide_min(x$v1, before=w-1L, complete=TRUE)",
+    "median" = "",
+    "multiroll" = "list(slide_mean(x$v1, before=w-51L, complete=TRUE), slide_mean(x$v1, before=w+49L, complete=TRUE), slide_mean(x$v2, before=w-51L, complete=TRUE), slide_mean(x$v2, before=w+49L, complete=TRUE))",
+    "weighted" = "",
+    "uneven dense" = "slide_index_mean(x$v1, i=x$id2, before=w-1L, complete=TRUE)",
+    "uneven sparse" = "slide_index_mean(x$v1, i=x$id3, before=w-1L, complete=TRUE)",
+    "regression" = ""
+  )},
+  "pandas" = {c(
+    "mean" = "x['v1'].rolling(w).mean()",
+    "window small" = "x['v1'].rolling(wsmall).mean()",
+    "window big" = "x['v1'].rolling(wbig).mean()",
+    "min" = "x['v1'].rolling(w).min()",
+    "median" = "x['v1'].rolling(w).median()",
+    "multiroll" = "pd.concat([x[['v1','v2']].rolling(w-50).mean().reset_index(drop=True), x[['v1','v2']].rolling(w+50).mean().reset_index(drop=True)], axis=1).set_axis(['v1_small', 'v1_big', 'v2_small', 'v2_big'], axis=1)",
+    "weighted" = "",
+    "uneven dense" = "{y}.rolling('{w}s').mean()",
+    "uneven sparse" = "{y}.rolling('{w}s').mean()",
+    "regression" = ""
+  )},
+  "spark" = {c(
+    "mean" = "select avg(v1) over (order by id1 rows between {w-1} preceding and current row) as v1 from x",
+    "window small" = "select avg(v1) over (order by id1 rows between {wsmall-1} preceding and current row) as v1 from x",
+    "window big" = "select avg(v1) over (order by id1 rows between {wbig-1} preceding and current row) as v1 from x",
+    "min" = "select min(v1) over (order by id1 rows between {w-1} preceding and current row) as v1 from x",
+    "median" = "select median(v1) over (order by id1 rows between {w-1} preceding and current row) as v1 from x",
+    "multiroll" = "select avg(v1) over (order by id1 rows between {w-51} preceding and current row) as v1_small, avg(v1) over (order by id1 rows between {w+49} preceding and current row) as v1_big, avg(v2) over (order by id1 rows between {w-51} preceding and current row) as v2_small, avg(v2) over (order by id1 rows between {w+49} preceding and current row) as v2_big from x",
+    "weighted" = "",
+    "uneven dense" = "select avg(v1) over (order by id2 range between {w-1} preceding and current row) as v1 from x",
+    "uneven sparse" = "select avg(v1) over (order by id3 range between {w-1} preceding and current row) as v1 from x",
+    "regression" = ""
+  )},
+  "duckdb-latest" = {c(
+    "mean" = "SELECT avg(v1) OVER (ORDER BY id1 ROWS BETWEEN {w-1} PRECEDING AND CURRENT ROW) AS v1 FROM x",
+    "window small" = "SELECT avg(v1) OVER (ORDER BY id1 ROWS BETWEEN {wsmall-1} PRECEDING AND CURRENT ROW) AS v1 FROM x",
+    "window big" = "SELECT avg(v1) OVER (ORDER BY id1 ROWS BETWEEN {wbig-1} PRECEDING AND CURRENT ROW) AS v1 FROM x",
+    "min" = "SELECT min(v1) OVER (ORDER BY id1 ROWS BETWEEN {w-1} PRECEDING AND CURRENT ROW) AS v1 FROM x",
+    "median" = "SELECT median(v1) OVER (ORDER BY id1 ROWS BETWEEN {w-1} PRECEDING AND CURRENT ROW) AS v1 FROM x",
+    "multiroll" = "SELECT avg(v1) OVER small AS v1_small, avg(v1) OVER big AS v1_big, avg(v2) OVER small AS v2_small, avg(v2) OVER small AS v2_big FROM x WINDOW small AS (ORDER BY id1 ROWS BETWEEN w-51 PRECEDING AND CURRENT ROW), big AS (ORDER BY id1 ROWS BETWEEN w+49 PRECEDING AND CURRENT ROW)",
+    "weighted" = "",
+    "uneven dense" = "SELECT avg(v1) OVER (ORDER BY id2 RANGE BETWEEN {w-1} PRECEDING AND CURRENT ROW) AS v1 FROM x",
+    "uneven sparse" = "SELECT avg(v1) OVER (ORDER BY id3 RANGE BETWEEN {w-1} PRECEDING AND CURRENT ROW) AS v1 FROM x",
+    "regression" = "SELECT regr_r2(v2, v1) OVER (ORDER BY id1 ROWS BETWEEN {w-1} PRECEDING AND CURRENT ROW) AS r2 FROM x"
+  )}
+)}
+rollfun.query.exceptions = {list(
+  "data.table" =  list("not yet implemented" = "median", "not yet implemented" = "weighted", "not yet implemented" = "regression"),
+  "dplyr" =       list("not yet implemented" = "median", "not yet implemented" = "weighted", "not yet implemented" = "regression"),
+  "pandas" =      list("not yet implemented" = "weighted", "not yet implemented" = "regression"),
+  "spark" =       list("not yet implemented" = "weighted", "not yet implemented" = "regression"),
+  "duckdb-latest"     =  list("not yet implemented" = "weighted")
+)}
+rollfun.data.exceptions = {list(
+  "data.table" = {list(
+  )},
+  "dplyr" = {list(
+  )},
+  "pandas" = {list(
+  )},
+  "spark" = {list(
+  )},
+  "duckdb-latest" = {list(
+  )}
+)}
+rollfun.exceptions = task.exceptions(rollfun.query.exceptions, rollfun.data.exceptions)

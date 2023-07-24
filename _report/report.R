@@ -190,7 +190,7 @@ ftdata = function(x, task) {
     ans[as.logical(as.integer(x))] = "pre-sorted data"
     ans
   }
-  if (all(task %in% c("groupby","join","groupby2014"))) {
+  if (all(task %in% c("groupby","join","groupby2014","rollfun"))) {
     y = strsplit(as.character(x), "_", fixed = TRUE)
     y = lapply(y, function(yy) {yy[yy=="NA"] = NA_character_; yy})
     in_rows=ft(sapply(y, `[`, 2L))
