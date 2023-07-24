@@ -15,6 +15,7 @@ pydatatable,groupby
 pydatatable,join
 spark,groupby
 spark,join
+spark,rollfun
 dask,groupby
 dask,join
 juliadf,groupby
