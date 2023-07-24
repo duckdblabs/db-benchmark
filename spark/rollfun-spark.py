@@ -46,6 +46,11 @@ print(x.count(), flush=True)
 
 x.createOrReplaceTempView("x")
 
+# window size
+w = int(x.count()/1e3)
+wsmall = int(x.count()/1e4)
+wbig = int(x.count()/1e2)
+
 task_init = timeit.default_timer()
 print("rolling...", flush=True)
 
