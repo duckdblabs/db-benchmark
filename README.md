@@ -25,6 +25,7 @@ Contribution and feedback are very welcome!
   - [x] [Polars](https://github.com/ritchie46/polars)
   - [x] [Arrow](https://github.com/apache/arrow)
   - [x] [DuckDB](https://github.com/duckdb/duckdb)
+  - [x] [DataFrames.jl](https://github.com/JuliaData/DataFrames.jl)
 
 If you would like your solution to be included, feel free to file a PR with the necessary setup-_solution_/ver-_solution_/groupby-_solution_/join-_solution_ scripts. The team at duckdblabs approves the PR it will be merged.
 
