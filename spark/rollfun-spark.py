@@ -12,9 +12,9 @@ exec(open("./_helpers/helpers.py").read())
 
 ver = pyspark.__version__
 git = "" # won't fix: https://issues.apache.org/jira/browse/SPARK-16864
-task = "groupby"
+task = "rollfun"
 solution = "spark"
-fun = ".sql"
+fun = "over"
 cache = "TRUE"
 on_disk = "FALSE"
 
@@ -29,7 +29,7 @@ if "TEST_RUN" in os.environ:
 from pyspark.conf import SparkConf
 spark = SparkSession.builder \
      .master("local[*]") \
-     .appName("groupby-spark") \
+     .appName("rollfun-spark") \
      .config("spark.executor.memory", mem_usage) \
      .config("spark.driver.memory", mem_usage) \
      .config("spark.python.worker.memory", mem_usage) \
@@ -186,7 +186,7 @@ ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans, sql
 
-#question = "median" # q5
+#question = "median" # q5 ## https://stackoverflow.com/q/76760672/2490497
 #sql = f'select median(v1) over (order by id1 rows between {w-1} preceding and current row) as v1 from x'
 #gc.collect()
 #t_start = timeit.default_timer()
@@ -220,7 +220,7 @@ del ans, sql
 #del ans, sql
 
 question = "multiroll" # q6
-sql = f'select avg(v1) over (order by id1 rows between {w-51} preceding and current row) as v1_small, avg(v1) over (order by id1 rows between {w+49} preceding and current row) as v1_big, avg(v2) over (order by id1 rows between {w-51} preceding and current row) as v2_small, avg(v2) over (order by id1 rows between {w+49} preceding and current row) as v2_big from x'
+sql = f'select avg(v1) over small as v1_small, avg(v1) over big as v1_big, avg(v2) over small as v2_small, avg(v2) over big as v2_big from x window small as (order by id1 rows between {w-51} preceding and current row), big as (order by id1 rows between {w+49} preceding and current row)'
 gc.collect()
 t_start = timeit.default_timer()
 ans = spark.sql(sql).persist(pyspark.StorageLevel.MEMORY_ONLY)
@@ -229,7 +229,7 @@ t = timeit.default_timer() - t_start
 m = memory_usage()
 ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
-chk = [spark.sql("select sum(v1_small) as v1_small, sum(v1_big) as v1_big, sum(v2_small) as v2_small, sum(v2_big) as v2_big from ans").collect()[0].asDict()['v1']]
+chk = spark.sql("select sum(v1_small) as v1_small, sum(v1_big) as v1_big, sum(v2_small) as v2_small, sum(v2_big) as v2_big from ans").collect()[0].asDict().values()
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 ans.unpersist()
@@ -243,7 +243,7 @@ t = timeit.default_timer() - t_start
 m = memory_usage()
 ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
-chk = [spark.sql("select sum(v1_small) as v1_small, sum(v1_big) as v1_big, sum(v2_small) as v2_small, sum(v2_big) as v2_big from ans").collect()[0].asDict()['v1']]
+chk = spark.sql("select sum(v1_small) as v1_small, sum(v1_big) as v1_big, sum(v2_small) as v2_small, sum(v2_big) as v2_big from ans").collect()[0].asDict().values()
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)
