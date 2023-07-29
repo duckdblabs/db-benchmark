@@ -59,6 +59,7 @@ t = system.time({
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
+invisible(dbSendQuery(con, sprintf("UPDATE ans SET v1 = NULL WHERE ROWID < %d", w-1))) ## due to https://github.com/duckdb/duckdb/discussions/8340 note that rowid is 0-based thus w-1
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
@@ -67,6 +68,7 @@ t = system.time({
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
+invisible(dbSendQuery(con, sprintf("UPDATE ans SET v1 = NULL WHERE ROWID < %d", w-1)))
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                                      ## head
@@ -81,6 +83,7 @@ t = system.time({
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
+invisible(dbSendQuery(con, sprintf("UPDATE ans SET v1 = NULL WHERE ROWID < %d", wsmall-1)))
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
@@ -89,6 +92,7 @@ t = system.time({
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
+invisible(dbSendQuery(con, sprintf("UPDATE ans SET v1 = NULL WHERE ROWID < %d", wsmall-1)))
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                                      ## head
@@ -103,6 +107,7 @@ t = system.time({
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
+invisible(dbSendQuery(con, sprintf("UPDATE ans SET v1 = NULL WHERE ROWID < %d", wbig-1)))
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
@@ -111,6 +116,7 @@ t = system.time({
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
+invisible(dbSendQuery(con, sprintf("UPDATE ans SET v1 = NULL WHERE ROWID < %d", wbig-1)))
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                                      ## head
@@ -125,6 +131,7 @@ t = system.time({
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
+invisible(dbSendQuery(con, sprintf("UPDATE ans SET v1 = NULL WHERE ROWID < %d", w-1)))
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
@@ -133,6 +140,7 @@ t = system.time({
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
+invisible(dbSendQuery(con, sprintf("UPDATE ans SET v1 = NULL WHERE ROWID < %d", w-1)))
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                                      ## head
@@ -147,6 +155,7 @@ t = system.time({
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
+invisible(dbSendQuery(con, sprintf("UPDATE ans SET v1 = NULL WHERE ROWID < %d", w-1)))
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
@@ -155,6 +164,7 @@ t = system.time({
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
+invisible(dbSendQuery(con, sprintf("UPDATE ans SET v1 = NULL WHERE ROWID < %d", w-1)))
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                                      ## head
@@ -169,6 +179,7 @@ t = system.time({
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
+invisible(dbSendQuery(con, sprintf("UPDATE ans SET v1 = NULL WHERE ROWID < %d", w-1)))
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1_small) AS v1_small, sum(v1_big) AS v1_big, sum(v2_small) AS v2_small, sum(v2_big) AS v2_big FROM ans"))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
@@ -177,6 +188,7 @@ t = system.time({
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
+invisible(dbSendQuery(con, sprintf("UPDATE ans SET v1 = NULL WHERE ROWID < %d", w-1)))
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1_small) AS v1_small, sum(v1_big) AS v1_big, sum(v2_small) AS v2_small, sum(v2_big) AS v2_big FROM ans"))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                                      ## head
@@ -191,6 +203,7 @@ rm(sql)
 #  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 #})[["elapsed"]]
 #m = memory_usage()
+#invisible(dbSendQuery(con, sprintf("UPDATE ans SET v1 = NULL WHERE ROWID < %d", w-1)))
 #chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
 #write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 #invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
@@ -199,6 +212,7 @@ rm(sql)
 #  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 #})[["elapsed"]]
 #m = memory_usage()
+#invisible(dbSendQuery(con, sprintf("UPDATE ans SET v1 = NULL WHERE ROWID < %d", w-1)))
 #chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
 #write.log(run=2L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 #print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                                      ## head
@@ -213,6 +227,7 @@ t = system.time({
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
+invisible(dbSendQuery(con, sprintf("UPDATE ans SET v1 = NULL WHERE ROWID <= (SELECT max(ROWID) FROM x WHERE id2 < %d)", w)))
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
@@ -221,6 +236,7 @@ t = system.time({
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
+invisible(dbSendQuery(con, sprintf("UPDATE ans SET v1 = NULL WHERE ROWID <= (SELECT max(ROWID) FROM x WHERE id2 < %d)", w)))
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                                      ## head
@@ -235,6 +251,7 @@ t = system.time({
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
+invisible(dbSendQuery(con, sprintf("UPDATE ans SET v1 = NULL WHERE ROWID <= (SELECT max(ROWID) FROM x WHERE id3 < %d)", w)))
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
@@ -243,6 +260,7 @@ t = system.time({
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
+invisible(dbSendQuery(con, sprintf("UPDATE ans SET v1 = NULL WHERE ROWID <= (SELECT max(ROWID) FROM x WHERE id3 < %d)", w)))
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1 FROM ans"))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                                      ## head
@@ -257,6 +275,7 @@ t = system.time({
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
+invisible(dbSendQuery(con, sprintf("UPDATE ans SET v1 = NULL WHERE ROWID < %d", w-1)))
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(r2) AS r2 FROM ans"))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
@@ -265,6 +284,7 @@ t = system.time({
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
+invisible(dbSendQuery(con, sprintf("UPDATE ans SET v1 = NULL WHERE ROWID < %d", w-1)))
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(r2) AS r2 FROM ans"))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                                      ## head
