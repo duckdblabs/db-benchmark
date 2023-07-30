@@ -108,6 +108,26 @@ plot(d, "data.table", 1e8, "join")
 plot(d, "data.table", 1e9, "join")
 ```
 
+#### rollfun {.tabset .tabset-fade .tabset-pills}
+
+##### 0.05 GB
+
+```{r datatable.rollfun.1e6}
+plot(d, "data.table", 1e6, "rollfun")
+```
+
+##### 0.5 GB {.active}
+
+```{r datatable.rollfun.1e7}
+plot(d, "data.table", 1e7, "rollfun")
+```
+
+##### 5 GB
+
+```{r datatable.rollfun.1e8}
+plot(d, "data.table", 1e8, "rollfun")
+```
+
 #### groupby2014 {.tabset .tabset-fade .tabset-pills}
 
 ##### 0.5 GB
@@ -212,6 +232,26 @@ plot(d, "pandas", 1e8, "join")
 plot(d, "pandas", 1e9, "join")
 ```
 
+#### rollfun {.tabset .tabset-fade .tabset-pills}
+
+##### 0.05 GB
+
+```{r pandas.rollfun.1e6}
+plot(d, "pandas", 1e6, "rollfun")
+```
+
+##### 0.5 GB {.active}
+
+```{r pandas.rollfun.1e7}
+plot(d, "pandas", 1e7, "rollfun")
+```
+
+##### 5 GB
+
+```{r pandas.rollfun.1e8}
+plot(d, "pandas", 1e8, "rollfun")
+```
+
 #### groupby2014 {.tabset .tabset-fade .tabset-pills}
 
 ##### 0.5 GB
@@ -272,6 +312,27 @@ plot(d, "dplyr", 1e8, "join")
 
 ```{r dplyr.join.1e9}
 plot(d, "dplyr", 1e9, "join")
+```
+
+
+#### rollfun {.tabset .tabset-fade .tabset-pills}
+
+##### 0.05 GB
+
+```{r dplyr.rollfun.1e6}
+plot(d, "dplyr", 1e6, "rollfun")
+```
+
+##### 0.5 GB {.active}
+
+```{r dplyr.rollfun.1e7}
+plot(d, "dplyr", 1e7, "rollfun")
+```
+
+##### 5 GB
+
+```{r dplyr.rollfun.1e8}
+plot(d, "dplyr", 1e8, "rollfun")
 ```
 
 #### groupby2014 {.tabset .tabset-fade .tabset-pills}
@@ -376,6 +437,27 @@ plot(d, "spark", 1e8, "join")
 
 ```{r spark.join.1e9}
 plot(d, "spark", 1e9, "join")
+```
+
+
+#### rollfun {.tabset .tabset-fade .tabset-pills}
+
+##### 0.05 GB
+
+```{r spark.rollfun.1e6}
+plot(d, "spark", 1e6, "rollfun")
+```
+
+##### 0.5 GB {.active}
+
+```{r spark.rollfun.1e7}
+plot(d, "spark", 1e7, "rollfun")
+```
+
+##### 5 GB
+
+```{r spark.rollfun.1e8}
+plot(d, "spark", 1e8, "rollfun")
 ```
 
 ### juliadf {.tabset .tabset-fade .tabset-pills}
@@ -715,18 +797,24 @@ plot(d, "duckdb-latest", 1e8, "join")
 plot(d, "duckdb-latest", 1e9, "join")
 ```
 
-## Details
+#### rollfun {.tabset .tabset-fade .tabset-pills}
 
-### Environment
+##### 0.05 GB
 
-Nodename: `r .nodename`
+```{r duckdb-latest.rollfun.1e6}
+plot(d, "duckdb-latest", 1e6, "rollfun")
+```
 
-------
+##### 0.5 GB {.active}
 
-Report was generated on: `r format(Sys.time(), usetz=TRUE)`.  
+```{r duckdb-latest.rollfun.1e7}
+plot(d, "duckdb-latest", 1e7, "rollfun")
+```
 
-```{r status_set_success}
-cat("history\n", file=get_report_status_file(), append=TRUE)
+##### 5 GB
+
+```{r duckdb-latest.rollfun.1e8}
+plot(d, "duckdb-latest", 1e8, "rollfun")
 ```
 
 ### datafusion {.tabset .tabset-fade .tabset-pills}
@@ -769,4 +857,18 @@ plot(d, "datafusion", 1e8, "join")
 
 ```{r datafusion.join.1e9}
 plot(d, "datafusion", 1e9, "join")
+```
+
+## Details
+
+### Environment
+
+Nodename: `r .nodename`
+
+------
+
+Report was generated on: `r format(Sys.time(), usetz=TRUE)`.
+
+```{r status_set_success}
+cat("history\n", file=get_report_status_file(), append=TRUE)
 ```
