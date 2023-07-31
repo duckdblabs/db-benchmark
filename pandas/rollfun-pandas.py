@@ -173,10 +173,11 @@ del ans
 question = "multiroll" # q6
 gc.collect()
 t_start = timeit.default_timer()
-ans = pd.concat([x[['v1','v2']].rolling(w-50).mean().reset_index(drop=True), x[['v1','v2']].rolling(w+50).mean().reset_index(drop=True)], axis=1).set_axis(['v1_small', 'v1_big', 'v2_small', 'v2_big'], axis=1)
+ans = pd.concat([x[['v1','v2']].rolling(w-50).mean().reset_index(drop=True), x[['v1','v2']].rolling(w+50).mean().reset_index(drop=True)], axis=1).set_axis(['v1_small', 'v2_small', 'v1_big', 'v2_big'], axis=1)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
+ans = ans[['v1_small','v1_big','v2_small','v2_big']]
 t_start = timeit.default_timer()
 chk = [ans['v1_small'].sum(), ans['v1_big'].sum(), ans['v2_small'].sum(), ans['v2_big'].sum()]
 chkt = timeit.default_timer() - t_start
@@ -184,10 +185,11 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = pd.concat([x[['v1','v2']].rolling(w-50).mean().reset_index(drop=True), x[['v1','v2']].rolling(w+50).mean().reset_index(drop=True)], axis=1).set_axis(['v1_small', 'v1_big', 'v2_small', 'v2_big'], axis=1)
+ans = pd.concat([x[['v1','v2']].rolling(w-50).mean().reset_index(drop=True), x[['v1','v2']].rolling(w+50).mean().reset_index(drop=True)], axis=1).set_axis(['v1_small', 'v2_small', 'v1_big', 'v2_big'], axis=1)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
+ans = ans[['v1_small','v1_big','v2_small','v2_big']]
 t_start = timeit.default_timer()
 chk = [ans['v1_small'].sum(), ans['v1_big'].sum(), ans['v2_small'].sum(), ans['v2_big'].sum()]
 chkt = timeit.default_timer() - t_start
@@ -234,8 +236,8 @@ ans = y.rolling(ws).mean()
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
-ans.iloc[:w-1] = np.nan
 ans.reset_index(drop=True, inplace=True)
+ans.iloc[:x[x.id2 >= w].index[0]] = np.nan
 ans = ans['v1']
 t_start = timeit.default_timer()
 chk = [ans.sum()]
@@ -248,8 +250,8 @@ ans = y.rolling(ws).mean()
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
-ans.iloc[:w-1] = np.nan
 ans.reset_index(drop=True, inplace=True)
+ans.iloc[:x[x.id2 >= w].index[0]] = np.nan
 ans = ans['v1']
 t_start = timeit.default_timer()
 chk = [ans.sum()]
@@ -270,8 +272,8 @@ ans = y.rolling(ws).mean()
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
-ans.iloc[:w-1] = np.nan
 ans.reset_index(drop=True, inplace=True)
+ans.iloc[:x[x.id3 >= w].index[0]] = np.nan
 ans = ans['v1']
 t_start = timeit.default_timer()
 chk = [ans.sum()]
@@ -284,8 +286,8 @@ ans = y.rolling(ws).mean()
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
-ans.iloc[:w-1] = np.nan
 ans.reset_index(drop=True, inplace=True)
+ans.iloc[:x[x.id3 >= w].index[0]] = np.nan
 ans = ans['v1']
 t_start = timeit.default_timer()
 chk = [ans.sum()]

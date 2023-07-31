@@ -181,7 +181,7 @@ spark.catalog.uncacheTable("ans")
 del ans0, ans, ansdo, sql0, sql
 
 question = "min" # q4
-sql0 = f'select id1, avg(v1) over (order by id1 rows between {w-1} preceding and current row) as v1 from x'
+sql0 = f'select id1, min(v1) over (order by id1 rows between {w-1} preceding and current row) as v1 from x'
 sql = f'select case when id1<{w} then null else v1 end as v1 from ans'
 gc.collect()
 t_start = timeit.default_timer()

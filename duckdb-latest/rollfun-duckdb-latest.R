@@ -173,13 +173,14 @@ invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 rm(sql)
 
 question = "multiroll" # q6
-sql = sprintf("CREATE TABLE ans AS SELECT avg(v1) OVER small AS v1_small, avg(v1) OVER big AS v1_big, avg(v2) OVER small AS v2_small, avg(v2) OVER small AS v2_big FROM x WINDOW small AS (ORDER BY id1 ROWS BETWEEN %d PRECEDING AND CURRENT ROW), big AS (ORDER BY id1 ROWS BETWEEN %d PRECEDING AND CURRENT ROW)", w-51L, w+49L)
+sql = sprintf("CREATE TABLE ans AS SELECT avg(v1) OVER small AS v1_small, avg(v1) OVER big AS v1_big, avg(v2) OVER small AS v2_small, avg(v2) OVER big AS v2_big FROM x WINDOW small AS (ORDER BY id1 ROWS BETWEEN %d PRECEDING AND CURRENT ROW), big AS (ORDER BY id1 ROWS BETWEEN %d PRECEDING AND CURRENT ROW)", w-51L, w+49L)
 t = system.time({
   dbExecute(con, sql)
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
-invisible(dbSendQuery(con, sprintf("UPDATE ans SET v1_small = NULL, v1_big = NULL, v2_small = NULL, v2_big = NULL WHERE ROWID < %d", w-1)))
+invisible(dbSendQuery(con, sprintf("UPDATE ans SET v1_small = NULL, v2_small = NULL WHERE ROWID < %d", w-51L)))
+invisible(dbSendQuery(con, sprintf("UPDATE ans SET v1_big = NULL, v2_big = NULL WHERE ROWID < %d", w+49L)))
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1_small) AS v1_small, sum(v1_big) AS v1_big, sum(v2_small) AS v2_small, sum(v2_big) AS v2_big FROM ans"))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
@@ -188,7 +189,8 @@ t = system.time({
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
-invisible(dbSendQuery(con, sprintf("UPDATE ans SET v1_small = NULL, v1_big = NULL, v2_small = NULL, v2_big = NULL WHERE ROWID < %d", w-1)))
+invisible(dbSendQuery(con, sprintf("UPDATE ans SET v1_small = NULL, v2_small = NULL WHERE ROWID < %d", w-51L)))
+invisible(dbSendQuery(con, sprintf("UPDATE ans SET v1_big = NULL, v2_big = NULL WHERE ROWID < %d", w+49L)))
 chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1_small) AS v1_small, sum(v1_big) AS v1_big, sum(v2_small) AS v2_small, sum(v2_big) AS v2_big FROM ans"))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                                      ## head
