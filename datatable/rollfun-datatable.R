@@ -14,7 +14,7 @@ cat("# rollfun-datatable.R\n")
 
 source("./_helpers/helpers.R")
 
-suppressPackageStartupMessages(library("data.table"))#, lib.loc="./datatable/r-datatable-adapt"))
+suppressPackageStartupMessages(library("data.table", lib.loc="./datatable/r-datatable-adapt"))
 setDTthreads(0L)
 ver = packageVersion("data.table")
 git = data.table:::.git(quiet=TRUE)
@@ -34,10 +34,6 @@ print(nrow(x))
 w = nrow(x)/1e3
 wsmall = nrow(x)/1e4
 wbig = nrow(x)/1e2
-
-ans<-frollmean(x$v1, frolladapt(x$id2, w), algo="fast", adaptive=TRUE)
-anse<-frollmean(x$v1, frolladapt(x$id2, w), algo="exact", adaptive=TRUE)
-tail(ans,3)-tail(anse,3)
 
 task_init = proc.time()[["elapsed"]]
 cat("rolling...\n")
