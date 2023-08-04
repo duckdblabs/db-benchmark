@@ -14,7 +14,7 @@ cat("# rollfun-datatable.R\n")
 
 source("./_helpers/helpers.R")
 
-suppressPackageStartupMessages(library("data.table", lib.loc="./datatable/r-datatable-adapt"))
+suppressPackageStartupMessages(library("data.table"))#, lib.loc="./datatable/r-datatable-adapt"))
 setDTthreads(0L)
 ver = packageVersion("data.table")
 git = data.table:::.git(quiet=TRUE)
@@ -34,6 +34,10 @@ print(nrow(x))
 w = nrow(x)/1e3
 wsmall = nrow(x)/1e4
 wbig = nrow(x)/1e2
+
+ans<-frollmean(x$v1, frolladapt(x$id2, w), algo="fast", adaptive=TRUE)
+anse<-frollmean(x$v1, frolladapt(x$id2, w), algo="exact", adaptive=TRUE)
+tail(ans,3)-tail(anse,3)
 
 task_init = proc.time()[["elapsed"]]
 cat("rolling...\n")
@@ -147,12 +151,12 @@ rm(ans)
 fun = "frollmean"
 
 question = "uneven dense" # q8
-t = system.time(print(length(ans<-frollmean(x$v1, frolladapt(x$id2, w), algo="exact", adaptive=TRUE))))[["elapsed"]]
+t = system.time(print(length(ans<-frollmean(x$v1, frolladapt(x$id2, w), adaptive=TRUE))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
-t = system.time(print(length(ans<-frollmean(x$v1, frolladapt(x$id2, w), algo="exact", adaptive=TRUE))))[["elapsed"]]
+t = system.time(print(length(ans<-frollmean(x$v1, frolladapt(x$id2, w), adaptive=TRUE))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
@@ -161,12 +165,12 @@ print(tail(ans, 3))
 rm(ans)
 
 question = "uneven sparse" # q9
-t = system.time(print(length(ans<-frollmean(x$v1, frolladapt(x$id3, w), algo="exact", adaptive=TRUE))))[["elapsed"]]
+t = system.time(print(length(ans<-frollmean(x$v1, frolladapt(x$id3, w), adaptive=TRUE))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
-t = system.time(print(length(ans<-frollmean(x$v1, frolladapt(x$id3, w), algo="exact", adaptive=TRUE))))[["elapsed"]]
+t = system.time(print(length(ans<-frollmean(x$v1, frolladapt(x$id3, w), adaptive=TRUE))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)

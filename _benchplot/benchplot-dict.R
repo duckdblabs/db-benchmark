@@ -548,8 +548,8 @@ rollfun.syntax.dict = {list(
     "median" = "frollmedian(x$v1, w)",
     "multiroll" = "frollmean(list(x$v1, x$v2), c(w-50L, w+50L))",
     "weighted" = "",
-    "uneven dense" = "frollmean(x$v1, frolladapt(x$id2, w), algo='exact', adaptive=TRUE)",
-    "uneven sparse" = "frollmean(x$v1, frolladapt(x$id3, w), algo='exact', adaptive=TRUE)",
+    "uneven dense" = "frollmean(x$v1, frolladapt(x$id2, w), adaptive=TRUE)",
+    "uneven sparse" = "frollmean(x$v1, frolladapt(x$id3, w), adaptive=TRUE)",
     "regression" = ""
   )},
   "dplyr" = {c(
