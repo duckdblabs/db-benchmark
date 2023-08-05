@@ -44,7 +44,7 @@ load_time = function(path=getwd()) {
   time.csv = Sys.getenv("CSV_TIME_FILE","time.csv")
   fread(file.path(path,time.csv))[
     !is.na(batch) &
-      in_rows %in% c(1e7, 1e8, 1e9) &
+      in_rows %in% c(1e6, 1e7, 1e8, 1e9) &
       solution %in% get_report_solutions() &
       !batch %in% get_excluded_batch() &
       !(task=="groupby" & substr(data, 1L, 2L)=="G2") &
@@ -247,7 +247,7 @@ transform = function(ld) {
 # all ----
 
 time_logs = function(path=getwd()) {
-  ct = clean_time(load_time(path=getwd()))
+  ct = clean_time(load_time(path=path))
   d = model_time(ct)
   l = model_logs(clean_logs(load_logs(path=path)))
   q = model_questions(clean_questions(load_questions(path=path)))
