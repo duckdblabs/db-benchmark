@@ -16,8 +16,29 @@ source("./_helpers/helpers.R")
 
 suppressPackageStartupMessages(library("data.table", lib.loc="./datatable/r-datatable-adapt"))
 setDTthreads(0L)
-ver = packageVersion("data.table")
-git = data.table:::.git(quiet=TRUE)
+## till adapt branch is not yet merged to master we need extra trickery so DT version/git between logs.csv and time.csv matches
+if (FALSE) {
+  # use this when adapt branch will be merged to master
+  ver = packageVersion("data.table")
+  git = data.table:::.git(quiet=TRUE)
+} else {
+  f = Sys.getenv("CSV_LOGS_FILE", "logs.csv")
+  if (file.exists(f)) {
+    l = fread(f)[.N]
+    if (nrow(l)==1L && identical(l$solution, "data.table") && identical(l$action, "start")) {
+      ver = l$version
+      git = l$git
+    } else {
+      # possibly run interactively
+      ver = NA_character_
+      git = ""
+    }
+    rm(f, l)
+  } else {
+    ver = NA_character_
+    git = ""
+  }
+}
 task = "rollfun"
 solution = "data.table"
 cache = TRUE
