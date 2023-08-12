@@ -365,7 +365,8 @@ benchplot = function(
   }
   margins(nsolutions, pending=pending)
   x[na_time_sec==FALSE, "max_time" := max(c(time1, time2)), by=c("solution","question")]
-  lim_x = tail(xlab_labels(max(c(0, x$max_time), na.rm=TRUE)), n=1L)
+  trunc5 = function(x) trunc(x*1e5)/1e5
+  lim_x = tail(xlab_labels(trunc5(max(c(0, x$max_time), na.rm=TRUE))), n=1L)
   if (lim_x == 0) stop("internal error: lim x is c(0,0), this should be already escaped at the beginning with 'sum(x$na_time_sec)==nrow(x)'")
   # get bars Y coordinates, positions only, plot later in bar1
   all_y_bars = barplot(rep(NA_real_, length(pad)), horiz=TRUE, xlim=c(0, lim_x), axes=FALSE, xpd=FALSE)
