@@ -616,8 +616,10 @@ rollfun.data.exceptions = {list(
   "pandas" = {list(
   )},
   "spark" = {list(
+    "timeout" = c("R1_1e7_NA_0_1", "R1_1e8_NA_0_1")
   )},
   "duckdb-latest" = {list(
+    "timeout" = c("R1_1e8_NA_0_1")
   )}
 )}
 rollfun.exceptions = task.exceptions(rollfun.query.exceptions, rollfun.data.exceptions)
