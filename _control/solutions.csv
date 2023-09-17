@@ -1,4 +1,6 @@
 solution,task
+collapse,groupby
+collapse,groupby2014
 data.table,groupby
 data.table,join
 data.table,groupby2014
