@@ -4,6 +4,8 @@ cat("# groupby-collapse.R\n")
 
 source("./_helpers/helpers.R")
 
+collapse::set_collapse(nthreads = data.table::getDTthreads(), sort = FALSE)
+
 stopifnot(requireNamespace(c("bit64","data.table"), quietly=TRUE)) # used in chk to sum numeric columns and data loading
 .libPaths("./collapse/r-collapse") # tidyverse/collapse#4641
 suppressPackageStartupMessages(library("collapse", lib.loc="./collapse/r-collapse", warn.conflicts=FALSE))
@@ -26,12 +28,12 @@ task_init = proc.time()[["elapsed"]]
 cat("grouping...\n")
 
 question = "sum v1 by id1" # q1
-t = system.time(print(dim(ans<-x |> fgroup_by("id1") |> fsummarize(v1 = fsum(na.rm = TRUE)))))[["elapsed"]]
+t = system.time(print(dim(ans<-x |> fgroup_by("id1") |> fsummarize(v1 = fsum(v1, na.rm = TRUE)))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-fsum(bit64::as.integer64(ans$v1)))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
-t = system.time(print(dim(ans<-x |> fgroup_by("id1") |> fsummarize(v1 = fsum(na.rm = TRUE)))))[["elapsed"]]
+t = system.time(print(dim(ans<-x |> fgroup_by("id1") |> fsummarize(v1 = fsum(v1, na.rm = TRUE)))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-fsum(bit64::as.integer64(ans$v1)))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
