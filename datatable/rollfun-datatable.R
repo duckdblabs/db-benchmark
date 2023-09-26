@@ -1,24 +1,24 @@
 #!/usr/bin/env Rscript
 
-if (!dir.exists("./datatable/r-datatable-adapt/data.table")) {
+if (!dir.exists("./datatable/r-datatable-rollmedian/data.table")) {
   cat("# data.table adapt branch library does not exist, installing\n")
   #stopifnot(requireNamespace("remotes", quietly=TRUE))
-  dir.create("./datatable/r-datatable-adapt", showWarnings=FALSE)
-  #remotes::install_github("Rdatatable/data.table@adapt", force=TRUE, lib="./datatable/r-datatable-adapt")
+  dir.create("./datatable/r-datatable-rollmedian", showWarnings=FALSE)
+  #remotes::install_github("Rdatatable/data.table@rollmedian", force=TRUE, lib="./datatable/r-datatable-rollmedian")
   ## https://github.com/duckdblabs/db-benchmark/actions/runs/5585092483/job/15159770868
   ## install_github fails from GH Actions with HTTP error 401, therefore use standard R repo instead
-  install.packages("data.table", repos="https://jangorecki.github.io/data.table-adapt", lib="./datatable/r-datatable-adapt")
+  install.packages("data.table", repos="https://jangorecki.github.io/data.table-rollmedian", lib="./datatable/r-datatable-rollmedian")
 }
 
 cat("# rollfun-datatable.R\n")
 
 source("./_helpers/helpers.R")
 
-suppressPackageStartupMessages(library("data.table", lib.loc="./datatable/r-datatable-adapt"))
+suppressPackageStartupMessages(library("data.table", lib.loc="./datatable/r-datatable-rollmedian"))
 setDTthreads(0L)
-## till adapt branch is not yet merged to master we need extra trickery so DT version/git between logs.csv and time.csv matches
+## till rollmedian branch is not yet merged to master we need extra trickery so DT version/git between logs.csv and time.csv matches
 if (FALSE) {
-  # use this when adapt branch will be merged to master
+  # use this when rollmedian branch will be merged to master
   ver = packageVersion("data.table")
   git = data.table:::.git(quiet=TRUE)
 } else {
@@ -105,35 +105,35 @@ rm(ans)
 
 fun = "frollmin"
 
-#question = "min" # q4 # not yet implemented
-#t = system.time(print(length(ans<-frollmin(x$v1, w))))[["elapsed"]]
-#m = memory_usage()
-#chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
-#write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
-#rm(ans)
-#t = system.time(print(length(ans<-frollmin(x$v1, w))))[["elapsed"]]
-#m = memory_usage()
-#chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
-#write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
-#print(head(ans, 3))
-#print(tail(ans, 3))
-#rm(ans)
+question = "min" # q4
+t = system.time(print(length(ans<-frollmin(x$v1, w))))[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+rm(ans)
+t = system.time(print(length(ans<-frollmin(x$v1, w))))[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
+write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+print(head(ans, 3))
+print(tail(ans, 3))
+rm(ans)
 
-#fun = "frollmedian"
+fun = "frollmedian"
 
-#question = "median" # q5 ## not yet implemeneted
-#t = system.time(print(length(ans<-frollmedian(x$v1, w))))[["elapsed"]]
-#m = memory_usage()
-#chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
-#write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun="frollmedian", time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
-#rm(ans)
-#t = system.time(print(length(ans<-frollmedian(x$v1, w))))[["elapsed"]]
-#m = memory_usage()
-#chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
-#write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun="frollmedian", time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
-#print(head(ans, 3))
-#print(tail(ans, 3))
-#rm(ans)
+question = "median" # q5
+t = system.time(print(length(ans<-frollmedian(x$v1, w))))[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun="frollmedian", time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+rm(ans)
+t = system.time(print(length(ans<-frollmedian(x$v1, w))))[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-sum(ans, na.rm=TRUE))[["elapsed"]]
+write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=length(ans), out_cols=1L, solution=solution, version=ver, git=git, fun="frollmedian", time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+print(head(ans, 3))
+print(tail(ans, 3))
+rm(ans)
 
 fun = "frollmean"
 

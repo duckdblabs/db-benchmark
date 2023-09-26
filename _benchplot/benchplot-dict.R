@@ -602,7 +602,7 @@ rollfun.syntax.dict = {list(
   )}
 )}
 rollfun.query.exceptions = {list(
-  "data.table" =  list("not yet implemented" = "min", "not yet implemented" = "median", "not yet implemented" = "weighted", "not yet implemented" = "regression"),
+  "data.table" =  list("not yet implemented" = "weighted", "not yet implemented" = "regression"),
   "dplyr" =       list("not yet implemented" = "median", "not yet implemented" = "weighted", "not yet implemented" = "regression"),
   "pandas" =      list("not yet implemented" = "weighted", "not yet implemented" = "regression"),
   "spark" =       list("not yet implemented" = "median", "not yet implemented" = "weighted", "not yet implemented" = "regression"),
