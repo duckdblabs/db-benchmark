@@ -9,7 +9,7 @@ Rscript -e 'install.packages("DBI", lib="./duckdb-latest/r-duckdb-latest")'
 
 
 cd duckdb-latest
-git clone https://github.com/duckdb/duckdb
-R CMD INSTALL -l "./r-duckdb-latest" duckdb/tools/rpkg
+git clone https://github.com/duckdb/duckdb-r.git
+MAKE="make -j30" R CMD INSTALL -l "./r-duckdb-latest" .
 rm -rf duckdb
 cd ..
