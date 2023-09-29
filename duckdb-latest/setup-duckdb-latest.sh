@@ -5,7 +5,7 @@ set -e
 mkdir -p ./duckdb-latest/r-duckdb-latest
 # Rscript -e  'withr::with_libpaths(new = "./duckdb-latest/r-duckdb-latest", devtools::install_github("duckdb/duckdb/tools/rpkg"))'
 # prevent errors when running 'ver-duckdb.sh'
-Rscript -e 'install.packages("DBI", lib="./duckdb-latest/r-duckdb-latest")'
+Rscript -e 'install.packages("DBI", repos = "https://cloud.r-project.org", lib="./duckdb-latest/r-duckdb-latest")'
 
 
 cd duckdb-latest

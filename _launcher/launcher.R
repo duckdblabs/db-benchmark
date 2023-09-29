@@ -6,7 +6,7 @@ readret = function(x) {
   if (file.exists(x) && file.size(x)) {
     ret = readLines(x)
     if (length(ret)!=1L) stop(sprintf("'%s' file containts more than a single line"))
-    ret
+   ret
   } else NA_character_
 }
 
@@ -17,7 +17,9 @@ file.ext = function(x) {
     "data.table"=, "dplyr"=, "h2o"=, "arrow"=, "duckdb"="R", "duckdb-latest"="R",
     "pandas"=, "spark"=, "pydatatable"=, "modin"=, "dask"=, "polars"="py",
     "clickhouse"="sql",
-    "juliadf"="jl"
+    "juliadf"="jl",
+    "pyhdk"="py",
+    "pyhdk-exp"="py"
   )
   if (is.null(ans)) stop(sprintf("solution %s does not have file extension defined in file.ext helper function", x))
   ans

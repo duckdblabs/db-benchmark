@@ -4,7 +4,7 @@ cat("# join-duckdb.R\n")
 
 source("./_helpers/helpers.R")
 
-suppressPackageStartupMessages({
+suppressPackageStartupMessages({  
   library("DBI", lib.loc="./duckdb/r-duckdb", warn.conflicts=FALSE)
   library("duckdb", lib.loc="./duckdb/r-duckdb", warn.conflicts=FALSE)
 })
