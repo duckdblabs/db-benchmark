@@ -261,7 +261,7 @@ question = "regression v1 v2 by id2 id4" # q9
 #corr().iloc[0::2][['v2']]**2 # on 1e8,k=1e2 slower, 76s vs 47s
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[['id2','id4','v1','v2']].groupby(['id2','id4'], as_index=False, sort=False, observed=True, dropna=False).apply(lambda x: (x['x'].corr(x['y'])**2)).rename(columns={None: "r2"})
+ans = x[['id2','id4','v1','v2']].groupby(['id2','id4'], as_index=False, sort=False, observed=True, dropna=False).apply(lambda x: x['v1'].corr(x['v2'])**2).rename(columns={None: "r2"})
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -272,7 +272,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[['id2','id4','v1','v2']].groupby(['id2','id4'], as_index=False, sort=False, observed=True, dropna=False).apply(lambda x: (x['x'].corr(x['y'])**2)).rename(columns={None: "r2"})
+ans = x[['id2','id4','v1','v2']].groupby(['id2','id4'], as_index=False, sort=False, observed=True, dropna=False).apply(lambda x: x['v1'].corr(x['v2'])**2).rename(columns={None: "r2"})
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
