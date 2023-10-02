@@ -8,7 +8,7 @@ os.environ["MODIN_ENGINE"] = "native"
 os.environ["MODIN_STORAGE_FORMAT"] = "hdk"
 os.environ["MODIN_EXPERIMENTAL"] = "True"
 # os.environ['MODIN_HDK_FRAGMENT_SIZE'] = "32000000"
-os.environ['MODIN_HDK_FRAGMENT_SIZE'] = "4000000"
+# os.environ['MODIN_HDK_FRAGMENT_SIZE'] = "4000000"
 print("Pandas backend: Modin on HDK")
 
 import gc
