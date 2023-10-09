@@ -5,13 +5,13 @@ cat("# join-duckdb.R\n")
 source("./_helpers/helpers.R")
 
 suppressPackageStartupMessages({
-  library("DBI", lib.loc="./duckdb/r-duckdb", warn.conflicts=FALSE)
-  library("duckdb", lib.loc="./duckdb/r-duckdb", warn.conflicts=FALSE)
+  library("DBI", lib.loc="./duckdb-latest/r-duckdb-latest", warn.conflicts=FALSE)
+  library("duckdb", lib.loc="./duckdb-latest/r-duckdb-latest", warn.conflicts=FALSE)
 })
 ver = packageVersion("duckdb")
 #git = "" # set up later on after connecting to db
 task = "join"
-solution = "duckdb"
+solution = "duckdb-latest"
 cache = TRUE
 
 data_name = Sys.getenv("SRC_DATANAME")
@@ -38,11 +38,13 @@ detach_and_drop <- function(con, db_file, db) {
   }
 }
 
+tempfile1 <- tempfile()
 on_disk = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][2L])>=1e9
 uses_NAs = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][4L])>0
+
 if (on_disk) {
   print("using disk memory-mapped data storage")
-  con = dbConnect(duckdb::duckdb(), dbdir=tempfile())
+  con = dbConnect(duckdb::duckdb(), dbdir=tempfile1)
 } else {
   print("using in-memory data storage")
   con = dbConnect(duckdb::duckdb())
@@ -50,7 +52,7 @@ if (on_disk) {
 
 ncores = parallel::detectCores()
 invisible(dbExecute(con, sprintf("PRAGMA THREADS=%d", ncores)))
-invisible(dbExecute(con, "SET experimental_parallel_csv=true;"))
+invisible(dbExecute(con, "SET memory_limit='100GB'"))
 git = dbGetQuery(con, "SELECT source_id FROM pragma_version()")[[1L]]
 
 invisible({
@@ -61,22 +63,31 @@ invisible({
 })
 
 if (!uses_NAs) {
+  if (on_disk) {
+    unlink('clean.db')
+    invisible(dbExecute(con, "attach 'clean.db'"))
+    db_name = "clean."
+  }
+  else {
+    db_name = ""
+  }
+
   id4_enum_statement = "SELECT id4 FROM x_csv UNION ALL SELECT id4 FROM small_csv UNION ALL SELECT id4 from medium_csv UNION ALL SELECT id4 from big_csv"
   id5_enum_statement = "SELECT id5 FROM x_csv UNION ALL SELECT id5 from medium_csv UNION ALL SELECT id5 from big_csv"
   invisible(dbExecute(con, sprintf("CREATE TYPE id4ENUM AS ENUM (%s)", id4_enum_statement)))
   invisible(dbExecute(con, sprintf("CREATE TYPE id5ENUM AS ENUM (%s)", id5_enum_statement)))
 
-  invisible(dbExecute(con, "CREATE TABLE small(id1 INT64, id4 id4ENUM, v2 DOUBLE)"))
-  invisible(dbExecute(con, "INSERT INTO small (SELECT * from small_csv)"))
+  invisible(dbExecute(con, sprintf("CREATE TABLE %ssmall(id1 INT64, id4 id4ENUM, v2 DOUBLE)", db_name)))
+  invisible(dbExecute(con, sprintf("INSERT INTO %ssmall (SELECT * from small_csv)", db_name)))
 
-  invisible(dbExecute(con, "CREATE TABLE medium(id1 INT64, id2 INT64, id4 id4ENUM, id5 id5ENUM, v2 DOUBLE)"))
-  invisible(dbExecute(con, "INSERT INTO medium (SELECT * FROM medium_csv)"))
+  invisible(dbExecute(con, sprintf("CREATE TABLE %smedium(id1 INT64, id2 INT64, id4 id4ENUM, id5 id5ENUM, v2 DOUBLE)", db_name)))
+  invisible(dbExecute(con, sprintf("INSERT INTO %smedium (SELECT * FROM medium_csv)", db_name)))
 
-  invisible(dbExecute(con, "CREATE TABLE big(id1 INT64, id2 INT64, id3 INT64, id4 id4ENUM, id5 id5ENUM, id6 VARCHAR, v2 DOUBLE)"))
-  invisible(dbExecute(con, "INSERT INTO big (Select * from big_csv)"))
+  invisible(dbExecute(con, sprintf("CREATE TABLE %sbig(id1 INT64, id2 INT64, id3 INT64, id4 id4ENUM, id5 id5ENUM, id6 VARCHAR, v2 DOUBLE)", db_name)))
+  invisible(dbExecute(con, sprintf("INSERT INTO %sbig (Select * from big_csv)", db_name)))
 
-  invisible(dbExecute(con, "CREATE TABLE x(id1 INT64, id2 INT64, id3 INT64, id4 id4ENUM, id5 id5ENUM, id6 VARCHAR, v1 DOUBLE)"))
-  invisible(dbExecute(con, "INSERT INTO x (SELECT * FROM x_csv);"))
+  invisible(dbExecute(con, sprintf("CREATE TABLE %sx(id1 INT64, id2 INT64, id3 INT64, id4 id4ENUM, id5 id5ENUM, id6 VARCHAR, v1 DOUBLE)", db_name)))
+  invisible(dbExecute(con, sprintf("INSERT INTO %sx (SELECT * FROM x_csv);", db_name)))
 
   # drop all the csv ingested tables
   invisible({
@@ -85,6 +96,12 @@ if (!uses_NAs) {
     dbExecute(con, "DROP TABLE medium_csv")
     dbExecute(con, "DROP TABLE big_csv")
   })
+
+  if (on_disk) {
+    dbDisconnect(con, shutdown=TRUE)
+    unlink(tempfile1)
+    con <- dbConnect(duckdb(), dbdir='clean.db')
+  }
 } else {
   invisible({
     dbExecute(con, "ALTER TABLE x_csv RENAME TO x")
@@ -233,6 +250,9 @@ print(dbGetQuery(con, "SELECT * FROM q5.ans LIMIT 3"))                          
 print(dbGetQuery(con, "SELECT * FROM q5.ans WHERE ROWID > (SELECT count(*) FROM q5.ans) - 4")) ## tail
 invisible(dbExecute(con, "DROP TABLE IF EXISTS q5.ans"))
 detach_and_drop(con, 'q5.db', 'q5')
+
+dbDisconnect(con, shutdown=TRUE)
+unlink('clean.db')
 
 cat(sprintf("joining finished, took %.0fs\n", proc.time()[["elapsed"]]-task_init))
 
