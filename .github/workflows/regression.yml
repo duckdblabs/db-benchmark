@@ -59,6 +59,10 @@ jobs:
       shell: bash
       run: ./_utils/validate_no_errors.sh
 
+    - name: Check Report Generation does not fail
+      shell: bash
+      run: Rscript -e 'rmarkdown::render("./_report/index.Rmd", output_dir="public")'
+
     - name: Create Archive
       if: always()
       shell: bash
