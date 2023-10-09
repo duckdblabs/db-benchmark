@@ -2,16 +2,20 @@ solution,task
 data.table,groupby
 data.table,join
 data.table,groupby2014
+data.table,rollfun
 dplyr,groupby
 dplyr,join
 dplyr,groupby2014
+dplyr,rollfun
 pandas,groupby
 pandas,join
 pandas,groupby2014
+pandas,rollfun
 pydatatable,groupby
 pydatatable,join
 spark,groupby
 spark,join
+spark,rollfun
 dask,groupby
 dask,join
 juliadf,groupby
@@ -28,5 +32,6 @@ duckdb,groupby
 duckdb,join
 duckdb-latest,groupby
 duckdb-latest,join
+duckdb-latest,rollfun
 datafusion,groupby
 datafusion,join

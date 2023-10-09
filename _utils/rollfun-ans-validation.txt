@@ -1,0 +1,60 @@
+# data.table dplyr
+ans[(w-2):(w+2)]
+tail(ans, 3)
+
+# duckdb
+dbGetQuery(con, "SELECT * FROM ans WHERE ROWID BETWEEN 1000-2-1 AND 1000+2-1")
+dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT count(*) FROM ans) - 4")
+
+# pandas
+ans.head(w+2).tail(5)
+ans.tail(3)
+
+# spark
+ans.head(w+2)[-5:]
+ans.tail(3)
+
+# q6
+data.table::as.data.table(ans)[(w-52):(w-48)]
+data.table::as.data.table(ans)[(w+48):(w+52)]
+tail(data.table::as.data.table(ans), 3)
+
+dbGetQuery(con, "SELECT * FROM ans WHERE ROWID BETWEEN 1000-50-2-1 AND 1000-50+2-1")
+dbGetQuery(con, "SELECT * FROM ans WHERE ROWID BETWEEN 1000+50-2-1 AND 1000+50+2-1")
+dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT count(*) FROM ans) - 4")
+
+ans.head(w-50+2).tail(5)
+ans.head(w+50+2).tail(5)
+ans.tail(3)
+
+ans.head(w-50+2)[-5:]
+ans.head(w+50+2)[-5:]
+ans.tail(3)
+
+# q8
+ans[900:904]
+tail(ans, 3)
+
+dbGetQuery(con, "SELECT * FROM ans WHERE ROWID BETWEEN 900-1 AND 904-1")
+dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT count(*) FROM ans) - 4")
+
+ans.head(904).tail(5)
+ans.tail(3)
+
+ans.head(904)[-5:]
+ans.tail(3)
+
+# q9
+ans[493:497]
+tail(ans, 3)
+
+dbGetQuery(con, "SELECT * FROM ans WHERE ROWID BETWEEN 493-1 AND 497-1")
+dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT count(*) FROM ans) - 4")
+
+ans.head(497).tail(5)
+ans.tail(3)
+
+# spark
+ans.head(497)[-5:]
+ans.tail(3)
+

@@ -21,7 +21,11 @@ get_data_levels = function() {
   in_rows = c("1e7","1e8","1e9")
   k_na_sort = "1e2_0_0"
   groupby2014 = paste("G0", paste(rep(in_rows, each=length(k_na_sort)), k_na_sort, sep="_"), sep="_")
-  list(groupby=groupby, join=join, groupby2014=groupby2014)
+  ## rollfun
+  in_rows = c("1e6","1e7","1e8")
+  k_na_sort = "NA_0_1"
+  rollfun = paste("R1", paste(rep(in_rows, each=length(k_na_sort)), k_na_sort, sep="_"), sep="_")
+  list(groupby=groupby, join=join, groupby2014=groupby2014, rollfun=rollfun)
 }
 get_excluded_batch = function() {
   c(
@@ -40,7 +44,7 @@ load_time = function(path=getwd()) {
   time.csv = Sys.getenv("CSV_TIME_FILE","time.csv")
   fread(file.path(path,time.csv))[
     !is.na(batch) &
-      in_rows %in% c(1e7, 1e8, 1e9) &
+      in_rows %in% c(1e6, 1e7, 1e8, 1e9) &
       solution %in% get_report_solutions() &
       !batch %in% get_excluded_batch() &
       !(task=="groupby" & substr(data, 1L, 2L)=="G2") &
@@ -186,7 +190,7 @@ ftdata = function(x, task) {
     ans[as.logical(as.integer(x))] = "pre-sorted data"
     ans
   }
-  if (all(task %in% c("groupby","join","groupby2014"))) {
+  if (all(task %in% c("groupby","join","groupby2014","rollfun"))) {
     y = strsplit(as.character(x), "_", fixed = TRUE)
     y = lapply(y, function(yy) {yy[yy=="NA"] = NA_character_; yy})
     in_rows=ft(sapply(y, `[`, 2L))
@@ -243,7 +247,7 @@ transform = function(ld) {
 # all ----
 
 time_logs = function(path=getwd()) {
-  ct = clean_time(load_time(path=getwd()))
+  ct = clean_time(load_time(path=path))
   d = model_time(ct)
   l = model_logs(clean_logs(load_logs(path=path)))
   q = model_questions(clean_questions(load_questions(path=path)))
