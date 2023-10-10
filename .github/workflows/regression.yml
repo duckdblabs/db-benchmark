@@ -35,6 +35,9 @@ jobs:
       shell: bash
       run: sudo swapoff -a
 
+    - name: Setup upterm session
+      uses: lhotari/action-upterm@v1
+
     - name: Install libraries
       shell: bash
       run: ./_utils/setup-small.sh
