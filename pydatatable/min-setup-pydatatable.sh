@@ -1,9 +1,9 @@
 #!/bin/bash
 set -e
 
-# install dependencies
-sudo apt-get update -qq
-sudo apt-get install -y python3.10 virtualenv
+# # install dependencies
+# sudo apt-get update -qq
+# sudo apt-get install -y python3.10 virtualenv
 
 virtualenv pydatatable/py-pydatatable --python=python3
 source pydatatable/py-pydatatable/bin/activate
