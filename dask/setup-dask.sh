@@ -2,8 +2,8 @@
 set -e
 
 # install all dependencies
-sudo apt-get update
-sudo apt-get install build-essential 
+# sudo apt-get update
+# sudo apt-get install build-essential 
 
 virtualenv dask/py-dask --python=python3
 source dask/py-dask/bin/activate

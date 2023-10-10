@@ -2,8 +2,8 @@
 set -e
 
 # install dependencies
-sudo apt-get update -qq
-sudo apt-get install -y python3.6-dev virtualenv
+# sudo apt-get update -qq
+# sudo apt-get install -y python3.6-dev virtualenv
 
 virtualenv pydatatable/py-pydatatable --python=python3
 source pydatatable/py-pydatatable/bin/activate
