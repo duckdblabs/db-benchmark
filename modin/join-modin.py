@@ -6,69 +6,12 @@ import os
 import gc
 import timeit
 
-os.environ["MODIN_ENGINE"] = "native"
-os.environ["MODIN_STORAGE_FORMAT"] = "hdk"
-os.environ["MODIN_EXPERIMENTAL"] = "True"
-# os.environ['MODIN_HDK_FRAGMENT_SIZE'] = "32000000"
-# os.environ['MODIN_HDK_FRAGMENT_SIZE'] = "4000000"
-print("Pandas backend: Modin on HDK")
+exec(open("./modin/modin-helpers.py").read())
 
-
-import modin
+import modin as modin
 import modin.pandas as pd
 
-
-import pyhdk
-pyhdk.init()
-
-def init_modin_on_hdk(pd):
-    from modin.experimental.sql import query
-
-    # Calcite initialization
-    data = {"a": [1, 2, 3]}
-    df = pd.DataFrame(data)
-    query("SELECT * FROM df", df=df)
-
-
 init_modin_on_hdk(pd)
-
-
-def trigger_import(df: pd.DataFrame):
-    """
-    Trigger import execution for DataFrame obtained by HDK engine.
-    Parameters
-    ----------
-    df : DataFrame
-        DataFrame for trigger import.
-    """
-    modin_frame = df._query_compiler._modin_frame
-    if hasattr(modin_frame, "force_import"):
-        modin_frame.force_import()
-        return
-
-    # The code below has been kept for backwards compatibility and will be removed in the future.
-
-    from modin.experimental.core.execution.native.implementations.hdk_on_native.db_worker import (
-        DbWorker,
-    )
-
-    df.shape  # to trigger real execution
-
-    p = modin_frame._partitions[0][0]
-    if (
-        p.frame_id is None
-        and modin_frame._has_arrow_table()
-        and not isinstance(table := p.get(), pd.DataFrame)
-    ):
-        p.frame_id = DbWorker().import_arrow_table(table)  # to trigger real execution
-
-
-def execute(df: pd.DataFrame, *, trigger_hdk_import: bool = False):
-    if trigger_hdk_import:
-        trigger_import(df)
-    else:
-        df._query_compiler._modin_frame._execute()
-    return df
 
 exec(open("./_helpers/helpers.py").read())
 
@@ -109,6 +52,7 @@ big = pd.read_csv(src_jn_y[2], dtype={
                 "v2": "float64",
             },)
 
+# To trigger non-lazy loading
 [execute(df, trigger_hdk_import=True) for df in [x, small, medium, big]]
 
 task_init = timeit.default_timer()
@@ -118,6 +62,7 @@ question = "small inner on int" # q1
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.merge(small, on='id1')
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -129,6 +74,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.merge(small, on='id1')
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -144,6 +90,7 @@ question = "medium inner on int" # q2
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.merge(medium, on='id2')
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -155,6 +102,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.merge(medium, on='id2')
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -170,6 +118,7 @@ question = "medium outer on int" # q3
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.merge(medium, how='left', on='id2')
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -181,6 +130,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.merge(medium, how='left', on='id2')
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -196,6 +146,7 @@ question = "medium inner on factor" # q4
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.merge(medium, on='id5')
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -207,6 +158,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.merge(medium, on='id5')
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -222,6 +174,7 @@ question = "big inner on int" # q5
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.merge(big, on='id3')
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -233,6 +186,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.merge(big, on='id3')
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()

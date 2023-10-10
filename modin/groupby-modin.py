@@ -2,83 +2,22 @@
 
 print("# groupby-modin.py", flush=True)
 
-import os
-
-os.environ["MODIN_ENGINE"] = "native"
-os.environ["MODIN_STORAGE_FORMAT"] = "hdk"
-os.environ["MODIN_EXPERIMENTAL"] = "True"
-# os.environ['MODIN_HDK_FRAGMENT_SIZE'] = "32000000"
-# os.environ['MODIN_HDK_FRAGMENT_SIZE'] = "4000000"
-print("Pandas backend: Modin on HDK")
-
 import gc
 import timeit
+
+exec(open("./modin/modin-helpers.py").read())
+
 import modin as modin
 import modin.pandas as pd
 
-import pyhdk
-pyhdk.init()
-
-def init_modin_on_hdk(pd):
-    from modin.experimental.sql import query
-
-    # Calcite initialization
-    data = {"a": [1, 2, 3]}
-    df = pd.DataFrame(data)
-    query("SELECT * FROM df", df=df)
-
-
 init_modin_on_hdk(pd)
-gb_params = dict(as_index=False, sort=False, observed=True)
-
-
-def trigger_import(df: pd.DataFrame):
-    """
-    Trigger import execution for DataFrame obtained by HDK engine.
-    Parameters
-    ----------
-    df : DataFrame
-        DataFrame for trigger import.
-    """
-    modin_frame = df._query_compiler._modin_frame
-    if hasattr(modin_frame, "force_import"):
-        modin_frame.force_import()
-        return
-
-    # The code below has been kept for backwards compatibility and will be removed in the future.
-
-    from modin.experimental.core.execution.native.implementations.hdk_on_native.db_worker import (
-        DbWorker,
-    )
-
-    df.shape  # to trigger real execution
-
-    p = modin_frame._partitions[0][0]
-    if (
-        p.frame_id is None
-        and modin_frame._has_arrow_table()
-        and not isinstance(table := p.get(), pd.DataFrame)
-    ):
-        p.frame_id = DbWorker().import_arrow_table(table)  # to trigger real execution
-
-
-def execute(df: pd.DataFrame, *, trigger_hdk_import: bool = False):
-    if trigger_hdk_import:
-        trigger_import(df)
-    else:
-        df._query_compiler._modin_frame._execute()
-    return df
 
 exec(open("./_helpers/helpers.py").read())
 
 ver = modin.__version__
-
-
-# warnings.filterwarnings('ignore')
-
 git = ""
 task = "groupby"
-solution = "modin"
+solution = solution_txt
 fun = ".groupby"
 cache = "TRUE"
 on_disk = "FALSE"
@@ -91,7 +30,10 @@ x = pd.read_csv(src_grp, dtype={'id1':'category', 'id2':'category', 'id3':'categ
     **{n: "int32" for n in ["id4", "id5", "id6", "v1", "v2"]},
     "v3": "float64",})
 print(len(x.index), flush=True)
+# To trigger non-lazy loading
 execute(x, trigger_hdk_import=True)
+
+gb_params = dict(as_index=False, sort=False, observed=True)
 
 task_init = timeit.default_timer()
 print("grouping...", flush=True)
@@ -100,7 +42,7 @@ question = "sum v1 by id1" # q1
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id1'], **gb_params).agg({'v1':'sum'})
-# ans.reset_index(inplace=True) # #68
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -112,7 +54,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id1'], **gb_params).agg({'v1':'sum'})
-# ans.reset_index(inplace=True)
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -128,7 +70,7 @@ question = "sum v1 by id1:id2" # q2
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id1','id2'], **gb_params).agg({'v1':'sum'})
-# ans.reset_index(inplace=True)
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -140,7 +82,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id1','id2'], **gb_params).agg({'v1':'sum'})
-# ans.reset_index(inplace=True)
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -156,7 +98,7 @@ question = "sum v1 mean v3 by id3" # q3
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id3'], **gb_params).agg({'v1':'sum', 'v3':'mean'})
-# ans.reset_index(inplace=True)
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -168,7 +110,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id3'], **gb_params).agg({'v1':'sum', 'v3':'mean'})
-# ans.reset_index(inplace=True)
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -184,7 +126,7 @@ question = "mean v1:v3 by id4" # q4
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id4'], **gb_params).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})
-# ans.reset_index(inplace=True)
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -196,7 +138,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id4'], **gb_params).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})
-# ans.reset_index(inplace=True)
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -212,7 +154,7 @@ question = "sum v1:v3 by id6" # q5
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id6'], **gb_params).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})
-# ans.reset_index(inplace=True)
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -224,7 +166,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id6'], **gb_params).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})
-# ans.reset_index(inplace=True)
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -240,7 +182,7 @@ question = "median v3 sd v3 by id4 id5" # q6
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id4','id5'], **gb_params).agg({'v3': ['median','std']})
-# ans.reset_index(inplace=True)
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -252,7 +194,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id4','id5'], **gb_params).agg({'v3': ['median','std']})
-# ans.reset_index(inplace=True)
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -269,7 +211,7 @@ question = "max v1 - min v2 by id3" # q7
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id3'], **gb_params).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']]
-# ans.reset_index(inplace=True)
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -281,7 +223,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id3'], **gb_params).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']]
-# ans.reset_index(inplace=True)
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -297,8 +239,8 @@ del ans
 question = "largest two v3 by id6" # q8
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby('id6')['v3'].nlargest(2).reset_index()[['id6', 'v3']]
-# ans.reset_index(drop=True, inplace=True)
+ans = x.groupby('id6', sort=False, observed=True)['v3'].nlargest(2).reset_index()[['id6', 'v3']]
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -309,8 +251,8 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby('id6')['v3'].nlargest(2).reset_index()[['id6', 'v3']]
-# ans.reset_index(drop=True, inplace=True)
+ans = x.groupby('id6', sort=False, observed=True)['v3'].nlargest(2).reset_index()[['id6', 'v3']]
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -334,7 +276,7 @@ FROM df
 GROUP BY id2, id4;
 """
 ans = query(sql, df=x)
-# ans.reset_index(inplace=True)
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -346,7 +288,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = query(sql, df=x)
-# ans.reset_index(inplace=True)
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -362,7 +304,7 @@ question = "sum v3 count by id1:id6" # q10
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id1','id2','id3','id4','id5','id6'], **gb_params).agg({'v3':'sum', 'v1':'count'})
-# ans.reset_index(inplace=True)
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -374,7 +316,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id1','id2','id3','id4','id5','id6'], **gb_params).agg({'v3':'sum', 'v1':'count'})
-# ans.reset_index(inplace=True)
+execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
