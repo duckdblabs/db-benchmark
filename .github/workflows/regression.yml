@@ -16,7 +16,7 @@ concurrency:
 jobs:
  regression-test-benchmark-runner:
   name: Regression Tests
-  runs-on: ubuntu-20.04
+  runs-on: ubuntu-22.04
   env:
     CC: gcc-10
     CXX: g++-10
@@ -39,8 +39,8 @@ jobs:
       shell: bash
       run: ./_utils/setup-small.sh
 
-    - name: Setup upterm session
-      uses: lhotari/action-upterm@v1
+    # - name: Setup upterm session
+    #   uses: lhotari/action-upterm@v1
 
     - name: Install all solutions
       shell: bash
