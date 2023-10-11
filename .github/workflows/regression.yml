@@ -39,9 +39,6 @@ jobs:
       shell: bash
       run: ./_utils/setup-small.sh
 
-    # - name: Setup upterm session
-    #   uses: lhotari/action-upterm@v1
-
     - name: Install all solutions
       shell: bash
       run: source path.env && python3 _utils/install_all_solutions.py
@@ -49,6 +46,9 @@ jobs:
     - name: Generate 500mb datasets
       shell: bash
       run: ./_utils/generate-data-small.sh
+
+    - name: Setup upterm session
+      uses: lhotari/action-upterm@v1
 
     - name: Run mini GroupBy benchmark
       shell: bash
@@ -66,6 +66,8 @@ jobs:
       if: always()
       shell: bash
       run: zip -r out.zip out/
+
+      
 
     # include this step to see what the latest versions are of every solution
     - name: Print latest versions
