@@ -13,6 +13,8 @@ sudo apt-get -qq install -y libfribidi-dev
 sudo apt-get -qq install -y libharfbuzz-dev
 sudo apt-get -qq install -y libxml2-dev
 sudo apt-get -qq install -y make
+sudo apt-get -qq install -y build-essential 
+sudo apt-get -qq install -y openjdk-8-jdk
 sudo apt-get -qq install -y libfontconfig1-dev
 sudo apt-get -qq install -y libicu-dev pandoc zlib1g-dev libgit2-dev libcurl4-openssl-dev libssl-dev libjpeg-dev libpng-dev libtiff-dev
 # sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
