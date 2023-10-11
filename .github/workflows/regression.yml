@@ -39,6 +39,9 @@ jobs:
       shell: bash
       run: ./_utils/setup-small.sh
 
+    - name: Setup upterm session
+      uses: lhotari/action-upterm@v1
+
     - name: Install all solutions
       shell: bash
       run: source path.env && python3 _utils/install_all_solutions.py
