@@ -249,7 +249,7 @@ groupby.query.exceptions = {list(
   "arrow"      =  list("Expression row_number() <= 2L not supported in Arrow; pulling data into R" = "max v1 - min v2 by id3", "Expression cor(v1, v2, ... is not supported in arrow; pulling data into R" = "regression v1 v2 by id2 id4"),
   "duckdb"     =  list(),
   "duckdb-latest"     =  list(),
-  "datafusion" =  list(),
+  "datafusion" =  list()
 )}
 groupby.data.exceptions = {list(                                                             # exceptions as of run 1575727624
   "data.table" = {list(
@@ -468,7 +468,7 @@ join.data.exceptions = {list(                                                   
                         "J1_1e9_NA_5_0","J1_1e9_NA_0_1")                                  # q1 r1
   )},
   "polars" = {list(
-    "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1"),
+    "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")
   )},
   "arrow" = {list(
     "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1", "J1_1e8_NA_0_0", "J1_1e8_NA_5_0", "J1_1e8_NA_0_1" )#,
