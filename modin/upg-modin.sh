@@ -3,6 +3,6 @@ set -e
 
 echo 'upgrading modin...'
 
-source ./modin/py-modin/bin/activate
+source ./modin/miniconda/bin/activate
 
-python -m pip install --upgrade modin[all] > /dev/null
+conda update modin-hdk -p ./modin/py-modin -y
