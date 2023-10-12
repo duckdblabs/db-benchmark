@@ -270,12 +270,7 @@ question = "regression v1 v2 by id2 id4" # q9
 gc.collect()
 t_start = timeit.default_timer()
 from modin.experimental.sql import query
-sql = """
-SELECT id2, id4, POWER(CORR(v1, v2), 2) AS r2
-FROM df
-GROUP BY id2, id4;
-"""
-ans = query(sql, df=x)
+ans = query('SELECT id2, id4, POWER(CORR(v1, v2), 2) AS r2 FROM df GROUP BY id2, id4;', df=x)
 execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
@@ -287,7 +282,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = query(sql, df=x)
+ans = query('SELECT id2, id4, POWER(CORR(v1, v2), 2) AS r2 FROM df GROUP BY id2, id4;', df=x)
 execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
