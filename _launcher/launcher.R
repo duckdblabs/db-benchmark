@@ -15,9 +15,10 @@ file.ext = function(x) {
   ans = switch(
     x,
     "data.table"=, "dplyr"=, "h2o"=, "arrow"=, "duckdb"="R", "duckdb-latest"="R",
-    "pandas"=, "spark"=, "pydatatable"=, "modin"="py", "hdk"="py", "dask"=, "datafusion"=, "polars"="py",
+    "pandas"=, "spark"=, "pydatatable"=, "modin"="py", "dask"=, "datafusion"=, "polars"="py",
     "clickhouse"="sql",
     "juliadf"="jl", "juliads"="jl",
+    "hdk"="py"
   )
   if (is.null(ans)) stop(sprintf("solution %s does not have file extension defined in file.ext helper function", x))
   ans

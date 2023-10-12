@@ -6,6 +6,8 @@ metastore_db/*
 *.md5
 .Rproj.user
 .Rhistory
+py-modin
+miniconda
 db-benchmark.Rproj
 */REVISION
 */VERSION
