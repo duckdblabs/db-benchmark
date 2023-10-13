@@ -35,22 +35,22 @@ if len(src_jn_y) != 3:
 print("loading datasets " + data_name + ", " + y_data_name[0] + ", " + y_data_name[1] + ", " + y_data_name[2], flush=True)
 
 x = pd.read_csv(src_jn_x, dtype={
-                **{n: "int32" for n in ["id1", "id2", "id3"]},
-                **{n: "category" for n in ["id4", "id5", "id6"]},
-                "v1": "float64",
-            })
+  **{n: "int32" for n in ["id1", "id2", "id3"]},
+  **{n: "category" for n in ["id4", "id5", "id6"]},
+  "v1": "float64",
+})
 
 small = pd.read_csv(src_jn_y[0], dtype={"id1": "int32", "id4": "category", "v2": "float64"})
 medium = pd.read_csv(src_jn_y[1], dtype={
-                **{n: "int32" for n in ["id1", "id2"]},
-                **{n: "category" for n in ["id4", "id5"]},
-                "v2": "float64",
-            })
+  **{n: "int32" for n in ["id1", "id2"]},
+  **{n: "category" for n in ["id4", "id5"]},
+  "v2": "float64",
+})
 big = pd.read_csv(src_jn_y[2], dtype={
-                **{n: "int32" for n in ["id1", "id2", "id3"]},
-                **{n: "category" for n in ["id4", "id5", "id6"]},
-                "v2": "float64",
-            },)
+  **{n: "int32" for n in ["id1", "id2", "id3"]},
+  **{n: "category" for n in ["id4", "id5", "id6"]},
+  "v2": "float64",
+})
 
 # To trigger non-lazy loading
 [execute(df, trigger_hdk_import=True) for df in [x, small, medium, big]]

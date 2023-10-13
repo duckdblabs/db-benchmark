@@ -17,7 +17,7 @@ exec(open("./_helpers/helpers.py").read())
 ver = modin.__version__
 git = ""
 task = "groupby"
-solution = solution_txt
+solution = "modin"
 fun = ".groupby"
 cache = "TRUE"
 on_disk = "FALSE"
@@ -26,10 +26,14 @@ data_name = os.environ['SRC_DATANAME']
 src_grp = os.path.join("data", data_name+".csv")
 print("loading dataset %s" % data_name, flush=True)
 
-x = pd.read_csv(src_grp, dtype={'id1':'category', 'id2':'category', 'id3':'category',
-    **{n: "int32" for n in ["id4", "id5", "id6", "v1", "v2"]},
-    "v3": "float64",})
-print(len(x.index), flush=True)
+x = pd.read_csv(
+    src_grp,
+    dtype={
+        'id1':'category', 'id2':'category', 'id3':'category',
+        **{n: "int32" for n in ["id4", "id5", "id6", "v1", "v2"]},
+        "v3": "float64",
+    }
+)
 # To trigger non-lazy loading
 execute(x, trigger_hdk_import=True)
 
