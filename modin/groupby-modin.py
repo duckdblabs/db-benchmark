@@ -210,11 +210,10 @@ print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
 
-# TODO: change impl
 question = "max v1 - min v2 by id3" # q7
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(['id3'], **gb_params).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']]
+ans = x.groupby(['id3'], **gb_params).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['id3', 'range_v1_v2']]
 execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
@@ -226,7 +225,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(['id3'], **gb_params).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']]
+ans = x.groupby(['id3'], **gb_params).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['id3', 'range_v1_v2']]
 execute(ans)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
@@ -239,7 +238,6 @@ print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
 
-# TODO: change impl
 question = "largest two v3 by id6" # q8
 gc.collect()
 t_start = timeit.default_timer()
@@ -268,7 +266,6 @@ print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
 
-# TODO: change impl
 question = "regression v1 v2 by id2 id4" # q9
 #ans = x[['id2','id4','v1','v2']].groupby(['id2','id4']).corr().iloc[0::2][['v2']]**2 # slower, 76s vs 47s on 1e8 1e2
 gc.collect()
