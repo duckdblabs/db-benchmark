@@ -31,6 +31,7 @@ header_title_fun = function(x) {
   )
 }
 solution.dict = {list(
+  "collapse" = list(name=c(short="collapse", long="collapse"), color=c(strong="darkturquoise", light="turquoise")),
   "data.table" = list(name=c(short="data.table", long="data.table"), color=c(strong="blue", light="#7777FF")),
   "dplyr" = list(name=c(short="dplyr", long="dplyr"), color=c(strong="red", light="#FF7777")),
   "pandas" = list(name=c(short="pandas", long="pandas"), color=c(strong="green4", light="#77FF77")),
