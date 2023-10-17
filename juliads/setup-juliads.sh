@@ -6,7 +6,7 @@ sudo mv julia-1.9.3 /opt
 rm julia-1.9.3-linux-x86_64.tar.gz
 
 # put to paths
-echo 'export JULIA_HOME=/opt/julia-1.9.1' >> path.env
+echo 'export JULIA_HOME=/opt/julia-1.9.3' >> path.env
 echo 'export PATH=$PATH:$JULIA_HOME/bin' >> path.env
 echo "export JULIA_NUM_THREADS=40" >> path.env
 # note that cron job must have path updated as well
