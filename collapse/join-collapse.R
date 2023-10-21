@@ -6,7 +6,6 @@ source("./_helpers/helpers.R")
 
 stopifnot(requireNamespace(c("data.table"), quietly=TRUE)) # used for data loading
 .libPaths("./collapse/r-collapse") # tidyverse/collapse#4641
-suppressPackageStartupMessages(library("dplyr", lib.loc="./collapse/r-collapse", warn.conflicts=FALSE))
 suppressPackageStartupMessages(library("collapse", lib.loc="./collapse/r-collapse", warn.conflicts=FALSE))
 ver = packageVersion("collapse")
 git = "" # uses stable version now #124
@@ -36,16 +35,16 @@ cat("joining...\n")
 
 question = "small inner on int" # q1
 fun = "inner_join"
-t = system.time(print(dim(ans<-collapse::join(x, small, on="id1", how="inner", verbose=0))))[["elapsed"]]
+t = system.time(print(dim(ans<-join(x, small, on="id1", how="inner", verbose=0))))[["elapsed"]]
 
 
 m = memory_usage()
-chkt = system.time(chk<-dplyr::summarise(ans, sum(v1, na.rm=TRUE), sum(v2, na.rm=TRUE)))[["elapsed"]]
+chkt = system.time(chk<-fsum(fselect(ans, v1, v2), drop = FALSE))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
-t = system.time(print(dim(ans<-collapse::join(x, small, on="id1", how="inner", verbose=0))))[["elapsed"]]
+t = system.time(print(dim(ans<-join(x, small, on="id1", how="inner", verbose=0))))[["elapsed"]]
 m = memory_usage()
-chkt = system.time(chk<-dplyr::summarise(ans, sum(v1, na.rm=TRUE), sum(v2, na.rm=TRUE)))[["elapsed"]]
+chkt = system.time(chk<-fsum(fselect(ans, v1, v2), drop = FALSE))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(head(ans, 3))
 print(tail(ans, 3))
@@ -53,14 +52,14 @@ rm(ans)
 
 question = "medium inner on int" # q2
 fun = "inner_join"
-t = system.time(print(dim(ans<-collapse::join(x, medium, on="id2", how="inner", verbose=0))))[["elapsed"]]
+t = system.time(print(dim(ans<-join(x, medium, on="id2", how="inner", verbose=0))))[["elapsed"]]
 m = memory_usage()
-chkt = system.time(chk<-dplyr::summarise(ans, sum(v1, na.rm=TRUE), sum(v2, na.rm=TRUE)))[["elapsed"]]
+chkt = system.time(chk<-fsum(fselect(ans, v1, v2), drop = FALSE))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
-t = system.time(print(dim(ans<-collapse::join(x, medium, on="id2", how="inner", verbose=0))))[["elapsed"]]
+t = system.time(print(dim(ans<-join(x, medium, on="id2", how="inner", verbose=0))))[["elapsed"]]
 m = memory_usage()
-chkt = system.time(chk<-dplyr::summarise(ans, sum(v1, na.rm=TRUE), sum(v2, na.rm=TRUE)))[["elapsed"]]
+chkt = system.time(chk<-fsum(fselect(ans, v1, v2), drop = FALSE))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(head(ans, 3))
 print(tail(ans, 3))
@@ -68,14 +67,14 @@ rm(ans)
 
 uestion = "medium outer on int" # q3
 fun = "left_join"
-t = system.time(print(dim(ans<-collapse::join(x, medium, on="id2", how="left", verbose=0))))[["elapsed"]]
+t = system.time(print(dim(ans<-join(x, medium, on="id2", how="left", verbose=0))))[["elapsed"]]
 m = memory_usage()
-chkt = system.time(chk<-summarise(ans, sum(v1, na.rm=TRUE), sum(v2, na.rm=TRUE)))[["elapsed"]]
+chkt = system.time(chk<-fsum(fselect(ans, v1, v2), drop = FALSE))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
-t = system.time(print(dim(ans<-collapse::join(x, medium, on="id2", how="left", verbose=0))))[["elapsed"]]
+t = system.time(print(dim(ans<-join(x, medium, on="id2", how="left", verbose=0))))[["elapsed"]]
 m = memory_usage()
-chkt = system.time(chk<-summarise(ans, sum(v1, na.rm=TRUE), sum(v2, na.rm=TRUE)))[["elapsed"]]
+chkt = system.time(chk<-fsum(fselect(ans, v1, v2), drop = FALSE))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(head(ans, 3))
 print(tail(ans, 3))
@@ -83,14 +82,14 @@ rm(ans)
 
 question = "medium inner on factor" # q4
 fun = "inner_join"
-t = system.time(print(dim(ans<-collapse::join(x, medium, on="id5", how="inner", verbose=0))))[["elapsed"]]
+t = system.time(print(dim(ans<-join(x, medium, on="id5", how="inner", verbose=0))))[["elapsed"]]
 m = memory_usage()
-chkt = system.time(chk<-summarise(ans, sum(v1, na.rm=TRUE), sum(v2, na.rm=TRUE)))[["elapsed"]]
+chkt = system.time(chk<-fsum(fselect(ans, v1, v2), drop = FALSE))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
-t = system.time(print(dim(ans<-collapse::join(x, medium, on="id5", how="inner", verbose=0))))[["elapsed"]]
+t = system.time(print(dim(ans<-join(x, medium, on="id5", how="inner", verbose=0))))[["elapsed"]]
 m = memory_usage()
-chkt = system.time(chk<-summarise(ans, sum(v1, na.rm=TRUE), sum(v2, na.rm=TRUE)))[["elapsed"]]
+chkt = system.time(chk<-fsum(fselect(ans, v1, v2), drop = FALSE))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(head(ans, 3))
 print(tail(ans, 3))
@@ -98,14 +97,14 @@ rm(ans)
 
 question = "big inner on int" # q5
 fun = "inner_join"
-t = system.time(print(dim(ans<-collapse::join(x, big, on="id3", how="inner", verbose=0))))[["elapsed"]]
+t = system.time(print(dim(ans<-join(x, big, on="id3", how="inner", verbose=0))))[["elapsed"]]
 m = memory_usage()
-chkt = system.time(chk<-summarise(ans, sum(v1, na.rm=TRUE), sum(v2, na.rm=TRUE)))[["elapsed"]]
+chkt = system.time(chk<-fsum(fselect(ans, v1, v2), drop = FALSE))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
-t = system.time(print(dim(ans<-collapse::join(x, big, on="id3", how="inner", verbose=0))))[["elapsed"]]
+t = system.time(print(dim(ans<-join(x, big, on="id3", how="inner", verbose=0))))[["elapsed"]]
 m = memory_usage()
-chkt = system.time(chk<-summarise(ans, sum(v1, na.rm=TRUE), sum(v2, na.rm=TRUE)))[["elapsed"]]
+chkt = system.time(chk<-fsum(fselect(ans, v1, v2), drop = FALSE))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(head(ans, 3))
 print(tail(ans, 3))
