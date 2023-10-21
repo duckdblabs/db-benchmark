@@ -6,8 +6,7 @@ source("./_helpers/helpers.R")
 
 stopifnot(requireNamespace(c("data.table"), quietly=TRUE)) # used for data loading
 .libPaths("./collapse/r-collapse") # tidyverse/collapse#4641
-suppressPackageStartupMessages(library("dplyr", lib.loc="./collapse/r-collapse", warn.conflicts=FALSE)) 
-suppressPackageStartupMessages(library("collapse", lib.loc="./collapse/r-collapse", warn.conflicts=FALSE)) 
+suppressPackageStartupMessages(library("collapse", lib.loc="./collapse/r-collapse", warn.conflicts=FALSE))
 ver = packageVersion("collapse")
 git = "" # uses stable version now #124
 task = "join"
