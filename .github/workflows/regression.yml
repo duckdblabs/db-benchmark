@@ -71,7 +71,9 @@ jobs:
     - name: Create Archive
       if: always()
       shell: bash
-      run: zip -r out.zip out/
+      run: |
+        cp *.csv out/
+        zip -r out.zip out/
 
     # include this step to see what the latest versions are of every solution
     - name: Print latest versions

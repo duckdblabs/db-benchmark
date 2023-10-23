@@ -7,15 +7,20 @@ else
 	grep -i "error" out/*.err
 	exit 1
 fi
-# check report generation
-if [ $(grep -i "quitting" out/*.out | wc -l) = 0 && $(grep -i "execution halted" out/*.out | wc -l) = 0 ]
+
+
+
+# check report generation. If this fails, the logs.csv/time.csv
+# have errors 
+Rscript _utils/parse_time_logs.R > report_check.txt
+# https://gist.github.com/jesugmz/3fda0fc7c1006cedfe039ff1459c3174
+output=$(wc -l report_check.txt | awk '{ print $1 }')
+if [ $output -ne 0 ]
 then
-	exit 0
-else
-	echo "Report generation failed. Printing output below"
-	cat out/rmarkdown_*.out
+	echo "report check not empty"
 	exit 1
 fi
-# errors found
+echo "time.csv and logs.csv can be parsed"
+
 
 

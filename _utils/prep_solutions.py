@@ -37,8 +37,11 @@ def main():
 
 def update_run_conf_solutions(solution_name_list, task):
     # change what solutions are run in run.conf
-    os.system(f"sed 's/export RUN_SOLUTIONS=.*/export RUN_SOLUTIONS=\"{solution_name_list}\"/g' run.conf > tmp_run.conf")
-    os.system(f"sed 's/export RUN_TASKS=.*/export RUN_TASKS=\"{task}\"/g' tmp_run.conf > run.conf")
+    os.system(f"sed 's/export RUN_SOLUTIONS=.*/export RUN_SOLUTIONS=\"{solution_name_list}\"/g' run.conf > run_2.conf")
+    os.system(f"sed 's/export RUN_TASKS=.*/export RUN_TASKS=\"{task}\"/g' run_2.conf > run_3.conf")
+    os.system(f"sed 's/export DO_REPORT=.*/export DO_REPORT=false/g' run_3.conf > run.conf")
+    os.remove('run_2.conf')
+    os.remove('run_3.conf')
 
 def get_solutions(task):
     solutions_for_task = ""
