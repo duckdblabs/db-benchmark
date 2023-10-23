@@ -18,6 +18,7 @@ output=$(wc -l report_check.txt | awk '{ print $1 }')
 if [ $output -ne 0 ]
 then
 	echo "report check not empty"
+	cat report_check.txt
 	exit 1
 fi
 echo "time.csv and logs.csv can be parsed"
