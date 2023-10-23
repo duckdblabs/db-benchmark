@@ -41,7 +41,7 @@ if len(sys.argv) == 0:
 
 # first argument is file name
 for solution in sys.argv[1:]:
-    if solution == "all":
+    if solution.strip() == "all":
         install_all_solutions()
     else:
         if solution == "clickhouse":
