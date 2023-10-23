@@ -12,21 +12,28 @@ def print_usage():
     print("Usage: python3 _utils/prep_solutions.py --task=[groupby|join]")
     exit(1)
 
-def parse_args():
+def parse_task():
     task = None
     for arg in sys.argv[1:]:
         if arg.startswith("--task="):
             task = arg.replace("--task=", "")
-        else:
-            print_usage()
     if task == None or (task != "groupby" and task != "join"):
         print_usage()
     return task
 
+def parse_solution():
+    solution = None
+    for arg in sys.argv[1:]:
+        if arg.startswith("--solution="):
+            solution = arg.replace("--solution=", "")
+    return solution
+
 def main():
-    task = parse_args()
-    solution_name_list = get_solutions(task)
-    update_run_conf_solutions(solution_name_list, task)
+    task = parse_task()
+    solution = parse_solution()
+    if solution == "all":
+        solution = get_solutions(task)
+    update_run_conf_solutions(solution, task)
 
 def update_run_conf_solutions(solution_name_list, task):
     # change what solutions are run in run.conf
