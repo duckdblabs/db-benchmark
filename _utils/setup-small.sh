@@ -9,7 +9,7 @@ sudo apt upgrade
 
 sudo apt-get -qq install make
 
-sudo apt-get -qq install wget curl openssl 
+sudo apt-get -qq install wget curl openssl build-essential
 sudo apt-get -qq install -y r-base-dev virtualenv
 
 sudo apt-get install -y zlib1g-dev
