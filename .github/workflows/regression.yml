@@ -17,7 +17,7 @@ jobs:
  regression-test-benchmark-runner:
   strategy:
     matrix:
-      solution: [data.table, dplyr, pandas, pydatatable, spark, dask, juliadf, juliads, polars, arrow, duckdb, duckdb-latest, datafusion, all]
+      solution: [data.table, dplyr, pandas, pydatatable, spark, dask, juliadf, juliads, polars, arrow, duckdb, duckdb-latest, datafusion]
   name: Regression Tests
   runs-on: ubuntu-20.04
   env:

@@ -1,7 +1,6 @@
 import os
 import csv
 import sys
-import pdb
 
 SOLUTIONS_FILENAME = "_control/solutions.csv"
 
@@ -33,7 +32,6 @@ def install_all_solutions():
                 install_solutions.add("datatable")
             else:
                 install_solutions.add(row['solution'])
-    pdb.set_trace()
     for solution in install_solutions:
         install_solution(solution)
         
@@ -51,6 +49,5 @@ for solution in sys.argv[1:]:
         elif solution == "data.table":
             install_solution("datatable")
         else:
-            pdb.set_trace()
             install_solution(solution)
         
