@@ -38,12 +38,13 @@ detach_and_drop <- function(con, db_file, db) {
   }
 }
 
-tempfile1 <- tempfile()
+duckdb_join_db = sprintf('%s-%s-%s.db', solution, task, data_name)
+
 on_disk = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][2L])>=1e9
 uses_NAs = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][4L])>0
 if (on_disk) {
   print("using disk memory-mapped data storage")
-  con = dbConnect(duckdb::duckdb(), dbdir=tempfile1)
+  con = dbConnect(duckdb::duckdb(), dbdir=duckdb_join_db)
 } else {
   print("using in-memory data storage")
   con = dbConnect(duckdb::duckdb())
@@ -98,7 +99,7 @@ if (!uses_NAs) {
 
   if (on_disk) {
     dbDisconnect(con, shutdown=TRUE)
-    unlink(tempfile1)
+    unlink(duckdb_join_db)
     con <- dbConnect(duckdb(), dbdir='clean.db')
   }
 } else {
@@ -251,7 +252,10 @@ invisible(dbExecute(con, "DROP TABLE IF EXISTS q5.ans"))
 detach_and_drop(con, 'q5.db', 'q5')
 
 dbDisconnect(con, shutdown=TRUE)
-unlink('clean.db')
+
+if (on_disk) {
+  unlink('clean.db')
+}
 
 cat(sprintf("joining finished, took %.0fs\n", proc.time()[["elapsed"]]-task_init))
 
