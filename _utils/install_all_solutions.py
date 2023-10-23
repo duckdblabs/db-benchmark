@@ -1,21 +1,22 @@
 import os
 import csv
 import sys
+import pdb
 
 SOLUTIONS_FILENAME = "_control/solutions.csv"
 
 
 def install_solution(solution_name):
-    min_setup_file_name = f"./{solution}/min-setup-{solution}.sh"
-    setup_file_name = f"./{solution}/setup-{solution}.sh"
-    print(f"Installing {solution}")
+    min_setup_file_name = f"./{solution_name}/min-setup-{solution_name}.sh"
+    setup_file_name = f"./{solution_name}/setup-{solution_name}.sh"
+    print(f"Installing {solution_name}")
     if os.path.exists(min_setup_file_name):
         os.system(min_setup_file_name)
     elif os.path.exists(setup_file_name):
         os.system(setup_file_name)
     else:
         # print(f"no script for {setup_file_name} or {min_setup_file_name}")
-        raise Exception(f"No script to install {solution}")
+        raise Exception(f"No script to install {solution_name}")
 
 # based on the name of the solution, run the {{solution}}/min-setup-{{solution}}.sh file.
 # if there is no min-setup-{{solution}}.sh, then run setup-{{solution}}.sh.
@@ -32,6 +33,7 @@ def install_all_solutions():
                 install_solutions.add("datatable")
             else:
                 install_solutions.add(row['solution'])
+    pdb.set_trace()
     for solution in install_solutions:
         install_solution(solution)
         
@@ -49,5 +51,6 @@ for solution in sys.argv[1:]:
         elif solution == "data.table":
             install_solution("datatable")
         else:
+            pdb.set_trace()
             install_solution(solution)
         
