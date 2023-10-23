@@ -1,15 +1,12 @@
 #!/bin/bash
 set -e
 
-sudo apt-get update -qq
-sudo apt-get install -y python3.6-dev virtualenv
-
-virtualenv dask/py-dask --python=python3.6
+virtualenv dask/py-dask --python=python3
 source dask/py-dask/bin/activate
 
 # install binaries
-python3 -m pip install --upgrade dask[complete]
-python3 -m pip install pandas logging
+python3 -m pip install "dask[complete]"
+python3 -m pip install pandas
 
 # check
 # python3
