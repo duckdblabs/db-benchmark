@@ -16,6 +16,7 @@ concurrency:
 jobs:
  regression-test-benchmark-runner:
   strategy:
+    fail-fast: false
     matrix:
       solution: [data.table, dplyr, pandas, pydatatable, spark, dask, juliadf, juliads, polars, arrow, duckdb, duckdb-latest, datafusion]
   name: Regression Tests
