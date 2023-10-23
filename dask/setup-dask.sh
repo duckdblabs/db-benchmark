@@ -7,6 +7,7 @@ source dask/py-dask/bin/activate
 # install binaries
 python3 -m pip install "dask[complete]"
 python3 -m pip install pandas psutil
+python3 -m pip install distributed
 
 # check
 # python3
