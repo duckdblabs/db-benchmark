@@ -44,4 +44,10 @@ for solution in sys.argv[1:]:
     if solution == "all":
         install_all_solutions()
     else:
-        install_solution(solution)
+        if solution == "clickhouse":
+            continue
+        elif solution == "data.table":
+            install_solution("datatable")
+        else:
+            install_solution(solution)
+        
