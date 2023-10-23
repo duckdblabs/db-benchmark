@@ -1,7 +1,10 @@
 #!/bin/bash
 set -e
 
-virtualenv dask/py-dask --python=python3
+sudo apt-get update -qq
+sudo apt-get install -y python3.6-dev virtualenv
+
+virtualenv dask/py-dask --python=python3.6
 source dask/py-dask/bin/activate
 
 # install binaries

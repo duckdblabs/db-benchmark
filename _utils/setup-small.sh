@@ -22,7 +22,7 @@ sudo apt-get install -y pandoc
 sudo chmod o+w /usr/local/lib/R/site-library
 
 
-Rscript -e 'install.packages(c("data.table", "dplyr", "knitr"), dependecies=TRUE, repos="https://cloud.r-project.org")'
+Rscript -e 'install.packages(c("data.table", "dplyr", "knitr", "bit64"), dependecies=TRUE, repos="https://cloud.r-project.org")'
 
 
 mkdir -p ~/.R
