@@ -23,6 +23,9 @@ cat(sprintf("loading datasets %s\n", paste(c(data_name, y_data_name), collapse="
 
 attach_and_use <- function(con, db_file, db) {
   if (on_disk) {
+    if (file.exists(db_file)) {
+      unlink(db_file)
+    }
     dbExecute(con, sprintf("ATTACH '%s'", db_file))
   } else {
     dbExecute(con, sprintf("CREATE SCHEMA %s", db))
@@ -63,31 +66,23 @@ invisible({
 })
 
 if (!uses_NAs) {
-  if (on_disk) {
-    unlink('clean.db')
-    invisible(dbExecute(con, "attach 'clean.db'"))
-    db_name = "clean."
-  }
-  else {
-    db_name = ""
-  }
 
   id4_enum_statement = "SELECT id4 FROM x_csv UNION ALL SELECT id4 FROM small_csv UNION ALL SELECT id4 from medium_csv UNION ALL SELECT id4 from big_csv"
   id5_enum_statement = "SELECT id5 FROM x_csv UNION ALL SELECT id5 from medium_csv UNION ALL SELECT id5 from big_csv"
   invisible(dbExecute(con, sprintf("CREATE TYPE id4ENUM AS ENUM (%s)", id4_enum_statement)))
   invisible(dbExecute(con, sprintf("CREATE TYPE id5ENUM AS ENUM (%s)", id5_enum_statement)))
 
-  invisible(dbExecute(con, sprintf("CREATE TABLE %ssmall(id1 INT64, id4 id4ENUM, v2 DOUBLE)", db_name)))
-  invisible(dbExecute(con, sprintf("INSERT INTO %ssmall (SELECT * from small_csv)", db_name)))
+  invisible(dbExecute(con, "CREATE TABLE small(id1 INT64, id4 id4ENUM, v2 DOUBLE)"))
+  invisible(dbExecute(con, "INSERT INTO small (SELECT * from small_csv)"))
 
-  invisible(dbExecute(con, sprintf("CREATE TABLE %smedium(id1 INT64, id2 INT64, id4 id4ENUM, id5 id5ENUM, v2 DOUBLE)", db_name)))
-  invisible(dbExecute(con, sprintf("INSERT INTO %smedium (SELECT * FROM medium_csv)", db_name)))
+  invisible(dbExecute(con, "CREATE TABLE medium(id1 INT64, id2 INT64, id4 id4ENUM, id5 id5ENUM, v2 DOUBLE)"))
+  invisible(dbExecute(con, "INSERT INTO medium (SELECT * FROM medium_csv)"))
 
-  invisible(dbExecute(con, sprintf("CREATE TABLE %sbig(id1 INT64, id2 INT64, id3 INT64, id4 id4ENUM, id5 id5ENUM, id6 VARCHAR, v2 DOUBLE)", db_name)))
-  invisible(dbExecute(con, sprintf("INSERT INTO %sbig (Select * from big_csv)", db_name)))
+  invisible(dbExecute(con, "CREATE TABLE big(id1 INT64, id2 INT64, id3 INT64, id4 id4ENUM, id5 id5ENUM, id6 VARCHAR, v2 DOUBLE)"))
+  invisible(dbExecute(con, "INSERT INTO big (Select * from big_csv)"))
 
-  invisible(dbExecute(con, sprintf("CREATE TABLE %sx(id1 INT64, id2 INT64, id3 INT64, id4 id4ENUM, id5 id5ENUM, id6 VARCHAR, v1 DOUBLE)", db_name)))
-  invisible(dbExecute(con, sprintf("INSERT INTO %sx (SELECT * FROM x_csv);", db_name)))
+  invisible(dbExecute(con, "CREATE TABLE x(id1 INT64, id2 INT64, id3 INT64, id4 id4ENUM, id5 id5ENUM, id6 VARCHAR, v1 DOUBLE)"))
+  invisible(dbExecute(con, "INSERT INTO x (SELECT * FROM x_csv);"))
 
   # drop all the csv ingested tables
   invisible({
@@ -97,11 +92,6 @@ if (!uses_NAs) {
     dbExecute(con, "DROP TABLE big_csv")
   })
 
-  if (on_disk) {
-    dbDisconnect(con, shutdown=TRUE)
-    unlink(tempfile1)
-    con <- dbConnect(duckdb(), dbdir='clean.db')
-  }
 } else {
   invisible({
     dbExecute(con, "ALTER TABLE x_csv RENAME TO x")
@@ -252,7 +242,6 @@ invisible(dbExecute(con, "DROP TABLE IF EXISTS q5.ans"))
 detach_and_drop(con, 'q5.db', 'q5')
 
 dbDisconnect(con, shutdown=TRUE)
-unlink('clean.db')
 
 cat(sprintf("joining finished, took %.0fs\n", proc.time()[["elapsed"]]-task_init))
 
