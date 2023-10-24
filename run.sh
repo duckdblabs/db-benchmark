@@ -25,7 +25,6 @@ if [[ $IGNORE_SWAP == true ]]
 then
   # used for github actions. can only disable swap as super user.
   echo "Ignoring swap"
-  continue
 else
   # confirm swap is disabled
   Rscript -e 'swap_all<-data.table::fread("free -h | grep Swap", header=FALSE)[, -1L][, as.numeric(gsub("[^0-9.]", "", unlist(.SD)))]; swap_off<-!is.na(s<-sum(swap_all)) && s==0; q("no", status=as.numeric(swap_off))' && echo "# Benchmark run $BATCH aborted. swap is enabled, 'free -h' has to report only 0s for Swap, run 'swapoff -a' before calling 'run.sh'" && exit;
@@ -74,10 +73,10 @@ if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "polars" ]]; then ./polars/up
 if [[ "$RUN_SOLUTIONS" =~ "polars" ]]; then ./polars/ver-polars.sh; fi;
 if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "arrow" ]]; then ./arrow/upg-arrow.sh; fi;
 if [[ "$RUN_SOLUTIONS" =~ "arrow" ]]; then ./arrow/ver-arrow.sh; fi;
-if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "duckdb" ]]; then ./duckdb/upg-duckdb.sh; fi;
-if [[ "$RUN_SOLUTIONS" =~ "duckdb" ]]; then ./duckdb/ver-duckdb.sh; fi;
-if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "duckdb-latest" ]]; then ./duckdb-latest/setup-duckdb-latest.sh; fi;
-if [[ "$RUN_SOLUTIONS" =~ "duckdb-latest" ]]; then ./duckdb-latest/ver-duckdb-latest.sh; fi;
+if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" == "duckdb" ]]; then ./duckdb/upg-duckdb.sh; fi;
+if [[ "$RUN_SOLUTIONS" == "duckdb" ]]; then ./duckdb/ver-duckdb.sh; fi;
+if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" == "duckdb-latest" ]]; then ./duckdb-latest/setup-duckdb-latest.sh; fi;
+if [[ "$RUN_SOLUTIONS" == "duckdb-latest" ]]; then ./duckdb-latest/ver-duckdb-latest.sh; fi;
 if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "datafusion" ]]; then ./datafusion/upg-datafusion.sh; fi;
 if [[ "$RUN_SOLUTIONS" =~ "datafusion" ]]; then ./datafusion/ver-datafusion.sh; fi;
 

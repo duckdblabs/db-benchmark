@@ -8,5 +8,7 @@ fi;
 
 source ./path.env
 
+ncores=`python3 -c 'import multiprocessing as mp; print(mp.cpu_count())'`
+
 # execute benchmark script
-julia -t 20 ./juliadf/$1-juliadf.jl
+julia -t $ncores ./juliadf/$1-juliadf.jl
