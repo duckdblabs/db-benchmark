@@ -42,7 +42,10 @@ detach_and_drop <- function(con, db_file, db) {
   }
 }
 
-duckdb_join_db = sprintf('%s_%s_%s.db', solution, task, data_name)
+duckdb_join_db = sprintf('%s_%s_%s.db', gsub("-","_",solution), task, data_name)
+if (file.exists(duckdb_join_db)) {
+  unlink(duckdb_join_db)
+}
 
 on_disk = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][2L])>=1e9
 uses_NAs = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][4L])>0
@@ -66,8 +69,12 @@ invisible({
   dbExecute(con, sprintf("CREATE TABLE big_csv AS SELECT * FROM read_csv_auto('%s')", src_jn_y[3L]))
 })
 
-clean_schema_name <- sprintf("%s_%s_clean.", solution, data_name)
+clean_schema_name <- sprintf("%s_%s_clean.", gsub("-","_",solution), data_name)
 clean_db_name <- paste(clean_schema_name, "db", sep="")
+
+if (file.exists(clean_db_name)) {
+  unlink(clean_db_name)
+}
 
 if (!uses_NAs) {
   if (on_disk) {
