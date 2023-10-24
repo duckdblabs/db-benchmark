@@ -24,12 +24,12 @@ ch_active || exit 1
 # tail -n+2 data/G1_1e7_1e2_0_0.csv | clickhouse-client --query="INSERT INTO G1_1e7_1e2_0_0 SELECT * FROM input('id1 Nullable(String), id2 Nullable(String), id3 Nullable(String), id4 Nullable(Int32), id5 Nullable(Int32), id6 Nullable(Int32), v1 Nullable(Int32), v2 Nullable(Int32), v3 Nullable(Float64)') FORMAT CSV"
 
 # tune CH settings and load data
-CH_MEM=107374182400 # 100GB ## old value 128849018880 # 120GB ## now set to 96GB after cache=1 to in-memory temp tables because there was not enough mem for R to parse timings
+CH_MEM=245000000000 # 100GB ## old value 128849018880 # 120GB ## now set to 96GB after cache=1 to in-memory temp tables because there was not enough mem for R to parse timings
 clickhouse-client --query 'DROP TABLE IF EXISTS ans'
 echo '# clickhouse/exec.sh: creating tables and loading data'
 if [ $1 == 'groupby' ]; then
-  CH_EXT_GRP_BY=53687091200 # twice less than CH_MEM #96
-  CH_EXT_SORT=53687091200
+  CH_EXT_GRP_BY=122500000000 # twice less than CH_MEM #96
+  CH_EXT_SORT=122500000000
   clickhouse-client --query "DROP TABLE IF EXISTS $SRC_DATANAME"
   clickhouse-client --query "CREATE TABLE $SRC_DATANAME (id1 Nullable(String), id2 Nullable(String), id3 Nullable(String), id4 Nullable(Int32), id5 Nullable(Int32), id6 Nullable(Int32), v1 Nullable(Int32), v2 Nullable(Int32), v3 Nullable(Float64)) ENGINE = MergeTree() ORDER BY tuple();"
   tail -n+2 data/$SRC_DATANAME.csv | clickhouse-client --max_memory_usage $CH_MEM --max_insert_threads 1 --query "INSERT INTO $SRC_DATANAME SELECT * FROM input('id1 Nullable(String), id2 Nullable(String), id3 Nullable(String), id4 Nullable(Int32), id5 Nullable(Int32), id6 Nullable(Int32), v1 Nullable(Int32), v2 Nullable(Int32), v3 Nullable(Float64)') FORMAT CSV"
