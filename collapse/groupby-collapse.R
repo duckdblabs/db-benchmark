@@ -137,6 +137,7 @@ rm(ans)
 
 # Note: this is a native collapse solution to this problem: utilizing the fast fnth() function and quickselect to get the second largest element
 question = "largest two v3 by id6" # q8
+if(big_data) set_collapse(sort = TRUE) # This is because with sort = FALSE, an internal ordering vector for the elements to be passed to quickselect still needs to be computed. It turns out that the cost of this increases disproportionally with data size, so grouping directly with sort = TRUE is faster on big data. 
 t = system.time(print(dim(ans<-x |> group_by(id6) |> summarize(max_v3 = max(v3), second_v3 = nth(v3, 1-1e-7, ties = "min")))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-summarise(ans, largest2_v3=sum(max_v3+second_v3)))[["elapsed"]]
@@ -146,6 +147,7 @@ t = system.time(print(dim(ans<-x |> group_by(id6) |> summarize(max_v3 = max(v3),
 m = memory_usage()
 chkt = system.time(chk<-summarise(ans, largest2_v3=sum(max_v3+second_v3)))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+if(big_data) set_collapse(sort = endsWith(data_name, "_1"))
 print(head(ans, 3))
 print(tail(ans, 3))
 rm(ans)
