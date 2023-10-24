@@ -15,6 +15,10 @@ concurrency:
 
 jobs:
  regression-test-benchmark-runner:
+  strategy:
+    fail-fast: false
+    matrix:
+      solution: [data.table, dplyr, pandas, pydatatable, spark, dask, juliadf, juliads, polars, arrow, duckdb, duckdb-latest, datafusion]
   name: Regression Tests
   runs-on: ubuntu-20.04
   env:
@@ -31,29 +35,35 @@ jobs:
       with:
         python-version: '3.10'
 
-    - name: Turn swap off
-      shell: bash
-      run: sudo swapoff -a
-
     - name: Install libraries
       shell: bash
       run: ./_utils/setup-small.sh
 
     - name: Install all solutions
       shell: bash
-      run: source path.env && python3 _utils/install_all_solutions.py
+      run: source path.env && python3 _utils/install_all_solutions.py ${{ matrix.solution }}
 
     - name: Generate 500mb datasets
       shell: bash
       run: ./_utils/generate-data-small.sh
 
+    - name: Turn swap off
+      shell: bash
+      run: sudo swapoff -a
+
     - name: Run mini GroupBy benchmark
       shell: bash
-      run: python3 _utils/prep_solutions.py --task=groupby && source path.env && TEST_RUN=true ./run.sh
+      run: |
+        python3 _utils/prep_solutions.py --task=groupby --solution=${{ matrix.solution }}
+        source path.env
+        TEST_RUN=true ./run.sh
 
     - name: Run mini Join benchmark
       shell: bash
-      run: python3 _utils/prep_solutions.py --task=join && source path.env && TEST_RUN=true ./run.sh
+      run: |
+        python3 _utils/prep_solutions.py --task=join --solution=${{ matrix.solution }}
+        source path.env
+        TEST_RUN=true ./run.sh
 
     - name: Validate benchmark results and report generation
       shell: bash
@@ -62,7 +72,9 @@ jobs:
     - name: Create Archive
       if: always()
       shell: bash
-      run: zip -r out.zip out/
+      run: |
+        cp *.csv out/
+        zip -r out.zip out/
 
     # include this step to see what the latest versions are of every solution
     - name: Print latest versions
