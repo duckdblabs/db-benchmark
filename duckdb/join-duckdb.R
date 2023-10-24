@@ -42,7 +42,7 @@ detach_and_drop <- function(con, db_file, db) {
   }
 }
 
-duckdb_join_db = sprintf('%s-%s-%s.db', solution, task, data_name)
+duckdb_join_db = sprintf('%s_%s_%s.db', solution, task, data_name)
 on_disk = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][2L])>=1e9
 uses_NAs = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][4L])>0
 
