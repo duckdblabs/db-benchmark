@@ -73,7 +73,7 @@ jobs:
       shell: bash
       run: |
         cp *.csv out/
-        zip -r out.zip out/
+        zip -r ${{ matrix.solution }}-out.zip out/
 
     # include this step to see what the latest versions are of every solution
     - name: Print latest versions
