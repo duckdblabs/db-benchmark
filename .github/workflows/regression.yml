@@ -7,7 +7,6 @@ on:
       - '**.md'
       - '.github/workflows/**'
       - '!.github/workflows/Regression.yml'
-      - '.github/config/uncovered_files.csv'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.head_ref || '' }}-${{ github.base_ref || '' }}-${{ github.ref != 'refs/heads/master' || github.sha }}
@@ -39,13 +38,13 @@ jobs:
       shell: bash
       run: ./_utils/setup-small.sh
 
-    - name: Install all solutions
-      shell: bash
-      run: source path.env && python3 _utils/install_all_solutions.py ${{ matrix.solution }}
-
     - name: Generate 500mb datasets
       shell: bash
       run: ./_utils/generate-data-small.sh
+
+    - name: Install all solutions
+      shell: bash
+      run: source path.env && python3 _utils/install_all_solutions.py ${{ matrix.solution }}
 
     - name: Turn swap off
       shell: bash

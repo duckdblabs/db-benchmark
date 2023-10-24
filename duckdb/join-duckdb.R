@@ -242,7 +242,6 @@ invisible(dbExecute(con, "DROP TABLE IF EXISTS q5.ans"))
 detach_and_drop(con, 'q5.db', 'q5')
 
 dbDisconnect(con, shutdown=TRUE)
-unlink('clean.db')
 
 cat(sprintf("joining finished, took %.0fs\n", proc.time()[["elapsed"]]-task_init))
 
