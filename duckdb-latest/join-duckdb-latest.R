@@ -23,6 +23,10 @@ cat(sprintf("loading datasets %s\n", paste(c(data_name, y_data_name), collapse="
 
 attach_and_use <- function(con, db_file, db) {
   if (on_disk) {
+    # in case a previous solution failed during query execution and left the file around.
+    if (file.exists(db_file)) {
+      unlink(db_file)
+    }
     dbExecute(con, sprintf("ATTACH '%s'", db_file))
   } else {
     dbExecute(con, sprintf("CREATE SCHEMA %s", db))
@@ -62,11 +66,14 @@ invisible({
   dbExecute(con, sprintf("CREATE TABLE big_csv AS SELECT * FROM read_csv_auto('%s')", src_jn_y[3L]))
 })
 
+clean_schema_name <- sprintf("%s-%s-clean.", solution, data_name)
+clean_db_name <- paste(clean_schema_name, "db", sep="")
+
 if (!uses_NAs) {
   if (on_disk) {
-    unlink('clean.db')
-    invisible(dbExecute(con, "attach 'clean.db'"))
-    db_name = "clean."
+    unlink(clean_db_name)
+    invisible(dbExecute(con, sprintf("attach '%s'", clean_db_name)))
+    db_name = clean_schema_name
   }
   else {
     db_name = ""
@@ -100,7 +107,7 @@ if (!uses_NAs) {
   if (on_disk) {
     dbDisconnect(con, shutdown=TRUE)
     unlink(duckdb_join_db)
-    con <- dbConnect(duckdb(), dbdir='clean.db')
+    con <- dbConnect(duckdb(), dbdir=clean_db_name)
   }
 } else {
   invisible({
@@ -254,7 +261,7 @@ detach_and_drop(con, 'q5.db', 'q5')
 dbDisconnect(con, shutdown=TRUE)
 
 if (on_disk) {
-  unlink('clean.db')
+  unlink(clean_db_name)
 }
 
 cat(sprintf("joining finished, took %.0fs\n", proc.time()[["elapsed"]]-task_init))
