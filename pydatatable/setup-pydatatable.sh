@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-install dependencies
+# install dependencies
 virtualenv pydatatable/py-pydatatable --python=python3
 source pydatatable/py-pydatatable/bin/activate
 
