@@ -1,3 +1,6 @@
+# use this function to check error logs
+# sudo -u clickhouse clickhouse-server --config=/etc/clickhouse-server/config.xml
+
 #!/bin/bash
 set -e
 
