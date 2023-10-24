@@ -52,7 +52,7 @@ if (on_disk) {
 
 ncores = parallel::detectCores()
 invisible(dbExecute(con, sprintf("PRAGMA THREADS=%d", ncores)))
-invisible(dbExecute(con, "SET memory_limit='100GB'"))
+invisible(dbExecute(con, "SET memory_limit='200GB'"))
 git = dbGetQuery(con, "SELECT source_id FROM pragma_version()")[[1L]]
 
 invisible({
