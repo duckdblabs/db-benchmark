@@ -1,8 +1,8 @@
-# use this function to check error logs
-# sudo -u clickhouse clickhouse-server --config=/etc/clickhouse-server/config.xml
-
 #!/bin/bash
 set -e
+
+# use this function to check error logs
+# sudo -u clickhouse clickhouse-server --config=/etc/clickhouse-server/config.xml
 
 if [ "$#" -ne 1 ]; then
   echo 'usage: ./clickhouse/exec.sh groupby';
