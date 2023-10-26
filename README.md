@@ -65,7 +65,7 @@ If you would like your solution to be included, feel free to file a PR with the 
 
 # Updating the benchmark.
 
-The benchmark will now be updated with PR requests. In order to see updated results for a solution, you must include the time.csv and log.csv files of a run you did yourself on a c6id.metal machine. To facilitate the creating an instance with all of the data, the script `_utils/format_and_mount.sh` will do the following 
+The benchmark will now be updated with PR requests. To publish new results for a solution(s), you can open a PR with any changes you'd like to your solutions scripts, with updates to the time.csv and log.csv files of a run you did yourself on a c6id.metal machine. To facilitate the creating an instance with all of the data, the script `_utils/format_and_mount.sh` will do the following 
 
 1. Format and mount an nvme drive so that solutions can use instance storage
 2. Create a new directory `db-benchmark-metal` on the nvme drive. This directory is just a clone of the repository
@@ -75,9 +75,8 @@ Once the `db-benchmark-metal` directory is created, you will need to
 2. Install the solutions you wish to have updated
 3. Update the solution(s) groupby or join scripts with any desired changes
 4. Run the benchmark on your solution
-5. Generate the report to see if the results are faster than the currently published results. If so,
-6. Copy time `time.csv` and `logs.csv` file to the solution directory
-7. Create your PR!
+5. Generate the report to see how the results compare to other solutions
+6. Create your PR! (make sure the new time.csv and logs.csv files are included!)
 
 The PR will then be reviewed by the DuckdbLabs team where we will run the benchmark ourselves to validate the new results. If there aren't any questions, we will merge your PR and update the results!
 
