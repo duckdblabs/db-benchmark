@@ -22,7 +22,7 @@ data_name = os.environ['SRC_DATANAME']
 src_grp = os.path.join("data", data_name+".csv")
 print("loading dataset %s" % data_name, flush=True)
 
-mem_usage = "100g"
+mem_usage = "240g"
 if "TEST_RUN" in os.environ:
      mem_usage = "2g"
 
