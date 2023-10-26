@@ -84,6 +84,6 @@ jobs:
     - uses: actions/upload-artifact@v3
       if: always()
       with:
-        name: out
+        name: ${{ matrix.solution }}-out.zip
         path: ${{ matrix.solution }}-out.zip
         if-no-files-found: error
