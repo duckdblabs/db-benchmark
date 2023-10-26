@@ -24,7 +24,10 @@ Contribution and feedback are very welcome!
   - [x] [Polars](https://github.com/ritchie46/polars)
   - [x] [Arrow](https://github.com/apache/arrow)
   - [x] [DuckDB](https://github.com/duckdb/duckdb)
+  - [x] [DuckDB-latest](https://github.com/duckdb/duckdb)
   - [x] [DataFrames.jl](https://github.com/JuliaData/DataFrames.jl)
+  - [x] [In Memory DataSets](https://github.com/sl-solution/InMemoryDatasets.jl)
+  - [x] [Datafusion] (https://github.com/apache/arrow-datafusion)
 
 If you would like your solution to be included, feel free to file a PR with the necessary setup-_solution_/ver-_solution_/groupby-_solution_/join-_solution_ scripts. The team at duckdblabs approves the PR it will be merged.
 
@@ -59,6 +62,24 @@ If you would like your solution to be included, feel free to file a PR with the 
 - source python virtual environment if needed
 - call `SRC_DATANAME=G1_1e7_1e2_0_0 R`, if desired replace `R` with `python` or `julia`
 - proceed pasting code from benchmark script
+
+# Updating the benchmark.
+
+The benchmark will now be updated with PR requests. In order to see updated results for a solution, you must include the time.csv and log.csv files of a run you did yourself on a c6id.metal machine. To facilitate the creating an instance with all of the data, the script `_utils/format_and_mount.sh` will do the following 
+
+1. Format and mount an nvme drive so that solutions can use instance storage
+2. Create a new directory `db-benchmark-metal` on the nvme drive. This directory is just a clone of the repository
+
+Once the `db-benchmark-metal` directory is created, you will need to 
+1. Create or generate the datasets in question
+2. Install the solutions you wish to have updated
+3. Update the solution(s) groupby or join scripts with any desired changes
+4. Run the benchmark on your solution
+5. Generate the report to see if the results are faster than the currently published results. If so,
+6. Copy time `time.csv` and `logs.csv` file to the solution directory
+7. Create your PR!
+
+The PR will then be reviewed by the DuckdbLabs team where we will run the benchmark ourselves to validate the new results. If there aren't any questions, we will merge your PR and update the results!
 
 
 # Example environment
