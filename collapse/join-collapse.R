@@ -65,7 +65,7 @@ print(head(ans, 3))
 print(tail(ans, 3))
 rm(ans)
 
-uestion = "medium outer on int" # q3
+question = "medium outer on int" # q3
 fun = "left_join"
 t = system.time(print(dim(ans<-join(x, medium, on="id2", how="left", verbose=0))))[["elapsed"]]
 m = memory_usage()
