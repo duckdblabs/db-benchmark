@@ -2,7 +2,7 @@
 set -e
 
 # install dependencies
-sudo apt-get update -qq
+# sudo apt-get update -qq
 
 virtualenv polars/py-polars --python=python3
 source polars/py-polars/bin/activate
