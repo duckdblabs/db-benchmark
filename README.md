@@ -65,25 +65,25 @@ If you would like your solution to be included, feel free to file a PR with the 
 
 # Updating the benchmark.
 
-The benchmark will now be updated with PR requests. To publish new results for a solution(s), you can open a PR with any changes you'd like to your solutions scripts, with updates to the time.csv and log.csv files of a run you did yourself on a c6id.metal machine. To facilitate the creating an instance with all of the data, the script `_utils/format_and_mount.sh` will do the following 
+The benchmark will now be updated with PR requests. To publish new results for a solution(s), you can open a PR with changes to solutions scripts or VERSION files, with updates to the time.csv and log.csv files of a run on a c6id.metal machine. To facilitate creating an instance identical to the one with the current results, the script `_utils/format_and_mount.sh`  was created. The script does the following 
 
-1. Format and mount an nvme drive so that solutions can use instance storage
-2. Create a new directory `db-benchmark-metal` on the nvme drive. This directory is just a clone of the repository
+1. Formats and mounts an nvme drive so that solutions have access to instance storage
+2. Creates a new directory `db-benchmark-metal` on the nvme drive. This directory is a clone of the repository
 
 Once the `db-benchmark-metal` directory is created, you will need to 
-1. Create or generate the datasets in question
+1. Create or generate all the datasets. The benchmark will not be updated if only a subset of datasets are tested. 
 2. Install the solutions you wish to have updated
 3. Update the solution(s) groupby or join scripts with any desired changes
 4. Run the benchmark on your solution
 5. Generate the report to see how the results compare to other solutions
 6. Create your PR! (make sure the new time.csv and logs.csv files are included!)
 
-The PR will then be reviewed by the DuckdbLabs team where we will run the benchmark ourselves to validate the new results. If there aren't any questions, we will merge your PR and update the results!
+The PR will then be reviewed by the DuckDBLabs team where we will run the benchmark ourselves to validate the new results. If there aren't any questions, we will merge your PR and publish a new report!
 
 
 # Example environment
 
-- setting up m4.10xlarge: 160GB RAM, 32 cores: [Amazon link](https://aws.amazon.com/ec2/instance-types/)  
+- setting up c6id.metal: 250GB RAM, 128 cores: [Amazon link](https://aws.amazon.com/ec2/instance-types/)  
 - Full reproduce script on clean Ubuntu 22.04: [_utils/repro.sh](https://github.com/duckdblabs/db-benchmark/blob/master/_utils/repro.sh)
 
 # Acknowledgment
