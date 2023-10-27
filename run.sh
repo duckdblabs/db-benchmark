@@ -45,6 +45,8 @@ source ./path.env
 
 # upgrade tools and VERSION, REVISION metadata files
 $DO_UPGRADE && echo "# Upgrading solutions"
+if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "collapse" ]]; then ./collapse/upg-collapse.sh; fi;
+if [[ "$RUN_SOLUTIONS" =~ "collapse" ]]; then ./collapse/ver-collapse.sh; fi;
 if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "dask" ]]; then ./dask/upg-dask.sh; fi;
 if [[ "$RUN_SOLUTIONS" =~ "dask" ]]; then ./dask/ver-dask.sh; fi;
 if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "data.table" ]]; then ./datatable/upg-datatable.sh; fi;
