@@ -11,7 +11,10 @@ python3 -m pip install --upgrade psutil polars numpy
 
 # build
 deactivate
+
 ./polars/upg-polars.sh
+
+./polars/ver-polars.sh
 
 # check
 # source polars/py-polars/bin/activate

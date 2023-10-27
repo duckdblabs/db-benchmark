@@ -10,6 +10,8 @@ python3 -m pip install --upgrade psutil datafusion pandas
 deactivate
 ./datafusion/upg-datafusion.sh
 
+./datafusion/ver-datafusion.sh
+
 # check
 # source datafusion/py-datafusion/bin/activate
 # python3

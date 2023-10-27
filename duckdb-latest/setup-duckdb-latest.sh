@@ -14,3 +14,5 @@ ncores=`python3 -c 'import multiprocessing as mp; print(mp.cpu_count())'`
 MAKE="make -j$ncores" R CMD INSTALL -l "./r-duckdb-latest" duckdb-r
 rm -rf duckdb-r
 cd ..
+
+./duckdb-latest/ver-duckdb-latest.sh
