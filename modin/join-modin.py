@@ -19,7 +19,7 @@ ver = modin.__version__
 git = ""
 task = "join"
 solution = "modin"
-fun = ".merge"
+fun = "merge"
 cache = "TRUE"
 on_disk = "FALSE"
 
