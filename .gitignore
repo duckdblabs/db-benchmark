@@ -3,12 +3,13 @@ metastore_db/*
 *.log
 *.html
 *.csv
+!time.csv
+!logs.csv
 *.md5
 .Rproj.user
 .Rhistory
 db-benchmark.Rproj
 */REVISION
-*/VERSION
 token
 .token
 public/
