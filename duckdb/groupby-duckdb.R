@@ -19,11 +19,13 @@ data_name = Sys.getenv("SRC_DATANAME")
 src_grp = file.path("data", paste(data_name, "csv", sep="."))
 cat(sprintf("loading dataset %s\n", data_name))
 
-on_disk = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][2L])>=1e9
+db_file = sprintf('%s-%s-%s.db', solution, task, data_name)
+
+on_disk = FALSE # as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][2L])>=1e9
 uses_NAs = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][4L])>0
 if (on_disk) {
   print("using disk memory-mapped data storage")
-  con = dbConnect(duckdb::duckdb(), dbdir=tempfile())
+  con = dbConnect(duckdb::duckdb(), dbdir=db_file)
 } else {
   print("using in-memory data storage")
   con = dbConnect(duckdb::duckdb())
@@ -261,5 +263,9 @@ print(dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT count(*) FROM ans
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 
 cat(sprintf("grouping finished, took %.0fs\n", proc.time()[["elapsed"]]-task_init))
+
+if (on_disk) {
+  unlink(db_file)
+}
 
 if( !interactive() ) q("no", status=0)

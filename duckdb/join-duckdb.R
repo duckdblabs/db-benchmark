@@ -23,6 +23,7 @@ cat(sprintf("loading datasets %s\n", paste(c(data_name, y_data_name), collapse="
 
 attach_and_use <- function(con, db_file, db) {
   if (on_disk) {
+    # in case a previous solution failed during query execution and left the file around.
     if (file.exists(db_file)) {
       unlink(db_file)
     }
@@ -41,7 +42,7 @@ detach_and_drop <- function(con, db_file, db) {
   }
 }
 
-tempfile1 <- tempfile()
+duckdb_join_db = sprintf('%s_%s_%s.db', solution, task, data_name)
 on_disk = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][2L])>=1e9
 less_cores = as.numeric(strsplit("J1_1e7_NA_0_0", "_", fixed=TRUE)[[1L]][2L])<=1e7
 
@@ -49,7 +50,7 @@ uses_NAs = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][4L])>0
 
 if (on_disk) {
   print("using disk memory-mapped data storage")
-  con = dbConnect(duckdb::duckdb(), dbdir=tempfile1)
+  con = dbConnect(duckdb::duckdb(), dbdir=duckdb_join_db)
 } else {
   print("using in-memory data storage")
   con = dbConnect(duckdb::duckdb())
@@ -97,7 +98,6 @@ if (!uses_NAs) {
     dbExecute(con, "DROP TABLE medium_csv")
     dbExecute(con, "DROP TABLE big_csv")
   })
-
 } else {
   invisible({
     dbExecute(con, "ALTER TABLE x_csv RENAME TO x")

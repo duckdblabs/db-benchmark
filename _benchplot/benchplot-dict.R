@@ -31,6 +31,7 @@ header_title_fun = function(x) {
   )
 }
 solution.dict = {list(
+  "collapse" = list(name=c(short="collapse", long="collapse"), color=c(strong="darkturquoise", light="turquoise")),
   "data.table" = list(name=c(short="data.table", long="data.table"), color=c(strong="blue", light="#7777FF")),
   "dplyr" = list(name=c(short="dplyr", long="dplyr"), color=c(strong="red", light="#FF7777")),
   "pandas" = list(name=c(short="pandas", long="pandas"), color=c(strong="green4", light="#77FF77")),
@@ -66,6 +67,18 @@ groupby_q_title_fun = function(x) {
     by = "iquestion"]$V1
 }
 groupby.syntax.dict = {list(
+    "collapse" = {c(
+    "sum v1 by id1" = "collap(x, v1 ~ id1, sum)",
+    "sum v1 by id1:id2" = "collap(x, v1 ~ id1 + id2, sum)",
+    "sum v1 mean v3 by id3" = "collap(x, ~ id3, custom = list(sum = 'v1', mean = 'v3'))",
+    "mean v1:v3 by id4" = "x |> group_by(id4) |> select(v1:v3) |> mean()",
+    "sum v1:v3 by id6" = "x |> group_by(id6) |> select(v1:v3) |> sum()",
+    "median v3 sd v3 by id4 id5" = "x |> group_by(id4, id5) |> summarise(v3_median = median(v3), v3_sd = sd(v3))",
+    "max v1 - min v2 by id3" = "x |> group_by(id3) |> summarise(range_v1_v2=max(v1)%-=%min(v2))",
+    "largest two v3 by id6" = "x |> group_by(id6) |> summarize(max_v3 = max(v3), second_v3 = nth(v3, 1-1e-7, ties = 'min'))",
+    "regression v1 v2 by id2 id4" = "x |> group_by(id2, id4) |> mutate(tmp = scale(v1)%*=%scale(v2)) |> summarise(r2 = (sum(tmp)%/=%(nobs(tmp)%-=%1))^2)",
+    "sum v3 count by id1:id6" = "x |> group_by(id1:id6) |> summarise(v3=sum(v3), count=n())"
+  )},
   "data.table" = {c(
     "sum v1 by id1" = "DT[, .(v1=sum(v1, na.rm=TRUE)), by=id1]",
     "sum v1 by id1:id2" = "DT[, .(v1=sum(v1, na.rm=TRUE)), by=.(id1, id2)]",
@@ -235,7 +248,8 @@ groupby.syntax.dict = {list(
     "sum v3 count by id1:id6" = "SELECT id1, id2, id3, id4, id5, id6, SUM(v3) as v3, COUNT(*) AS cnt FROM x GROUP BY id1, id2, id3, id4, id5, id6"
   )}
 )}
-groupby.query.exceptions = {list(
+ groupby.query.exceptions = {list(
+  "collapse" =    list(),
   "data.table" =  list(),
   "dplyr" =       list(),
   "pandas" =      list(),
@@ -252,6 +266,8 @@ groupby.query.exceptions = {list(
   "datafusion" =  list()
 )}
 groupby.data.exceptions = {list(                                                             # exceptions as of run 1575727624
+  "collapse" = {list(
+  )},
   "data.table" = {list(
     "timeout" = c("G1_1e9_1e1_0_0",                                                          # not always happened, q8 probably #110
                   "G1_1e9_2e0_0_0")                                                          # q4 #110 also sometimes segfaults during fread but not easily reproducible
@@ -326,6 +342,13 @@ join.syntax.dict = {list(
     "medium outer on int" = "DF.merge(medium, how='left', on='id2').compute()",
     "medium inner on factor" = "DF.merge(medium, on='id5').compute()",
     "big inner on int" = "DF.merge(big, on='id3').compute()"
+  )},
+  "collapse" = {c(
+    "small inner on int" = "join(DF, small, on='id1', how='inner')",
+    "medium inner on int" = "join(DF, medium, on='id2', how='inner')",
+    "medium outer on int" = "join(DF, medium, on='id2')",
+    "medium inner on factor" = "join(DF, medium, on='id5', how='inner')",
+    "big inner on int" = "join(DF, big, on='id3', how='inner')"
   )},
   "data.table" = {c(
     "small inner on int" = "DT[small, on='id1', nomatch=NULL]",
@@ -420,6 +443,7 @@ join.syntax.dict = {list(
   )}
 )}
 join.query.exceptions = {list(
+  "collapse" =    list(),
   "data.table" =  list(),
   "dplyr" =       list(),
   "pandas" =      list(),
@@ -436,6 +460,8 @@ join.query.exceptions = {list(
   "datafusion" =  list()
 )}
 join.data.exceptions = {list(                                                             # exceptions as of run 1575727624
+  "collapse" = {list(
+  )},
   "data.table" = {list(
     "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")                  # fread
   )},
@@ -491,6 +517,13 @@ join.exceptions = task.exceptions(join.query.exceptions, join.data.exceptions)
 # groupby2014 ----
 
 groupby2014.syntax.dict = {list(
+  "collapse" = {c(
+    "sum v1 by id1" = "collap(x, v1 ~ id1, sum)",
+    "sum v1 by id1:id2" = "collap(x, v1 ~ id1 + id2, sum)",
+    "sum v1 mean v3 by id3" = "collap(x, ~ id3, custom = list(sum = 'v1', mean = 'v3'))",
+    "mean v1:v3 by id4" = "x |> group_by(id4) |> select(v1:v3) |> mean()",
+    "sum v1:v3 by id6" = "x |> group_by(id6) |> select(v1:v3) |> sum()"
+  )},
   "data.table" = {c(
     "sum v1 by id1" = "DT[, sum(v1), keyby=id1]",
     "sum v1 by id1:id2" = "DT[, sum(v1), keyby='id1,id2']",
