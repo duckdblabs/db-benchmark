@@ -45,6 +45,8 @@ source ./path.env
 
 # upgrade tools and VERSION, REVISION metadata files
 $DO_UPGRADE && echo "# Upgrading solutions"
+if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "collapse" ]]; then ./collapse/upg-collapse.sh; fi;
+if [[ "$RUN_SOLUTIONS" =~ "collapse" ]]; then ./collapse/ver-collapse.sh; fi;
 if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "dask" ]]; then ./dask/upg-dask.sh; fi;
 if [[ "$RUN_SOLUTIONS" =~ "dask" ]]; then ./dask/ver-dask.sh; fi;
 if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "data.table" ]]; then ./datatable/upg-datatable.sh; fi;
@@ -77,9 +79,6 @@ if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" == "duckdb-latest" ]]; then ./du
 if [[ "$RUN_SOLUTIONS" == "duckdb-latest" ]]; then ./duckdb-latest/ver-duckdb-latest.sh; fi;
 if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "datafusion" ]]; then ./datafusion/upg-datafusion.sh; fi;
 if [[ "$RUN_SOLUTIONS" =~ "datafusion" ]]; then ./datafusion/ver-datafusion.sh; fi;
-if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "collapse" ]]; then ./collapse/upg-collapse.sh; fi;
-if [[ "$RUN_SOLUTIONS" =~ "collapse" ]]; then ./collapse/ver-collapse.sh; fi;
-
 
 # run
 if [[ -f ./stop ]]; then echo "# Benchmark run $BATCH has been interrupted after $(($(date +%s)-$BATCH))s due to 'stop' file" && rm -f ./stop && rm -f ./run.lock && exit; fi;
