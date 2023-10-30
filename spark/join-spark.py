@@ -25,7 +25,7 @@ src_jn_y = [os.path.join("data", y_data_name[0]+".csv"), os.path.join("data", y_
 if len(src_jn_y) != 3:
     raise Exception("Something went wrong in preparing files used for join")
 
-mem_usage = "100g"
+mem_usage = "220g"
 if "TEST_RUN" in os.environ:
      mem_usage = "2g"
 

@@ -44,6 +44,8 @@ detach_and_drop <- function(con, db_file, db) {
 
 duckdb_join_db = sprintf('%s_%s_%s.db', solution, task, data_name)
 on_disk = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][2L])>=1e9
+less_cores = as.numeric(strsplit("J1_1e7_NA_0_0", "_", fixed=TRUE)[[1L]][2L])<=1e7
+
 uses_NAs = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][4L])>0
 
 if (on_disk) {
@@ -55,6 +57,10 @@ if (on_disk) {
 }
 
 ncores = parallel::detectCores()
+if (less_cores) {
+  ncores = min(ncores, 40)
+}
+
 invisible(dbExecute(con, sprintf("PRAGMA THREADS=%d", ncores)))
 invisible(dbExecute(con, "SET memory_limit='200GB'"))
 git = dbGetQuery(con, "SELECT source_id FROM pragma_version()")[[1L]]

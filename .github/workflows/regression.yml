@@ -13,12 +13,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
- regression-test-benchmark-runner:
+ regression-test-benchmark-runner-solo-solutions:
   strategy:
     fail-fast: false
     matrix:
-      solution: [data.table, collapse, dplyr, pandas, pydatatable, spark, dask, juliadf, juliads, polars, arrow, duckdb, duckdb-latest, datafusion]
-  name: Regression Tests
+      solution: [data.table, collapse, dplyr, pandas, pydatatable, spark, juliadf, juliads, polars, arrow, duckdb, duckdb-latest, datafusion]
+  name: Regression Tests solo solutions
   runs-on: ubuntu-20.04
   env:
     CC: gcc-10
@@ -91,3 +91,76 @@ jobs:
         name: ${{ matrix.solution }}-out.zip
         path: ${{ matrix.solution }}-out.zip
         if-no-files-found: error
+ 
+ regression-test-benchmark-runner-all-solutions:
+  needs: regression-test-benchmark-runner-solo-solutions
+  name: Regression Tests all solutions
+  runs-on: ubuntu-20.04
+  env:
+    CC: gcc-10
+    CXX: g++-10
+    GEN: ninja
+
+  steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install libraries
+      shell: bash
+      run: ./_utils/setup-small.sh
+
+    - name: Generate 500mb datasets
+      shell: bash
+      run: ./_utils/generate-data-small.sh
+
+    - name: Install all solutions
+      shell: bash
+      run: source path.env && python3 _utils/install_all_solutions.py all
+
+    - name: Turn swap off
+      shell: bash
+      run: sudo swapoff -a
+
+    - name: Run mini GroupBy benchmark
+      shell: bash
+      run: |
+        python3 _utils/prep_solutions.py --task=groupby --solution=all
+        source path.env
+        TEST_RUN=true ./run.sh
+
+    - name: Run mini Join benchmark
+      shell: bash
+      run: |
+        python3 _utils/prep_solutions.py --task=join --solution=all
+        source path.env
+        TEST_RUN=true ./run.sh
+
+    - name: Validate benchmark results and report generation
+      shell: bash
+      run: ./_utils/validate_no_errors.sh
+
+    - name: Create Archive
+      if: always()
+      shell: bash
+      run: |
+        cp *.csv out/
+        zip -r all-out.zip out/
+
+    # include this step to see what the latest versions are of every solution
+    - name: Print latest versions
+      if: always()
+      shell: bash
+      run: tail -n +1 */VERSION
+
+    - uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: all-out.zip
+        path: all-out.zip
+        if-no-files-found: error
+
