@@ -244,8 +244,7 @@ transform = function(ld) {
 
 time_logs = function(path=getwd()) {
   ct = clean_time(load_time(path=getwd()))
-  new_ct = filter(ct, !(solution == "arrow" & data == "G1_1e8_1e2_5_0" & question == "sum v3 count by id1:id6"))
-  d = model_time(new_ct)
+  d = model_time(ct)
   l = model_logs(clean_logs(load_logs(path=path)))
   q = model_questions(clean_questions(load_questions(path=path)))
   
