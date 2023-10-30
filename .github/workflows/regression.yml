@@ -118,6 +118,10 @@ jobs:
       shell: bash
       run: ./_utils/generate-data-small.sh
 
+    - name: Remove old logs
+      shell: bash
+      run: rm time.csv logs.csv
+
     - name: Install all solutions
       shell: bash
       run: source path.env && python3 _utils/install_all_solutions.py all
