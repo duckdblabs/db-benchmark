@@ -67,24 +67,28 @@ If you would like your solution to be included, feel free to file a PR with the 
 
 The benchmark will now be updated upon request. A request can be made by creating a PR with a combination of the following.
 
-The PR *must* include 
-- updates to the time.csv and log.csv files of a run on a c6id.metal machine.
+The PR **must** include 
+- updates to the time.csv and log.csv files of a run on a c6id.metal machine. If you are re-enabling a query for a solution, you can just include new times and logs for the query, however, the version must match currently reported version.
 
-The PR must include one of the following
-- changes to the solution VERSION file.
-- changes to the solution scripts. Either loading the data differently or changing some internal settings for the solution.
+The PR must include **one** of the following
+- changes to a solution VERSION file.
+- changes to a solution groupby or join script. This can mean:
+  1. Loading the data differently 
+  2. Changing settings for a solution.
+  3. Re-enabling a query for a solution
 
 To facilitate creating an instance identical to the one with the current results, the script `_utils/format_and_mount.sh`  was created. The script does the following 
 1. Formats and mounts an nvme drive so that solutions have access to instance storage
-2. Creates a new directory `db-benchmark-metal` on the nvme drive. This directory is a clone of the repository
+2. Creates a new directory `db-benchmark-metal` on the nvme drive. This directory is a clone of the repository. Having a clone of the benchmark on the nvme drive enables the solutions to load the data faster (assuming you follow the steps to copy the data onto the nvme mount). 
 
 Once the `db-benchmark-metal` directory is created, you will need to 
 1. Create or generate all the datasets. The benchmark will not be updated if only a subset of datasets are tested. 
+  - If you call `./_utils/format_and_mount.sh -c` the datasets will be created for you. Creating every dataset will take at least >1hr
 2. Install the solutions you wish to have updated. The {{solution}}/setup-{{solution}}.sh should have everything you need
 3. Update the solution(s) groupby or join scripts with any desired changes
 4. Benchmark on your solution against all datasets.
-5. Generate the report to see how the results compare to other solutions
-6. Create your PR! The time.csv and logs.csv files should be included, the report (which is in the `public` directory) does not need to be included.
+5. Generate the report to see how the results compare to other solutions. The report should be automatically generated. You can find it in `public`.
+6. Create your PR! Include the updates to the time.csv and logs.csv files
 
 The PR will then be reviewed by the DuckDBLabs team where we will run the benchmark again ourselves to validate the new results. If there aren't any questions, we will merge the PR and publish a new report!
 
