@@ -16,6 +16,7 @@ Contribution and feedback are very welcome!
 
   - [x] [dask](https://github.com/dask/dask)
   - [x] [data.table](https://github.com/Rdatatable/data.table)
+  - [x] [collapse](https://sebkrantz.github.io/collapse/)
   - [x] [dplyr](https://github.com/tidyverse/dplyr)
   - [x] [pandas](https://github.com/pandas-dev/pandas)
   - [x] [(py)datatable](https://github.com/h2oai/datatable)
