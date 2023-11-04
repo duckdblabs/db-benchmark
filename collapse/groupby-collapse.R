@@ -34,12 +34,12 @@ task_init = proc.time()[["elapsed"]]
 cat("grouping...\n")
 
 question = "sum v1 by id1" # q1
-t = system.time(print(dim(ans<-collap(x, v1 ~ id1, sum))))[["elapsed"]]
+t = system.time(print(dim(ans<-collap(x, v1 ~ id1, sum, fill = TRUE))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-sum(ans$v1))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
-t = system.time(print(dim(ans<-collap(x, v1 ~ id1, sum))))[["elapsed"]]
+t = system.time(print(dim(ans<-collap(x, v1 ~ id1, sum, fill = TRUE))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-sum(ans$v1))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
@@ -48,12 +48,12 @@ print(tail(ans, 3))
 rm(ans)
 
 question = "sum v1 by id1:id2" # q2
-t = system.time(print(dim(ans<-collap(x, v1 ~ id1 + id2, sum))))[["elapsed"]]
+t = system.time(print(dim(ans<-collap(x, v1 ~ id1 + id2, sum, fill = TRUE))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-sum(x$v1))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
-t = system.time(print(dim(ans<-collap(x, v1 ~ id1 + id2, sum))))[["elapsed"]]
+t = system.time(print(dim(ans<-collap(x, v1 ~ id1 + id2, sum, fill = TRUE))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-sum(x$v1))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
@@ -62,12 +62,13 @@ print(tail(ans, 3))
 rm(ans)
 
 question = "sum v1 mean v3 by id3" # q3
-t = system.time(print(dim(ans<-collap(x, ~ id3, custom = list(sum = "v1", mean = "v3")))))[["elapsed"]]
+options(collapse_unused_arg_action = "none")
+t = system.time(print(dim(ans<-collap(x, ~ id3, custom = list(sum = "v1", mean = "v3"), fill = TRUE))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-qDF(list(v1=sum(ans$v1), v3=sum(ans$v3))))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
-t = system.time(print(dim(ans<-collap(x, ~ id3, custom = list(sum = "v1", mean = "v3")))))[["elapsed"]]
+t = system.time(print(dim(ans<-collap(x, ~ id3, custom = list(sum = "v1", mean = "v3"), fill = TRUE))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-qDF(list(v1=sum(ans$v1), v3=sum(ans$v3))))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
@@ -90,12 +91,12 @@ print(tail(ans, 3))
 rm(ans)
 
 question = "sum v1:v3 by id6" # q5
-t = system.time(print(dim(ans<-x |> group_by(id6) |> select(v1:v3) |> sum())))[["elapsed"]]
+t = system.time(print(dim(ans<-x |> group_by(id6) |> select(v1:v3) |> sum(fill = TRUE))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-ans |> select(v1, v2, v3) |> sum())[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
-t = system.time(print(dim(ans<-x |> group_by(id6) |> select(v1:v3) |> sum())))[["elapsed"]]
+t = system.time(print(dim(ans<-x |> group_by(id6) |> select(v1:v3) |> sum(fill = TRUE))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-ans |> select(v1, v2, v3) |> sum())[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
@@ -164,12 +165,12 @@ print(tail(ans, 3))
 rm(ans)
 
 question = "sum v3 count by id1:id6" # q10
-t = system.time(print(dim(ans<-x |> group_by(id1:id6) |> summarise(v3=sum(v3), count=n()))))[["elapsed"]]
+t = system.time(print(dim(ans<-x |> group_by(id1:id6) |> summarise(v3=sum(v3, fill = TRUE), count=n()))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-summarise(ans, v3=sum(v3), count=sum(count)))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
-t = system.time(print(dim(ans<-x |> group_by(id1:id6) |> summarise(v3=sum(v3), count=n()))))[["elapsed"]]
+t = system.time(print(dim(ans<-x |> group_by(id1:id6) |> summarise(v3=sum(v3, fill = TRUE), count=n()))))[["elapsed"]]
 mn = memory_usage()
 chkt = system.time(chk<-summarise(ans, v3=sum(v3), count=sum(count)))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
