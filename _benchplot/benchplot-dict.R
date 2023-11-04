@@ -75,8 +75,8 @@ groupby.syntax.dict = {list(
     "sum v1:v3 by id6" = "x |> group_by(id6) |> select(v1:v3) |> sum()",
     "median v3 sd v3 by id4 id5" = "x |> group_by(id4, id5) |> summarise(v3_median = median(v3), v3_sd = sd(v3))",
     "max v1 - min v2 by id3" = "x |> group_by(id3) |> summarise(range_v1_v2=max(v1)%-=%min(v2))",
-    "largest two v3 by id6" = "x |> group_by(id6) |> summarize(max_v3 = max(v3), second_v3 = nth(v3, 1-1e-7, ties = 'min'))",
-    "regression v1 v2 by id2 id4" = "x |> group_by(id2, id4) |> mutate(tmp = scale(v1)%*=%scale(v2)) |> summarise(r2 = (sum(tmp)%/=%(nobs(tmp)%-=%1))^2)",
+    "largest two v3 by id6" = "x |> gby(id6) |> smr(max=max(v3), sec=nth(v3,.9999,ties='min')) |> pivot('id6') |> compute(largest2_v3=value, keep='id6')",
+    "regression v1 v2 by id2 id4" = "x |> group_by(id2, id4) |> summarise(r2 = cor(v1, v2, use='na.or.complete')^2)",
     "sum v3 count by id1:id6" = "x |> group_by(id1:id6) |> summarise(v3=sum(v3), count=n())"
   )},
   "data.table" = {c(
