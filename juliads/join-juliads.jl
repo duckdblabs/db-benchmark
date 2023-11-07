@@ -21,7 +21,7 @@ solution = "juliads";
 fun = "join";
 cache = true;
 on_disk = false;
-isondisk(indata) = parse(Float64, split(indata, "_")[2])>=10^9
+isondisk(indata) = false # It seems that the new machine has enough memory - parse(Float64, split(indata, "_")[2])>=10^9
 
 data_name = ENV["SRC_DATANAME"];
 src_jn_x = string("data/", data_name, ".csv");

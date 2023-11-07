@@ -22,3 +22,5 @@ deactivate
 # resave 1e9 join data from csv to jay format so pydt can try out-of-memory processing
 source pydatatable/py-pydatatable/bin/activate
 python3 pydatatable/convert-pydatatable-data.py
+
+./pydatatable/ver-pydatatable.sh

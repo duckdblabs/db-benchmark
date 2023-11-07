@@ -48,7 +48,10 @@ if (file.exists(duckdb_join_db)) {
 }
 
 on_disk = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][2L])>=1e9
+less_cores = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][2L])<=1e7
+
 uses_NAs = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][4L])>0
+
 if (on_disk) {
   print("using disk memory-mapped data storage")
   con = dbConnect(duckdb::duckdb(), dbdir=duckdb_join_db)
@@ -58,6 +61,9 @@ if (on_disk) {
 }
 
 ncores = parallel::detectCores()
+if (less_cores) {
+  ncores = min(ncores, 40)
+}
 invisible(dbExecute(con, sprintf("PRAGMA THREADS=%d", ncores)))
 invisible(dbExecute(con, "SET memory_limit='200GB'"))
 git = dbGetQuery(con, "SELECT source_id FROM pragma_version()")[[1L]]

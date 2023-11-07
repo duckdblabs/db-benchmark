@@ -3,6 +3,8 @@ metastore_db/*
 *.log
 *.html
 *.csv
+!time.csv
+!logs.csv
 *.md5
 .Rproj.user
 .Rhistory
@@ -10,7 +12,6 @@ py-modin
 miniconda
 db-benchmark.Rproj
 */REVISION
-*/VERSION
 token
 .token
 public/
