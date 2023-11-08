@@ -266,7 +266,7 @@ groupby.syntax.dict = {list(
   "data.table" =  list(),
   "dplyr" =       list(),
   "pandas" =      list(),
-  "modin" =      list(),
+  "modin" =       list(),
   "pydatatable" = list(),
   "spark" =       list("not yet implemented: SPARK-26589" = "median v3 sd v3 by id4 id5"),
   "dask" =        list("not yet implemented: dask#4362" = "median v3 sd v3 by id4 id5"),
