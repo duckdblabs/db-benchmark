@@ -26,7 +26,7 @@ def init_modin_on_hdk():
     query("SELECT * FROM df", df=df)
 
 
-init_modin_on_hdk(pd)
+init_modin_on_hdk()
 
 exec(open("./_helpers/helpers.py").read())
 
