@@ -8,10 +8,15 @@ curl -o install_miniconda.sh -L https://repo.anaconda.com/miniconda/Miniconda3-p
 source ./modin/py-modin/bin/activate
 conda install -y conda-libmamba-solver
 
+conda create --name modin -y
+conda activate modin
+echo "conda activate modin" >> ./modin/py-modin/bin/activate
+
 # install binaries
 conda install -y -c conda-forge modin-hdk --solver=libmamba
 
 # check
 python3 -c "import modin; print(modin.__version__)"
 
+conda deactivate
 conda deactivate

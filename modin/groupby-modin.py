@@ -2,14 +2,29 @@
 
 print("# groupby-modin.py", flush=True)
 
+import os
 import gc
 import timeit
 
-exec(open("./modin/modin-helpers.py").read())
+# Set up HDK backend
+os.environ["MODIN_ENGINE"] = "native"
+os.environ["MODIN_STORAGE_FORMAT"] = "hdk"
+os.environ["MODIN_EXPERIMENTAL"] = "True"
+
 
 import modin as modin
 import modin.pandas as pd
 from modin.utils import execute
+
+
+def init_modin_on_hdk():
+    """Modin on HDK warmup before benchmarking for calcite"""
+    from modin.experimental.sql import query
+
+    data = {"a": [1, 2, 3]}
+    df = pd.DataFrame(data)
+    query("SELECT * FROM df", df=df)
+
 
 init_modin_on_hdk(pd)
 
