@@ -92,7 +92,7 @@ mv G1_1e7_1e2_0_0.csv data/
 echo "Changing run.conf and _control/data.csv to run only groupby at 0.5GB"
 cp run.conf run.conf.original
 sed -i 's/groupby join groupby2014/groupby/g' run.conf
-sed -i 's/data.table dplyr pandas pydatatable spark dask clickhouse polars arrow duckdb/data.table dplyr duckdb/g' run.conf
+sed -i 's/data.table dplyr pandas modin pydatatable spark dask clickhouse polars arrow duckdb/data.table dplyr duckdb/g' run.conf
 sed -i 's/DO_PUBLISH=true/DO_PUBLISH=false/g' run.conf
 
 # set sizes
