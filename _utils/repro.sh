@@ -64,7 +64,8 @@ python3 -m pip install --upgrade pandas
 deactivate
 
 source ./modin/py-modin/bin/activate
-conda update modin-hdk -y -c conda-forge --solver=libmambapython3 -m pip install --upgrade modin
+conda update modin-hdk -y -c conda-forge --solver=libmamba
+conda deactivate
 conda deactivate
 
 source ./pydatatable/py-pydatatable/bin/activate
