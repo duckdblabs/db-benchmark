@@ -221,52 +221,54 @@ def main():
     print("# groupby-dask.py", flush=True)
 
     # we use process-pool instead of thread-pool due to GIL cost
-    client = distributed.Client(processes=True, silence_logs=logging.ERROR)
-    print(
-        "using disk memory-mapped data storage"
-        if ON_DISK
-        else "using in-memory data storage",
-        flush=True,
-    )
+    from distributed import LocalCluster
+    with LocalCluster(processes=True, silence_logs=logging.ERROR) as cluster:
+        with cluster.get_client() as client:
+            print(
+                "using disk memory-mapped data storage"
+                if ON_DISK
+                else "using in-memory data storage",
+                flush=True,
+            )
 
-    print("loading dataset %s" % DATA_NAME, flush=True)
-    x = dd.read_csv(
-        SRC_GRP,
-        dtype={
-            "id1": "category",
-            "id2": "category",
-            "id3": "category",
-            "id4": "category",
-            "id5": "category",
-            "id6": "category",
-            "v1": "Int32",
-            "v2": "Int32",
-            "v3": "float64",
-        },
-        engine="pyarrow",
-    ).persist()
-    global IN_ROWS
-    IN_ROWS = len(x)
-    print(IN_ROWS, flush=True)
+            print("loading dataset %s" % DATA_NAME, flush=True)
+            x = dd.read_csv(
+                SRC_GRP,
+                dtype={
+                    "id1": "category",
+                    "id2": "category",
+                    "id3": "category",
+                    "id4": "category",
+                    "id5": "category",
+                    "id6": "category",
+                    "v1": "Int32",
+                    "v2": "Int32",
+                    "v3": "float64",
+                },
+                engine="pyarrow",
+            ).persist()
+            global IN_ROWS
+            IN_ROWS = len(x)
+            print(IN_ROWS, flush=True)
 
-    print("grouping...", flush=True)
-    task_init = timeit.default_timer()
+            print("grouping...", flush=True)
+            task_init = timeit.default_timer()
 
-    sum_v1_by_id1(x, client)
-    sum_v1_by_id1_id2(x, client)
-    sum_v1_mean_v3_by_id3(x, client)
-    mean_v1_v3_by_id4(x, client)
-    sum_v1_v3_by_id6(x, client)
-    median_v3_sd_v3_by_id4_id5(x, client)
-    max_v1_minus_min_v2_by_id3(x, client)
-    largest_two_v3_by_id6(x, client)
-    regression_v1_v2_by_id2_id4(x, client)
-    sum_v3_count_by_id1_id6(x, client)
+            sum_v1_by_id1(x, client)
+            sum_v1_by_id1_id2(x, client)
+            sum_v1_mean_v3_by_id3(x, client)
+            mean_v1_v3_by_id4(x, client)
+            sum_v1_v3_by_id6(x, client)
+            median_v3_sd_v3_by_id4_id5(x, client)
+            max_v1_minus_min_v2_by_id3(x, client)
+            largest_two_v3_by_id6(x, client)
+            regression_v1_v2_by_id2_id4(x, client)
+            sum_v3_count_by_id1_id6(x, client)
 
-    print(
-        "grouping finished, took %0.fs" % (timeit.default_timer() - task_init),
-        flush=True,
-    )
+            print(
+                "grouping finished, took %0.fs" % (timeit.default_timer() - task_init),
+                flush=True,
+            )
     exit(0)
 
 
