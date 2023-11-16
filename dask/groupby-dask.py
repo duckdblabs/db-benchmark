@@ -222,7 +222,7 @@ def main():
 
     # we use process-pool instead of thread-pool due to GIL cost
     from distributed import LocalCluster
-    with LocalCluster(processes=True, silence_logs=logging.ERROR) as cluster:
+    with LocalCluster(processes=False, silence_logs=logging.ERROR) as cluster:
         with cluster.get_client() as client:
             print(
                 "using disk memory-mapped data storage"
@@ -232,21 +232,8 @@ def main():
             )
 
             print("loading dataset %s" % DATA_NAME, flush=True)
-            x = dd.read_csv(
-                SRC_GRP,
-                dtype={
-                    "id1": "category",
-                    "id2": "category",
-                    "id3": "category",
-                    "id4": "category",
-                    "id5": "category",
-                    "id6": "category",
-                    "v1": "Int32",
-                    "v2": "Int32",
-                    "v3": "float64",
-                },
-                engine="pyarrow",
-            ).persist()
+            x = dd.read_csv(SRC_GRP, engine="pyarrow").persist()
+
             global IN_ROWS
             IN_ROWS = len(x)
             print(IN_ROWS, flush=True)
