@@ -222,7 +222,7 @@ def main():
 
     # we use process-pool instead of thread-pool due to GIL cost
     from distributed import LocalCluster
-    with LocalCluster(processes=False, silence_logs=logging.ERROR) as cluster:
+    with LocalCluster(processes=True, silence_logs=logging.ERROR) as cluster:
         with cluster.get_client() as client:
             print(
                 "using disk memory-mapped data storage"
@@ -248,7 +248,8 @@ def main():
             sum_v1_v3_by_id6(x, client)
             median_v3_sd_v3_by_id4_id5(x, client)
             max_v1_minus_min_v2_by_id3(x, client)
-            largest_two_v3_by_id6(x, client)
+            # Missing API: SeriesGroupBy.nlargest
+            #largest_two_v3_by_id6(x, client)  
             regression_v1_v2_by_id2_id4(x, client)
             sum_v3_count_by_id1_id6(x, client)
 
@@ -256,7 +257,6 @@ def main():
                 "grouping finished, took %0.fs" % (timeit.default_timer() - task_init),
                 flush=True,
             )
-    exit(0)
 
 
 if __name__ == "__main__":
