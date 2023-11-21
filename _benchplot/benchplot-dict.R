@@ -42,7 +42,7 @@ solution.dict = {list(
   "juliads" = list(name=c(short="IMD.jl", long="InMemoryDatasets.jl"), color=c(strong="#b80000", light="#ff1f1f")),
   "clickhouse" = list(name=c(short="clickhouse", long="ClickHouse"), color=c(strong="hotpink4", light="hotpink1")),
   "polars" = list(name=c(short="polars", long="Polars"), color=c(strong="deepskyblue4", light="deepskyblue3")),
-  "arrow" = list(name=c(short="arrow", long="Arrow"), color=c(strong="aquamarine3", light="aquamarine1")),
+  "arrow" = list(name=c(short="(R)arrow", long="(R)arrow"), color=c(strong="aquamarine3", light="aquamarine1")),
   "duckdb" = list(name=c(short="duckdb", long="DuckDB"), color=c(strong="#ddcd07", light="#fff100")),
   "duckdb-latest" = list(name=c(short="duckdb-latest", long="duckdb-latest"), color=c(strong="#ddcd07", light="#fff100")),
   "datafusion" = list(name=c(short="datafusion", long="Datafusion"), color=c(strong="deepskyblue4", light="deepskyblue3"))

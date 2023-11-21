@@ -23,7 +23,7 @@ Contribution and feedback are very welcome!
   - [x] [spark](https://github.com/apache/spark)
   - [x] [ClickHouse](https://github.com/yandex/ClickHouse)
   - [x] [Polars](https://github.com/ritchie46/polars)
-  - [x] [Arrow](https://github.com/apache/arrow)
+  - [x] [arrow R](https://github.com/apache/arrow)
   - [x] [DuckDB](https://github.com/duckdb/duckdb)
   - [x] [DuckDB-latest](https://github.com/duckdb/duckdb)
   - [x] [DataFrames.jl](https://github.com/JuliaData/DataFrames.jl)
