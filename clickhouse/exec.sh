@@ -38,13 +38,13 @@ if [ $1 == 'groupby' ]; then
   clickhouse-client --query "DROP TABLE IF EXISTS $SRC_DATANAME"
   if [ $HAS_NULL -eq 1 ]; then
     if [ $IS_SORTED -eq 1 ]; then
-      clickhouse-client --query "CREATE TABLE $SRC_DATANAME (id1 LowCardinality(Nullable(String)), id2 LowCardinality(Nullable(String)), id3 Nullable(String), id4 Nullable(Int32), id5 Nullable(Int32), id6 Nullable(Int32), v1 Nullable(Int32), v2 Nullable(Int32), v3 Nullable(Float64)) ENGINE = MergeTree() ORDER BY (id1,id2,id3,id4,id5,id6,v1,v2,v3);"
+      clickhouse-client --query "CREATE TABLE $SRC_DATANAME (id1 LowCardinality(Nullable(String)), id2 LowCardinality(Nullable(String)), id3 Nullable(String), id4 Nullable(Int32), id5 Nullable(Int32), id6 Nullable(Int32), v1 Nullable(Int32), v2 Nullable(Int32), v3 Nullable(Float64)) ENGINE = MergeTree() ORDER BY (id1,id2,id3,id4,id5,id6);"
     else
       clickhouse-client --query "CREATE TABLE $SRC_DATANAME (id1 LowCardinality(Nullable(String)), id2 LowCardinality(Nullable(String)), id3 Nullable(String), id4 Nullable(Int32), id5 Nullable(Int32), id6 Nullable(Int32), v1 Nullable(Int32), v2 Nullable(Int32), v3 Nullable(Float64)) ENGINE = MergeTree() ORDER BY tuple();"
     fi
   else
     if [ $IS_SORTED -eq 1 ]; then
-      clickhouse-client --query "CREATE TABLE $SRC_DATANAME (id1 LowCardinality(String), id2 LowCardinality(String), id3 String, id4 Int32, id5 Int32, id6 Int32, v1 Int32, v2 Int32, v3 Float64) ENGINE = MergeTree() ORDER BY (id1,id2,id3,id4,id5,id6,v1,v2,v3);"
+      clickhouse-client --query "CREATE TABLE $SRC_DATANAME (id1 LowCardinality(String), id2 LowCardinality(String), id3 String, id4 Int32, id5 Int32, id6 Int32, v1 Int32, v2 Int32, v3 Float64) ENGINE = MergeTree() ORDER BY (id1,id2,id3,id4,id5,id6);"
     else
       clickhouse-client --query "CREATE TABLE $SRC_DATANAME (id1 LowCardinality(String), id2 LowCardinality(String), id3 String, id4 Int32, id5 Int32, id6 Int32, v1 Int32, v2 Int32, v3 Float64) ENGINE = MergeTree() ORDER BY tuple();"
     fi
