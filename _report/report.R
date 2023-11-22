@@ -6,7 +6,7 @@ get_report_status_file = function(path=getwd()) {
   file.path(path, "report-done")
 }
 get_report_solutions = function() {
-  c("collapse", "data.table", "dplyr", "pandas", "pydatatable", "spark", "dask", "juliadf", "juliads", "clickhouse", "cudf", "polars","arrow","duckdb", "duckdb-latest", "datafusion")
+  c("collapse", "data.table", "dplyr", "pandas", "pydatatable", "spark", "dask", "juliadf", "juliads", "clickhouse", "cudf", "polars", "duckdb", "duckdb-latest", "datafusion", "arrow", "R-arrow")
 }
 get_data_levels = function() {
   ## groupby
@@ -243,9 +243,15 @@ transform = function(ld) {
 # all ----
 
 time_logs = function(path=getwd()) {
-  ct = clean_time(load_time(path=getwd()))
+  lt <- load_time(path=getwd())
+  # replace arrow with R-arrow (see https://github.com/duckdblabs/db-benchmark/pull/66)
+  lt$solution[lt$solution == "arrow"] <- "R-arrow"
+
+  ct = clean_time(lt)
   d = model_time(ct)
-  l = model_logs(clean_logs(load_logs(path=path)))
+  ll <- load_logs(path=path)
+  ll$solution[ll$solution == "arrow"] <- "R-arrow"
+  l = model_logs(clean_logs(ll))
   q = model_questions(clean_questions(load_questions(path=path)))
   
   lq = merge_logs_questions(l, q)
