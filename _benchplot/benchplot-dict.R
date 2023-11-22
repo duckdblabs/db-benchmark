@@ -490,8 +490,6 @@ join.data.exceptions = {list(                                                   
   "juliads" = {list(
   )},
   "clickhouse" = {list(
-    "out of memory" = c("J1_1e9_NA_0_0",                                                  # q1 r2 #169
-                        "J1_1e9_NA_5_0","J1_1e9_NA_0_1")                                  # q1 r1
   )},
   "polars" = {list(
     "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")

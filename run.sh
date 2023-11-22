@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-
 ## run script the following way to exit if benchmark is already running
 #if [[ -f ./run.lock ]]; then echo "# Benchmark run discarded due to previous run $(cat run.lock) still running" > "./run_discarded_at_$(date +%s).out"; else ./run.sh > ./run.out; fi;
 
@@ -18,7 +17,7 @@ pidof java > /dev/null 2>&1 && echo "# Benchmark run $BATCH aborted. java is run
 
 # confirm clickhouse is not running
 source ./clickhouse/ch.sh
-ch_installed && ch_active && echo "# Benchmark run $BATCH aborted. clickhouse-server is running, shut it down before calling 'run.sh'" && exit;
+ch_installed && ch_active && ch_stop
 
 
 if [[ $IGNORE_SWAP == true ]]
