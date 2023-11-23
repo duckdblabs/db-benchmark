@@ -12,7 +12,7 @@ suppressPackageStartupMessages({
 ver = packageVersion("arrow")
 git = ""
 task = "join"
-solution = "arrow"
+solution = "R-arrow"
 cache = TRUE
 on_disk = FALSE
 

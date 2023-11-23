@@ -69,6 +69,9 @@ clean_time = function(d) {
   if (nrow(d[!nzchar(version) | is.na(version)]))
     stop("timings data contains NA or '' as version field, that should not happen")
   old_advanced_groupby_questions = c("median v3 sd v3 by id2 id4","max v1 - min v2 by id2 id4","largest two v3 by id2 id4","regression v1 v2 by id2 id4","sum v3 count by id1:id6")
+
+  # replace arrow with R-arrow (see https://github.com/duckdblabs/db-benchmark/pull/66)
+  d[solution == "arrow", solution := "R-arrow"]
   d[!nzchar(git), git := NA_character_
     ][,"on_disk" := as.logical(on_disk)
       ][task=="groupby" & solution%in%c("pandas","dask","spark") & batch<1558106628, "out_cols" := NA_integer_
@@ -244,8 +247,6 @@ transform = function(ld) {
 
 time_logs = function(path=getwd()) {
   lt <- load_time(path=getwd())
-  # replace arrow with R-arrow (see https://github.com/duckdblabs/db-benchmark/pull/66)
-  lt$solution[lt$solution == "arrow"] <- "R-arrow"
 
   ct = clean_time(lt)
   d = model_time(ct)
