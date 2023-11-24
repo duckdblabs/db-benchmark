@@ -8,6 +8,7 @@ metastore_db/*
 *.md5
 .Rproj.user
 .Rhistory
+miniconda
 db-benchmark.Rproj
 */REVISION
 token

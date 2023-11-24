@@ -35,6 +35,7 @@ solution.dict = {list(
   "data.table" = list(name=c(short="data.table", long="data.table"), color=c(strong="blue", light="#7777FF")),
   "dplyr" = list(name=c(short="dplyr", long="dplyr"), color=c(strong="red", light="#FF7777")),
   "pandas" = list(name=c(short="pandas", long="pandas"), color=c(strong="green4", light="#77FF77")),
+  "modin" = list(name=c(short="modin", long="modin"), color=c(strong="blue4", light="#7799ff")),
   "pydatatable" = list(name=c(short="pydatatable", long="(py)datatable"), color=c(strong="darkorange", light="orange")),
   "spark" = list(name=c(short="spark", long="spark"), color=c(strong="#8000FFFF", light="#CC66FF")),
   "dask" = list(name=c(short="dask", long="dask"), color=c(strong="slategrey", light="lightgrey")),
@@ -113,6 +114,18 @@ groupby.syntax.dict = {list(
     "max v1 - min v2 by id3" = "DF.groupby('id3', as_index=False, sort=False, observed=True, dropna=False).agg({'v1':'max', 'v2':'min'}).assign(range_v1_v2=lambda x: x['v1']-x['v2'])[['id3','range_v1_v2']]",
     "largest two v3 by id6" = "DF[~DF['v3'].isna()][['id6','v3']].sort_values('v3', ascending=False).groupby('id6', as_index=False, sort=False, observed=True, dropna=False).head(2)",
     "regression v1 v2 by id2 id4" = "DF[['id2','id4','v1','v2']].groupby(['id2','id4'], as_index=False, sort=False, observed=True, dropna=False).apply(lambda x: x['v1'].corr(x['v2'])**2).rename(columns={None: 'r2'})",
+    "sum v3 count by id1:id6" = "DF.groupby(['id1','id2','id3','id4','id5','id6'], as_index=False, sort=False, observed=True, dropna=False).agg({'v3':'sum', 'v1':'size'})"
+  )},
+  "modin" = {c(
+    "sum v1 by id1" = "DF.groupby('id1', as_index=False, sort=False, observed=True, dropna=False).agg({'v1':'sum'})",
+    "sum v1 by id1:id2" = "DF.groupby(['id1','id2'], as_index=False, sort=False, observed=True, dropna=False).agg({'v1':'sum'})",
+    "sum v1 mean v3 by id3" = "DF.groupby('id3', as_index=False, sort=False, observed=True, dropna=False).agg({'v1':'sum', 'v3':'mean'})",
+    "mean v1:v3 by id4" = "DF.groupby('id4', as_index=False, sort=False, observed=True, dropna=False).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})",
+    "sum v1:v3 by id6" = "DF.groupby('id6', as_index=False, sort=False, observed=True, dropna=False).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})",
+    "median v3 sd v3 by id4 id5" = "DF.groupby(['id4','id5'], as_index=False, sort=False, observed=True, dropna=False).agg({'v3': ['median','std']})",
+    "max v1 - min v2 by id3" = "DF.groupby('id3', as_index=False, sort=False, observed=True, dropna=False).agg({'v1':'max', 'v2':'min'}).assign(range_v1_v2=lambda x: x['v1']-x['v2'])[['id3','range_v1_v2']]",
+    "largest two v3 by id6" = "DF.groupby('id6', sort=False, observed=True)['v3'].nlargest(2).reset_index()[['id6', 'v3']]",
+    "regression v1 v2 by id2 id4" = "query('SELECT id2, id4, POWER(CORR(v1, v2), 2) AS r2 FROM df GROUP BY id2, id4;', df=x)",
     "sum v3 count by id1:id6" = "DF.groupby(['id1','id2','id3','id4','id5','id6'], as_index=False, sort=False, observed=True, dropna=False).agg({'v3':'sum', 'v1':'size'})"
   )},
   "pydatatable" = {c(
@@ -253,6 +266,7 @@ groupby.syntax.dict = {list(
   "data.table" =  list(),
   "dplyr" =       list(),
   "pandas" =      list(),
+  "modin" =       list(),
   "pydatatable" = list(),
   "spark" =       list("not yet implemented: SPARK-26589" = "median v3 sd v3 by id4 id5"),
   "dask" =        list("not yet implemented: dask#4362" = "median v3 sd v3 by id4 id5"),
@@ -280,6 +294,8 @@ groupby.data.exceptions = {list(                                                
   )},
   "pandas" = {list(
     "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1") # read_csv #9
+  )},
+  "modin" = {list(
   )},
   "pydatatable" = {list(
     "csv reader NAs bug: datatable#2808" = c("G1_1e9_1e2_5_0")
@@ -385,6 +401,13 @@ join.syntax.dict = {list(
     "medium inner on factor" = "DF.merge(medium, on='id5')",
     "big inner on int" = "DF.merge(big, on='id3')"
   )},
+  "modin" = {c(
+    "small inner on int" = "DF.merge(small, on='id1')",
+    "medium inner on int" = "DF.merge(medium, on='id2')",
+    "medium outer on int" = "DF.merge(medium, how='left', on='id2')",
+    "medium inner on factor" = "DF.merge(medium, on='id5')",
+    "big inner on int" = "DF.merge(big, on='id3')"
+  )},
   "pydatatable" = {c(
     "small inner on int" = "y.key = 'id1'; DT[:, :, join(y)][isfinite(f.v2), :]",
     "medium inner on int" = "y.key = 'id2'; DT[:, :, join(y)][isfinite(f.v2), :]",
@@ -447,6 +470,7 @@ join.query.exceptions = {list(
   "data.table" =  list(),
   "dplyr" =       list(),
   "pandas" =      list(),
+  "modin" =       list(),
   "pydatatable" = list(),
   "spark" =       list(),
   "dask" =        list(),
@@ -470,6 +494,9 @@ join.data.exceptions = {list(                                                   
   )},
   "pandas" = {list(
     "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")                  # read_csv
+  )},
+  "modin" = {list(
+    "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")
   )},
   "pydatatable" = {list(
     "csv reader NAs bug: datatable#2808" = "J1_1e9_NA_5_0",

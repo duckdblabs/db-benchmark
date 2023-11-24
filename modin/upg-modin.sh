@@ -4,5 +4,4 @@ set -e
 echo 'upgrading modin...'
 
 source ./modin/py-modin/bin/activate
-
-python -m pip install --upgrade modin[all] > /dev/null
+conda update modin-hdk -y -c conda-forge --solver=libmamba

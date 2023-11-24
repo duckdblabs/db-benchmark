@@ -17,7 +17,7 @@ jobs:
   strategy:
     fail-fast: false
     matrix:
-      solution: [data.table, collapse, dplyr, pandas, pydatatable, spark, juliadf, juliads, polars, arrow, duckdb, duckdb-latest, datafusion]
+      solution: [data.table, collapse, dplyr, pandas, modin, pydatatable, spark, juliadf, juliads, polars, arrow, duckdb, duckdb-latest, datafusion]
   name: Regression Tests solo solutions
   runs-on: ubuntu-20.04
   env:
@@ -91,7 +91,7 @@ jobs:
         name: ${{ matrix.solution }}-out.zip
         path: ${{ matrix.solution }}-out.zip
         if-no-files-found: error
- 
+
  regression-test-benchmark-runner-all-solutions:
   needs: regression-test-benchmark-runner-solo-solutions
   name: Regression Tests all solutions

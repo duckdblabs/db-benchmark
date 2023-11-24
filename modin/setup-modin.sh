@@ -1,16 +1,22 @@
 #!/bin/bash
 set -e
 
-virtualenv modin/py-modin --python=python3
-source modin/py-modin/bin/activate
+curl -o install_miniconda.sh -L https://repo.anaconda.com/miniconda/Miniconda3-py311_23.9.0-0-Linux-x86_64.sh && \
+    sh install_miniconda.sh -u -b -p ./modin/py-modin && \
+    rm -f install_miniconda.sh
+
+eval source ./modin/py-modin/bin/activate
+conda install -y conda-libmamba-solver
+
+conda create --name modin -y
+conda activate modin
+echo "conda activate modin" >> ./modin/py-modin/bin/activate
 
 # install binaries
-python3 -m pip install --upgrade modin[all]
+conda install -y -c conda-forge modin-hdk --solver=libmamba
 
 # check
-python3
-import modin
-modin.__version__
-quit()
+python3 -c "import modin; print(modin.__version__)"
 
-deactivate
+conda deactivate
+conda deactivate

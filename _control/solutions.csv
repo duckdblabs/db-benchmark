@@ -11,6 +11,8 @@ dplyr,groupby2014
 pandas,groupby
 pandas,join
 pandas,groupby2014
+modin,groupby
+modin,join
 pydatatable,groupby
 pydatatable,join
 spark,groupby
