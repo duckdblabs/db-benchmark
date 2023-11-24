@@ -487,7 +487,7 @@ join.data.exceptions = {list(                                                   
   "collapse" = {list(
   )},
   "data.table" = {list(
-    "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")                  # fread
+    "timeout" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")                  # fread
   )},
   "dplyr" = {list(
     "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")                  # fread

@@ -201,7 +201,10 @@ launch = function(dt, mockup, out_dir="out") {
         }
         cmd = sprintf("%s > %s 2> %s", solution.cmd(s, t, d), out_file, err_file) # ./_launcher/solution.R ... > out 2> err
         shcmd = sprintf("/bin/bash -c \"%s%s\"", venv, cmd) # this is needed to source python venv
-# 	cat(mockup)
+        if (mockup) {
+          cat(cmd)
+          cat(shcmd)
+        }
         if (!mockup) {
           warn = NULL
           p = proc.time()[[3L]]
