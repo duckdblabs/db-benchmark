@@ -5,7 +5,7 @@ curl -o install_miniconda.sh -L https://repo.anaconda.com/miniconda/Miniconda3-p
     sh install_miniconda.sh -u -b -p ./modin/py-modin && \
     rm -f install_miniconda.sh
 
-source ./modin/py-modin/bin/activate
+eval source ./modin/py-modin/bin/activate
 conda install -y conda-libmamba-solver
 
 conda create --name modin -y

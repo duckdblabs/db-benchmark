@@ -10,6 +10,7 @@ import timeit
 os.environ["MODIN_ENGINE"] = "native"
 os.environ["MODIN_STORAGE_FORMAT"] = "hdk"
 os.environ["MODIN_EXPERIMENTAL"] = "True"
+os.environ["MODIN_CPUS"] = "40"
 
 
 import modin as modin
