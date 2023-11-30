@@ -26,8 +26,6 @@ def install_all_solutions():
     with open(SOLUTIONS_FILENAME, newline="") as solutions_file:
         solutions = csv.DictReader(solutions_file, delimiter=',')
         for row in solutions:
-            if row['solution'] == "clickhouse":
-                continue
             elif row['solution'] == "data.table":
                 install_solutions.add("datatable")
             else:
