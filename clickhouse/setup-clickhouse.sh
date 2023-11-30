@@ -14,7 +14,7 @@ sudo rm /var/log/clickhouse-server/clickhouse-server.err.log /var/log/clickhouse
 sudo service clickhouse-server start
 
 # stop server
-#sudo service clickhouse-server stop
+sudo service clickhouse-server stop
 
 # let file table function access csv -- NO LONGER NECESSARY
 # grep '<user_files_path>/var/lib/clickhouse/user_files/</user_files_path>' /etc/clickhouse-server/config.xml
