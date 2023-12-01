@@ -56,7 +56,7 @@ jobs:
 
     - name: Run mini GroupBy benchmark if clickhouse
       shell: bash
-      if: ${{ matrix.solution == "clickhouse" || matrix.solution == "all" }}
+      if: ${{ matrix.solution == 'clickhouse' || matrix.solution == 'all' }}
       run: |
         python3 _utils/prep_solutions.py --task=groupby --solution=clickhouse
         source path.env
