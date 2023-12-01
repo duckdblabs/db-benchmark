@@ -54,6 +54,9 @@ jobs:
       shell: bash
       run: sudo swapoff -a
 
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+
     - name: Run mini GroupBy benchmark
       shell: bash
       run: |
