@@ -71,7 +71,7 @@ clean_time = function(d) {
   old_advanced_groupby_questions = c("median v3 sd v3 by id2 id4","max v1 - min v2 by id2 id4","largest two v3 by id2 id4","regression v1 v2 by id2 id4","sum v3 count by id1:id6")
 
   # replace arrow with R-arrow (see https://github.com/duckdblabs/db-benchmark/pull/66)
-  d[solution == "arrow", solution := "R-arrow"]
+  d[which(solution == "arrow"),c("solution")] == "R-arrow"
   d[!nzchar(git), git := NA_character_
     ][,"on_disk" := as.logical(on_disk)
       ][task=="groupby" & solution%in%c("pandas","dask","spark") & batch<1558106628, "out_cols" := NA_integer_

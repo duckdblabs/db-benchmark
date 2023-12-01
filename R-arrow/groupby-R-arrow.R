@@ -7,8 +7,8 @@ source("./_helpers/helpers.R")
 stopifnot(requireNamespace("bit64", quietly=TRUE)) # used in chk to sum numeric columns
 .libPaths("./arrow/r-arrow") # tidyverse/dplyr#4641 ## leave it like here in case if this affects arrow pkg as well
 suppressPackageStartupMessages({
-  library("arrow", lib.loc="./arrow/r-arrow", warn.conflicts=FALSE)
-  library("dplyr", lib.loc="./arrow/r-arrow", warn.conflicts=FALSE)
+  library("arrow", lib.loc="./R-arrow/r-arrow", warn.conflicts=FALSE)
+  library("dplyr", lib.loc="./R-arrow/r-arrow", warn.conflicts=FALSE)
 })
 ver = packageVersion("arrow")
 git = ""
