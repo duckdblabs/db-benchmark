@@ -22,6 +22,9 @@ mv _control/data.csv _control/data.csv.original
 
 echo "task,data,nrow,k,na,sort,active" > _control/data.csv
 echo "groupby,G1_1e7_1e2_0_0,1e7,1e2,0,0,1" >> _control/data.csv
+# put this twice. clickhouse (for some reason), errors on the first attempt to run the benchmark
+# running this dataset twice will overwrite the old error file.
+echo "groupby,G1_1e7_1e2_0_0,1e7,1e2,0,0,1" >> _control/data.csv
 echo "groupby,G1_1e7_1e2_15_0,1e7,1e2,15,0,1" >> _control/data.csv
 echo "groupby,G1_1e9_1e2_0_0,1e9,1e2,0,0,1" >> _control/data.csv
 echo "join,J1_1e7_NA_0_0,1e7,NA,0,0,1" >> _control/data.csv
