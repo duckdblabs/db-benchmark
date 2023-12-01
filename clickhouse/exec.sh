@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-set -x
 
 # use this function to check error logs
 # sudo -u clickhouse clickhouse-server --config=/etc/clickhouse-server/config.xml
@@ -109,11 +108,11 @@ elif [ $1 == 'join' ]; then
   export RHS1
   export RHS2
   export RHS3
-  export ON_DISK
-  export THREADS
 else
   echo "clickhouse task $1 not implemented" >&2 && exit 1
 fi
+export ON_DISK
+export THREADS
 
 # cleanup timings from last run if they have not been cleaned up after parsing
 mkdir -p clickhouse/log
@@ -135,9 +134,11 @@ sleep 90
 sudo touch '/var/lib/clickhouse/flags/force_drop_table' && sudo chmod 666 '/var/lib/clickhouse/flags/force_drop_table'
 ch_active && echo '# clickhouse/exec.sh: finishing, cleaning up' && clickhouse-client --query "DROP TABLE IF EXISTS ans" || echo '# clickhouse/exec.sh: finishing, clickhouse server down, could not clean up'
 ch_active && clickhouse-client --query "DROP TABLE IF EXISTS $SRC_DATANAME" || echo '# clickhouse/exec.sh: finishing, clickhouse server down, could not clean up'
-ch_active && clickhouse-client --query "DROP TABLE IF EXISTS $RHS1" || echo '# clickhouse/exec.sh: finishing, clickhouse server down, could not clean up'
-ch_active && clickhouse-client --query "DROP TABLE IF EXISTS $RHS2" || echo '# clickhouse/exec.sh: finishing, clickhouse server down, could not clean up'
-ch_active && clickhouse-client --query "DROP TABLE IF EXISTS $RHS3" || echo '# clickhouse/exec.sh: finishing, clickhouse server down, could not clean up'
+if [ $1 == 'join' ]; then
+  ch_active && clickhouse-client --query "DROP TABLE IF EXISTS $RHS1" || echo '# clickhouse/exec.sh: finishing, clickhouse server down, could not clean up'
+  ch_active && clickhouse-client --query "DROP TABLE IF EXISTS $RHS2" || echo '# clickhouse/exec.sh: finishing, clickhouse server down, could not clean up'
+  ch_active && clickhouse-client --query "DROP TABLE IF EXISTS $RHS3" || echo '# clickhouse/exec.sh: finishing, clickhouse server down, could not clean up'
+fi;
 
 # stop server
 ch_stop && echo '# clickhouse/exec.sh: stopping server finished' || echo '# clickhouse/exec.sh: stopping server failed'

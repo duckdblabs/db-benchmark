@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-set -x
 source ./clickhouse/ch.sh
 
 SOLUTION=clickhouse
