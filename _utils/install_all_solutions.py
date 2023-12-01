@@ -44,7 +44,7 @@ for solution in sys.argv[1:]:
     else:
         if solution == "data.table":
             install_solution("datatable")
-        if solution == "clickhouse":
+        elif solution == "clickhouse":
             install_solution("clickhouse")
             install_solution("polars")
         else:
