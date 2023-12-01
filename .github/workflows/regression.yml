@@ -54,6 +54,14 @@ jobs:
       shell: bash
       run: sudo swapoff -a
 
+    - name: Run mini GroupBy benchmark if clickhouse
+      shell: bash
+      if: ${{ matrix.solution }} == "clickhouse" || ${{ solution }} == "all"
+      run: |
+        python3 _utils/prep_solutions.py --task=groupby --solution=clickhouse
+        source path.env
+        TEST_RUN=true ./run.sh
+
     - name: Run mini GroupBy benchmark
       shell: bash
       run: |
