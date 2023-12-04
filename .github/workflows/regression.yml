@@ -54,6 +54,10 @@ jobs:
       shell: bash
       run: sudo swapoff -a
 
+
+    # needed because clickhouse for some reason produces an error the first
+    # time a benchmark is run. The next benchmark run will work and overwrite the
+    # old benchmark files.
     - name: Run mini GroupBy benchmark if clickhouse
       shell: bash
       if: ${{ matrix.solution == 'clickhouse' || matrix.solution == 'all' }}
