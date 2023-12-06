@@ -6,7 +6,7 @@ get_report_status_file = function(path=getwd()) {
   file.path(path, "report-done")
 }
 get_report_solutions = function() {
-  c("collapse", "data.table", "dplyr", "pandas", "pydatatable", "spark", "dask", "juliadf", "juliads", "clickhouse", "cudf", "polars","arrow","duckdb", "duckdb-latest", "datafusion")
+  c("collapse", "data.table", "dplyr", "pandas", "pydatatable", "spark", "dask", "juliadf", "juliads", "clickhouse", "cudf", "polars", "duckdb", "duckdb-latest", "datafusion", "arrow", "R-arrow")
 }
 get_data_levels = function() {
   ## groupby
@@ -69,6 +69,9 @@ clean_time = function(d) {
   if (nrow(d[!nzchar(version) | is.na(version)]))
     stop("timings data contains NA or '' as version field, that should not happen")
   old_advanced_groupby_questions = c("median v3 sd v3 by id2 id4","max v1 - min v2 by id2 id4","largest two v3 by id2 id4","regression v1 v2 by id2 id4","sum v3 count by id1:id6")
+
+  # replace arrow with R-arrow (see https://github.com/duckdblabs/db-benchmark/pull/66)
+  d[which(solution == "arrow"),c("solution")] == "R-arrow"
   d[!nzchar(git), git := NA_character_
     ][,"on_disk" := as.logical(on_disk)
       ][task=="groupby" & solution%in%c("pandas","dask","spark") & batch<1558106628, "out_cols" := NA_integer_
@@ -243,9 +246,13 @@ transform = function(ld) {
 # all ----
 
 time_logs = function(path=getwd()) {
-  ct = clean_time(load_time(path=getwd()))
+  lt <- load_time(path=getwd())
+
+  ct = clean_time(lt)
   d = model_time(ct)
-  l = model_logs(clean_logs(load_logs(path=path)))
+  ll <- load_logs(path=path)
+  ll$solution[ll$solution == "arrow"] <- "R-arrow"
+  l = model_logs(clean_logs(ll))
   q = model_questions(clean_questions(load_questions(path=path)))
   
   lq = merge_logs_questions(l, q)

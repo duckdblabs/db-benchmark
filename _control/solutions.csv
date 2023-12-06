@@ -25,8 +25,8 @@ clickhouse,groupby
 clickhouse,join
 polars,groupby
 polars,join
-arrow,groupby
-arrow,join
+R-arrow,groupby
+R-arrow,join
 duckdb,groupby
 duckdb,join
 duckdb-latest,groupby
