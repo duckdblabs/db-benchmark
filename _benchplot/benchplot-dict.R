@@ -42,7 +42,7 @@ solution.dict = {list(
   "juliads" = list(name=c(short="IMD.jl", long="InMemoryDatasets.jl"), color=c(strong="#b80000", light="#ff1f1f")),
   "clickhouse" = list(name=c(short="clickhouse", long="ClickHouse"), color=c(strong="hotpink4", light="hotpink1")),
   "polars" = list(name=c(short="polars", long="Polars"), color=c(strong="deepskyblue4", light="deepskyblue3")),
-  "arrow" = list(name=c(short="arrow", long="Arrow"), color=c(strong="aquamarine3", light="aquamarine1")),
+  "R-arrow" = list(name=c(short="R-arrow", long="R-arrow"), color=c(strong="aquamarine3", light="aquamarine1")),
   "duckdb" = list(name=c(short="duckdb", long="DuckDB"), color=c(strong="#ddcd07", light="#fff100")),
   "duckdb-latest" = list(name=c(short="duckdb-latest", long="duckdb-latest"), color=c(strong="#ddcd07", light="#fff100")),
   "datafusion" = list(name=c(short="datafusion", long="Datafusion"), color=c(strong="deepskyblue4", light="deepskyblue3"))
@@ -199,7 +199,7 @@ groupby.syntax.dict = {list(
     "regression v1 v2 by id2 id4" = "DF.groupby(['id2','id4']).agg((pl.pearson_corr('v1','v2')**2).alias('r2')).collect()",
     "sum v3 count by id1:id6" = "DF.groupby(['id1','id2','id3','id4','id5','id6']).agg([pl.sum('v3').alias('v3'), pl.count('v1').alias('count')]).collect()"
   )},
-  "arrow" = {c(
+  "R-arrow" = {c(
     "sum v1 by id1" = "AT %>% group_by(id1) %>% summarise(v1=sum(v1, na.rm=TRUE))",
     "sum v1 by id1:id2" = "AT %>% group_by(id1, id2) %>% summarise(v1=sum(v1, na.rm=TRUE))",
     "sum v1 mean v3 by id3" = "AT %>% group_by(id3) %>% summarise(v1=sum(v1, na.rm=TRUE), v3=mean(v3, na.rm=TRUE))",
@@ -260,7 +260,7 @@ groupby.syntax.dict = {list(
   "juliads" =     list(),
   "clickhouse" =  list(),
   "polars"     =  list(),
-  "arrow"      =  list("Expression row_number() <= 2L not supported in Arrow; pulling data into R" = "max v1 - min v2 by id3", "Expression cor(v1, v2, ... is not supported in arrow; pulling data into R" = "regression v1 v2 by id2 id4"),
+  "R-arrow"      =  list("Expression row_number() <= 2L not supported in R-arrow; pulling data into R" = "max v1 - min v2 by id3", "Expression cor(v1, v2, ... is not supported in R-arrow; pulling data into R" = "regression v1 v2 by id2 id4"),
   "duckdb"     =  list(),
   "duckdb-latest"     =  list(),
   "datafusion" =  list()
@@ -309,7 +309,7 @@ groupby.data.exceptions = {list(                                                
   "polars" = {list(
     # "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0") # q10
   )},
-  "arrow" = {list(
+  "R-arrow" = {list(
     # "timeout" = c(), # q10
     "internal error" = c("G1_1e8_2e0_0_0", "G1_1e8_1e2_0_1", "G1_1e8_1e2_5_0", "G1_1e9_1e2_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0","G1_1e9_1e1_0_0", # inherits from dplyr
                          "G1_1e9_2e0_0_0"), # #190
@@ -413,7 +413,7 @@ join.syntax.dict = {list(
     "medium inner on factor" = "DF.merge(medium, on='id5')",
     "big inner on int" = "DF.merge(big, on='id3')"
   )},
-  "arrow" = {c(
+  "R-arrow" = {c(
     "small inner on int" = "inner_join(DF, small, by='id1')",
     "medium inner on int" = "inner_join(DF, medium, by='id2')",
     "medium outer on int" = "left_join(DF, medium, by='id2')",
@@ -454,7 +454,7 @@ join.query.exceptions = {list(
   "juliads" =     list(),
   "clickhouse" =  list(),
   "polars"     =  list(),
-  "arrow"      =  list(),
+  "R-arrow"      =  list(),
   "duckdb"     =  list(),
   "duckdb-latest"     =  list(),
   "datafusion" =  list()
@@ -496,7 +496,7 @@ join.data.exceptions = {list(                                                   
   "polars" = {list(
     "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")
   )},
-  "arrow" = {list(
+  "R-arrow" = {list(
     "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1", "J1_1e8_NA_0_0", "J1_1e8_NA_5_0", "J1_1e8_NA_0_1" )#,
     # "not yet implemented: #189" = c("J1_1e7_NA_0_0","J1_1e7_NA_5_0","J1_1e7_NA_0_1","J1_1e8_NA_0_0","J1_1e8_NA_5_0","J1_1e8_NA_0_1","J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")
   )},
