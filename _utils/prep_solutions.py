@@ -5,7 +5,7 @@ import csv
 SOLUTIONS_FILENAME = "_control/solutions.csv"
 RUN_CONF_FILENAME = "run.conf"
 
-SKIPPED_SOLUTIONS = ["clickhouse"]
+SKIPPED_SOLUTIONS = []
 
 
 def print_usage():
@@ -33,6 +33,8 @@ def main():
     solution = parse_solution()
     if solution == "all":
         solution = get_solutions(task)
+    if solution == "clickhouse":
+        solution = "clickhouse polars"
     update_run_conf_solutions(solution, task)
 
 def update_run_conf_solutions(solution_name_list, task):
