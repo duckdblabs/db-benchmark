@@ -30,7 +30,7 @@ Contribution and feedback are very welcome!
   - [x] [In Memory DataSets](https://github.com/sl-solution/InMemoryDatasets.jl)
   - [x] [Datafusion] (https://github.com/apache/arrow-datafusion)
 
-If you would like your solution to be included, feel free to file a PR with the necessary setup-_solution_/ver-_solution_/groupby-_solution_/join-_solution_ scripts. The team at duckdblabs approves the PR it will be merged.
+If you would like your solution to be included, feel free to file a PR with the necessary setup-_solution_/ver-_solution_/groupby-_solution_/join-_solution_ scripts. The team at DuckDB Labs approves the PR it will be merged.
 
 # Reproduce
 
@@ -91,7 +91,7 @@ Once the `db-benchmark-metal` directory is created, you will need to
 5. Generate the report to see how the results compare to other solutions. The report should be automatically generated. You can find it in `public`.
 6. Create your PR! Include the updates to the time.csv and logs.csv files
 
-The PR will then be reviewed by the DuckDBLabs team where we will run the benchmark again ourselves to validate the new results. If there aren't any questions, we will merge the PR and publish a new report!
+The PR will then be reviewed by the DuckDB Labs team where we will run the benchmark again ourselves to validate the new results. If there aren't any questions, we will merge the PR and publish a new report!
 
 
 # Example environment
