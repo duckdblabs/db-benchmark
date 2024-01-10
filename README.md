@@ -28,7 +28,7 @@ Contribution and feedback are very welcome!
   - [x] [DuckDB-latest](https://github.com/duckdb/duckdb)
   - [x] [DataFrames.jl](https://github.com/JuliaData/DataFrames.jl)
   - [x] [In Memory DataSets](https://github.com/sl-solution/InMemoryDatasets.jl)
-  - [x] [Datafusion] (https://github.com/apache/arrow-datafusion)
+  - [x] [Datafusion](https://github.com/apache/arrow-datafusion)
 
 If you would like your solution to be included, feel free to file a PR with the necessary setup-_solution_/ver-_solution_/groupby-_solution_/join-_solution_ scripts. The team at DuckDB Labs approves the PR it will be merged.
 
