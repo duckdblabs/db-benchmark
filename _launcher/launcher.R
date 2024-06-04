@@ -14,10 +14,9 @@ readret = function(x) {
 file.ext = function(x) {
   ans = switch(
     x,
-    "collapse"=, "data.table"=, "dplyr"=, "h2o"=, "arrow"=, "duckdb"="R", "duckdb-latest"="R",
+    "collapse"=, "data.table"=, "dplyr"=, "h2o"=, "R-arrow"=, "duckdb"="R", "duckdb-latest"="R",
     "pandas"=, "spark"=, "pydatatable"=, "modin"=, "dask"=, "datafusion"=, "polars"="py",
-    "clickhouse"="sql",
-    "juliadf"="jl", "juliads"="jl",
+    "clickhouse"="sh", "juliadf"="jl", "juliads"="jl",
   )
   if (is.null(ans)) stop(sprintf("solution %s does not have file extension defined in file.ext helper function", x))
   ans
@@ -201,7 +200,10 @@ launch = function(dt, mockup, out_dir="out") {
         }
         cmd = sprintf("%s > %s 2> %s", solution.cmd(s, t, d), out_file, err_file) # ./_launcher/solution.R ... > out 2> err
         shcmd = sprintf("/bin/bash -c \"%s%s\"", venv, cmd) # this is needed to source python venv
-# 	cat(mockup)
+        if (mockup) {
+          cat(cmd)
+          cat(shcmd)
+        }
         if (!mockup) {
           warn = NULL
           p = proc.time()[[3L]]

@@ -275,7 +275,7 @@ Once the `db-benchmark-metal` directory is created, you will need to
 5. Generate the report to see how the results compare to other solutions
 6. Create your PR! (make sure the new time.csv and logs.csv files are included!)
 
-The PR will then be reviewed by the DuckDBLabs team where we will run the benchmark ourselves to validate the new results. If there aren't any questions, we will merge your PR and publish a new report!
+The PR will then be reviewed by the DuckDB Labs team where we will run the benchmark ourselves to validate the new results. If there aren't any questions, we will merge your PR and publish a new report!
 
 
 ## Notes
@@ -313,7 +313,7 @@ We limit the scope to what can be achieved on a single machine. Laptop size memo
 
 ## Why db-benchmark?
 
-Because we have been asked many times to do so, the first task and initial motivation for this page, was to update the benchmark designed and run by [Matt Dowle](https://twitter.com/MattDowle) (creator of [data.table](https://github.com/Rdatatable/data.table)) in 2014 [here](https://github.com/Rdatatable/data.table/wiki/Benchmarks-%3A-Grouping). The methodology and reproducible code can be obtained there. Exact code of this report and benchmark script can be found at [h2oai/db-benchmark](https://github.com/h2oai/db-benchmark) created by [Jan Gorecki](https://github.com/jangorecki) funded by [H2O.ai](https://www.h2o.ai). H2O.ai stopped supporting the benchmark in 2021. In 2023, DuckdbLabs decided to start maintaining the benchmark, and code can be found at [duckdblabs/db-benchmark](https://github.com/duckdblabs/db-benchmark).
+Because we have been asked many times to do so, the first task and initial motivation for this page, was to update the benchmark designed and run by [Matt Dowle](https://twitter.com/MattDowle) (creator of [data.table](https://github.com/Rdatatable/data.table)) in 2014 [here](https://github.com/Rdatatable/data.table/wiki/Benchmarks-%3A-Grouping). The methodology and reproducible code can be obtained there. Exact code of this report and benchmark script can be found at [h2oai/db-benchmark](https://github.com/h2oai/db-benchmark) created by [Jan Gorecki](https://github.com/jangorecki) funded by [H2O.ai](https://www.h2o.ai). H2O.ai stopped supporting the benchmark in 2021. In 2023, DuckDB Labs decided to start maintaining the benchmark, and code can be found at [duckdblabs/db-benchmark](https://github.com/duckdblabs/db-benchmark).
 
 ------
 

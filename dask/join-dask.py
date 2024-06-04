@@ -43,10 +43,10 @@ print("using disk memory-mapped data storage" if on_disk else "using in-memory d
 #  medium = dd.read_parquet(src_jn_y[1], engine="fastparquet")
 #  big = dd.read_parquet(src_jn_y[2], engine="fastparquet")
 #else:
-x = dd.read_csv(src_jn_x, dtype={'id1':'Int32','id2':'Int32','id3':'Int32','id4':'category','id5':'category','id6':'category','v1':'float64'}).persist()
-small = dd.read_csv(src_jn_y[0], dtype={'id1':'Int32','id4':'category','v2':'float64'}).persist()
-medium = dd.read_csv(src_jn_y[1], dtype={'id1':'Int32','id2':'Int32','id4':'category','id5':'category','v2':'float64'}).persist()
-big = dd.read_csv(src_jn_y[2], dtype={'id1':'Int32','id2':'Int32','id3':'Int32','id4':'category','id5':'category','id6':'category','v2':'float64'}).persist()
+x = dd.read_csv(src_jn_x, engine="pyarrow").persist()
+small = dd.read_csv(src_jn_y[0], engine="pyarrow").persist()
+medium = dd.read_csv(src_jn_y[1], engine="pyarrow").persist()
+big = dd.read_csv(src_jn_y[2], engine="pyarrow").persist()
 
 in_rows = len(x)
 print(in_rows, flush=True)
