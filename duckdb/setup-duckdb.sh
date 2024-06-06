@@ -11,7 +11,7 @@ Rscript -e 'install.packages("DBI", lib="./duckdb/r-duckdb", repos = "http://clo
 cd duckdb
 git clone https://github.com/duckdb/duckdb-r.git
 cd duckdb-r
-git checkout v0.8.1-3
+git checkout v1.0.0
 cd ..
 ncores=`python3 -c 'import multiprocessing as mp; print(mp.cpu_count())'`
 MAKE="make -j$ncores" R CMD INSTALL -l "./r-duckdb" duckdb-r
