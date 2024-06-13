@@ -249,6 +249,7 @@ time_logs = function(path=getwd()) {
   lt <- load_time(path=getwd())
 
   ct = clean_time(lt)
+  ct = ct %>% filter(!(solution == 'polars' & question == 'sum v3 count by id1:id6'))
   d = model_time(ct)
   ll <- load_logs(path=path)
   ll$solution[ll$solution == "arrow"] <- "R-arrow"
