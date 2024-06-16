@@ -26,7 +26,7 @@ gc()
 # Setting collapse options: namespace masking and performance
 oldopts <- set_collapse(nthreads = max(data.table::getDTthreads(), 4), 
                         mask = "all",
-                        sort = endsWith(data_name, "_1") || nrow(x) > 2e8, 
+                        sort = endsWith(data_name, "_1"), # || nrow(x) > 2e8, 
                         na.rm = anyNA(num_vars(x)), 
                         stable.algo = FALSE)
 
