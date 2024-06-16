@@ -1,15 +1,18 @@
 # script to format mount and copy data.
 
+# remove a leftover instance mount
+rm -rf ~/db-benchmark-metal
+
+# format the mount
 sudo mkfs -t xfs /dev/nvme0n1
 
-mkdir db-benchmark-metal
+mkdir ~/db-benchmark-metal
 # mount the nvme volumn
 sudo mount /dev/nvme0n1 ~/db-benchmark-metal
-# change ownsership of the volumn
-sudo chown -R ubuntu db-benchmark-metal/
+# change ownsership of the volume
+sudo chown -R ubuntu ~/db-benchmark-metal/
 
-cd db-benchmark-metal
-git clone https://github.com/duckdblabs/db-benchmark.git .
+git clone https://github.com/duckdblabs/db-benchmark.git ~/db-benchmark-metal
 
 # if you have an EBS volume, you can generate the data once, save it on the ebs volume, and transfer it
 # each time.

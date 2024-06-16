@@ -16,6 +16,9 @@ sudo apt-get -qq install openjdk-8-jdk
 sudo apt-get install -y zlib1g-dev
 sudo apt-get install -y pandoc
 
+# update virtualenv
+python3 -m pip install virtualenv
+
 # sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
 # sudo add-apt-repository "deb [arch=amd64,i386] https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/"
 

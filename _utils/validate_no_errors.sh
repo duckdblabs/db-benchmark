@@ -1,10 +1,10 @@
-if [ $(grep -i "error" out/run_*.err | wc -l) = 0 ]
+if [ $(grep -i 'error|exception' out/run_*.err | wc -l) = 0 ]
 then
 	# no true errors found, print last line of each output script
     echo "No Errors found in run_*.err logs"
 else
 	echo "The following errors have been found. Failing check"
-	grep -i "error" out/*.err
+	grep -i "error|exception" out/*.err
 	exit 1
 fi
 

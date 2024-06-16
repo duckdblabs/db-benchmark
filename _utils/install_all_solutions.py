@@ -26,9 +26,7 @@ def install_all_solutions():
     with open(SOLUTIONS_FILENAME, newline="") as solutions_file:
         solutions = csv.DictReader(solutions_file, delimiter=',')
         for row in solutions:
-            if row['solution'] == "clickhouse":
-                continue
-            elif row['solution'] == "data.table":
+            if row['solution'] == "data.table":
                 install_solutions.add("datatable")
             else:
                 install_solutions.add(row['solution'])
@@ -44,10 +42,11 @@ for solution in sys.argv[1:]:
     if solution.strip() == "all":
         install_all_solutions()
     else:
-        if solution == "clickhouse":
-            continue
-        elif solution == "data.table":
+        if solution == "data.table":
             install_solution("datatable")
+        elif solution == "clickhouse":
+            install_solution("clickhouse")
+            install_solution("polars")
         else:
             install_solution(solution)
         

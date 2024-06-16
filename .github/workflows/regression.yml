@@ -17,7 +17,7 @@ jobs:
   strategy:
     fail-fast: false
     matrix:
-      solution: [data.table, collapse, dplyr, pandas, pydatatable, spark, juliadf, juliads, polars, arrow, duckdb, duckdb-latest, datafusion]
+      solution: [data.table, collapse, dplyr, pandas, pydatatable, spark, juliadf, juliads, polars, R-arrow, duckdb, duckdb-latest, datafusion, dask, clickhouse]
   name: Regression Tests solo solutions
   runs-on: ubuntu-20.04
   env:
@@ -53,6 +53,18 @@ jobs:
     - name: Turn swap off
       shell: bash
       run: sudo swapoff -a
+
+
+    # needed because clickhouse for some reason produces an error the first
+    # time a benchmark is run. The next benchmark run will work and overwrite the
+    # old benchmark files.
+    - name: Run mini GroupBy benchmark if clickhouse
+      shell: bash
+      if: ${{ matrix.solution == 'clickhouse' || matrix.solution == 'all' }}
+      run: |
+        python3 _utils/prep_solutions.py --task=groupby --solution=clickhouse
+        source path.env
+        TEST_RUN=true ./run.sh
 
     - name: Run mini GroupBy benchmark
       shell: bash
