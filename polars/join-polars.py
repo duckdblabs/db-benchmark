@@ -27,20 +27,20 @@ if len(src_jn_y) != 3:
 print("loading datasets " + data_name + ", " + y_data_name[0] + ", " + y_data_name[2] + ", " + y_data_name[2], flush=True)
 
 with pl.StringCache():
-  x = (pl.read_csv(src_jn_x, dtypes={"id1":pl.Int32, "id2":pl.Int32, "id3":pl.Int32, "v1":pl.Float64}, rechunk=True)
+  x = (pl.read_csv(src_jn_x, dtypes={"id1":pl.Int32, "id2":pl.Int32, "id3":pl.Int32, "v1":pl.Float32}, rechunk=True)
        .with_columns(
       pl.col(["id4", "id5", "id6"]).cast(pl.Categorical)
   )
    )
-  small = pl.read_csv(src_jn_y[0], dtypes={"id1":pl.Int32, "v2":pl.Float64}, rechunk=True)
+  small = pl.read_csv(src_jn_y[0], dtypes={"id1":pl.Int32, "v2":pl.Float32}, rechunk=True)
   small = small.with_columns(
     pl.col("id4").cast(pl.Categorical)
   )
-  medium = (pl.read_csv(src_jn_y[1], dtypes={"id1":pl.Int32, "id2":pl.Int32, "v2":pl.Float64}, rechunk=True)
+  medium = (pl.read_csv(src_jn_y[1], dtypes={"id1":pl.Int32, "id2":pl.Int32, "v2":pl.Float32}, rechunk=True)
            .with_columns(
             pl.col(["id4", "id5"]).cast(pl.Categorical),
   ))
-  big = (pl.read_csv(src_jn_y[2], dtypes={"id1":pl.Int32, "id2":pl.Int32, "id3":pl.Int32, "v2":pl.Float64}, rechunk=True)
+  big = (pl.read_csv(src_jn_y[2], dtypes={"id1":pl.Int32, "id2":pl.Int32, "id3":pl.Int32, "v2":pl.Float32}, rechunk=True)
          .with_columns(
     pl.col(["id4", "id5", "id6"]).cast(pl.Categorical)
   ))
