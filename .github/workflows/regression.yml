@@ -54,7 +54,6 @@ jobs:
       shell: bash
       run: sudo swapoff -a
 
-
     # needed because clickhouse for some reason produces an error the first
     # time a benchmark is run. The next benchmark run will work and overwrite the
     # old benchmark files.
@@ -64,21 +63,21 @@ jobs:
       run: |
         python3 _utils/prep_solutions.py --task=groupby --solution=clickhouse
         source path.env
-        TEST_RUN=true ./run.sh
+        TEST_RUN=true TEST_MOUNT_DIR=$GITHUB_WORKSPACE ./run.sh
 
     - name: Run mini GroupBy benchmark
       shell: bash
       run: |
         python3 _utils/prep_solutions.py --task=groupby --solution=${{ matrix.solution }}
         source path.env
-        TEST_RUN=true ./run.sh
+        TEST_RUN=true TEST_MOUNT_DIR=$GITHUB_WORKSPACE ./run.sh
 
     - name: Run mini Join benchmark
       shell: bash
       run: |
         python3 _utils/prep_solutions.py --task=join --solution=${{ matrix.solution }}
         source path.env
-        TEST_RUN=true ./run.sh
+        TEST_RUN=true TEST_MOUNT_DIR=$GITHUB_WORKSPACE ./run.sh
 
     - name: Validate benchmark results and report generation
       shell: bash
@@ -147,14 +146,14 @@ jobs:
       run: |
         python3 _utils/prep_solutions.py --task=groupby --solution=all
         source path.env
-        TEST_RUN=true ./run.sh
+        TEST_RUN=true TEST_MOUNT_DIR=$GITHUB_WORKSPACE ./run.sh
 
     - name: Run mini Join benchmark
       shell: bash
       run: |
         python3 _utils/prep_solutions.py --task=join --solution=all
         source path.env
-        TEST_RUN=true ./run.sh
+        TEST_RUN=true TEST_MOUNT_DIR=$GITHUB_WORKSPACE ./run.sh
 
     - name: Validate benchmark results and report generation
       shell: bash

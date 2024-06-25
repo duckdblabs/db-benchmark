@@ -44,7 +44,7 @@ source ./path.env
 
 if [[ $TEST_RUN == "true" ]]
 then
-    export MOUNT_POINT=$HOME
+    export MOUNT_POINT=$TEST_MOUNT_DIR
 fi
 
 # upgrade tools and VERSION, REVISION metadata files
