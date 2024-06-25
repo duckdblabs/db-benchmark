@@ -30,7 +30,7 @@ Contribution and feedback are very welcome!
   - [x] [In Memory DataSets](https://github.com/sl-solution/InMemoryDatasets.jl)
   - [x] [Datafusion](https://github.com/apache/arrow-datafusion)
 
-If you would like your solution to be included, feel free to file a PR with the necessary setup-_solution_/ver-_solution_/groupby-_solution_/join-_solution_ scripts. The team at DuckDB Labs approves the PR it will be merged.
+If you would like your solution to be included, feel free to file a PR with the necessary setup-_solution_/ver-_solution_/groupby-_solution_/join-_solution_ scripts. If the team at DuckDB Labs approves the PR it will be merged. In the interest of transparency and fairness, only results from open-source data-science tools will be merged.
 
 # Reproduce
 
@@ -104,3 +104,7 @@ The PR will then be reviewed by the DuckDB Labs team where we will run the bench
 Timings for solutions from before the fork have been deleted. You can still view them on the original [h2oai/db-benchmark fork](https://github.com/h2oai/db-benchmark). Including these timings in report generation resulted in errors, and since all libraries have been updated and benchmarked using new hardware, the decision was made to start a new results file. Timings for some solutions might be missing for particular data sizes or questions. Some functions are not yet implemented in all solutions so we were unable to answer all questions in all solutions. Some solutions might also run out of memory when running benchmark script which results the process to be killed by OS. There is also a timeout for single benchmark script to run, once the timeout value is reached script is terminated.
 Please check [_exceptions_](https://github.com/h2oai/db-benchmark/issues?q=is%3Aissue+is%3Aopen+label%3Aexceptions) label in the original h2oai repository for a list of issues/defects in solutions, that makes us unable to provide all timings.
 There is also [_no documentation_](https://github.com/h2oai/db-benchmark/labels/no%20documentation) label that lists issues that are blocked by missing documentation in solutions we are benchmarking.
+
+# Notice
+
+In the interest of transparency and fairness, only results from open-source data-science tools will be included in the benchmark. 
