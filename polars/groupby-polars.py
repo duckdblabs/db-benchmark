@@ -28,9 +28,9 @@ with pl.StringCache():
          .with_columns(pl.col(["id1", "id2", "id3"]).cast(pl.Categorical)))
 
 in_rows = x.shape[0]
-x.write_ipc(f"{mount_point}/tmp/tmp.ipc")
+x.write_ipc(f"{mount_point}/tmp.ipc")
 del x
-x = pl.read_ipc(f"{mount_point}/tmp/tmp.ipc", memory_map=True)
+x = pl.read_ipc(f"{mount_point}/tmp.ipc", memory_map=True)
 x = x.lazy()
 
 # materialize
