@@ -42,7 +42,7 @@ echo "# Benchmark run $BATCH started"
 source ./run.conf
 source ./path.env
 
-if [ $TEST_RUN == "true" ]
+if [[ $TEST_RUN == "true" ]]
 then
     export MOUNT_POINT=$HOME
 fi
