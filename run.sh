@@ -42,6 +42,7 @@ echo "# Benchmark run $BATCH started"
 source ./run.conf
 source ./path.env
 
+# if running on github actions, mount_point needs a special initialization.
 if [[ $TEST_RUN == "true" ]]
 then
     export MOUNT_POINT=$TEST_MOUNT_DIR
