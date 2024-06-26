@@ -50,6 +50,8 @@ print(len(small), flush=True)
 print(len(medium), flush=True)
 print(len(big), flush=True)
 
+mount_point = os.environ["MOUNT_POINT"]
+
 with pl.StringCache():
   x.write_ipc(f"{mount_point}/polars/x.ipc")
   del x
