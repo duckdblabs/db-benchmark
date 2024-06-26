@@ -249,8 +249,6 @@ time_logs = function(path=getwd()) {
   lt <- load_time(path=getwd())
 
   ct = clean_time(lt)
-  # https://github.com/pola-rs/polars/issues/16937
-  ct = ct %>% filter(!(solution == 'polars' & question == 'sum v3 count by id1:id6'))
   # remove duckdb-latest for now
   ct = ct %>% filter(!(solution == 'duckdb-latest'))
   d = model_time(ct)
