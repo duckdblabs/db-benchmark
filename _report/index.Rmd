@@ -51,7 +51,6 @@ if (nrow(lld_unfinished)) {
 
 dt_groupby = lld[task=="groupby"][substr(data,1,2)=="G1"]
 dt_join = lld[task=="join"]
-dt_groupby2014 = lld[task=="groupby2014"]
 ```
 
 ```{r helpers}
@@ -97,10 +96,6 @@ data_name = get_data_levels()[["join"]]
 loop_benchplot(dt_join, report_name="join", syntax.dict=join.syntax.dict, exceptions=join.exceptions, solution.dict=solution.dict, data_namev=data_name, q_groupv=c("basic"), title.txt.fun = header_title_fun, question.txt.fun = join_q_title_fun, cutoff = "spark", pending = "Modin")
 ```
 
-```{r report_groupby2014, message=FALSE}
-data_name = get_data_levels()[["groupby2014"]]
-loop_benchplot(dt_groupby2014, report_name="groupby2014", syntax.dict=groupby2014.syntax.dict, exceptions=groupby2014.exceptions, solution.dict=solution.dict, data_namev=data_name, q_groupv="basic", title.txt.fun = header_title_fun, question.txt.fun = groupby_q_title_fun, cutoff = "spark", pending = character())
-```
 
 ## Task {.tabset .tabset-fade .tabset-pills}
 
@@ -175,26 +170,6 @@ loop_benchplot(dt_groupby2014, report_name="groupby2014", syntax.dict=groupby201
 ![](./join/J1_1e9_NA_0_0_advanced.png)
 -->
 
-### groupby2014 {.tabset .tabset-fade .tabset-pills}
-
-#### 0.5 GB
-
-##### **basic questions**
-
-![](./groupby2014/G0_1e7_1e2_0_0_basic.png)
-
-#### 5 GB
-
-##### **basic questions**
-
-![](./groupby2014/G0_1e8_1e2_0_0_basic.png)
-
-#### 50 GB {.active}
-
-##### **basic questions**
-
-![](./groupby2014/G0_1e9_1e2_0_0_basic.png)
-
 ---
 
 ## Details {.tabset .tabset-fade .tabset-pills}
@@ -240,26 +215,7 @@ rpivotTable::rpivotTable(
 )
 ```
 
-### groupby2014
 
-This task reflects precisely grouping benchmark made by Matt Dowle in 2014 [here](https://github.com/Rdatatable/data.table/wiki/Benchmarks-%3A-Grouping). Differences are well summarized in the following [post on Data Science stackexchange](https://datascience.stackexchange.com/a/40532/10588).
-
-### groupby2014 timings
-
-```{r pivot_groupby2014}
-sdcols = c("solution","question_group","question","data","in_rows","time_sec_1","time_sec_2","version","git","chk_time_sec_1","na_time_sec","out_rows","out_cols")
-data = dt_groupby2014[, .SD, .SDcols=sdcols]
-rpivotTable::rpivotTable(
-  data,
-  rows = c("in_rows","question"),
-  cols = "solution",
-  aggregatorName = "Average",
-  vals = "time_sec_1",
-  height = "100%",
-  sorters = make_sorters(data),
-  unusedAttrsVertical = TRUE
-)
-```
 ## Requesting an updated run
 
 The benchmark will now be updated with PR requests. To publish new results for a solution(s), you can open a PR with changes to solutions scripts or VERSION files, with updates to the time.csv and log.csv files of a run on a c6id.metal machine. To facilitate creating an instance identical to the one with the current results, the script `_utils/format_and_mount.sh`  was created. The script does the following 

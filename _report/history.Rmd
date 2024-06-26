@@ -108,26 +108,6 @@ plot(d, "data.table", 1e8, "join")
 plot(d, "data.table", 1e9, "join")
 ```
 
-#### groupby2014 {.tabset .tabset-fade .tabset-pills}
-
-##### 0.5 GB
-
-```{r datatable.groupby2014.1e7}
-plot(d, "data.table", 1e7, "groupby2014")
-```
-
-##### 5 GB
-
-```{r datatable.groupby2014.1e8}
-plot(d, "data.table", 1e8, "groupby2014")
-```
-
-##### 50 GB {.active}
-
-```{r datatable.groupby2014.1e9}
-plot(d, "data.table", 1e9, "groupby2014")
-```
-
 ### pydatatable {.tabset .tabset-fade .tabset-pills}
 
 #### groupby {.tabset .tabset-fade .tabset-pills}
@@ -212,26 +192,6 @@ plot(d, "pandas", 1e8, "join")
 plot(d, "pandas", 1e9, "join")
 ```
 
-#### groupby2014 {.tabset .tabset-fade .tabset-pills}
-
-##### 0.5 GB
-
-```{r pandas.groupby2014.1e7}
-plot(d, "pandas", 1e7, "groupby2014")
-```
-
-##### 5 GB
-
-```{r pandas.groupby2014.1e8}
-plot(d, "pandas", 1e8, "groupby2014")
-```
-
-##### 50 GB {.active}
-
-```{r pandas.groupby2014.1e9}
-plot(d, "pandas", 1e9, "groupby2014")
-```
-
 ### dplyr {.tabset .tabset-fade .tabset-pills}
 
 #### groupby {.tabset .tabset-fade .tabset-pills}
@@ -274,25 +234,6 @@ plot(d, "dplyr", 1e8, "join")
 plot(d, "dplyr", 1e9, "join")
 ```
 
-#### groupby2014 {.tabset .tabset-fade .tabset-pills}
-
-##### 0.5 GB
-
-```{r dplyr.groupby2014.1e7}
-plot(d, "dplyr", 1e7, "groupby2014")
-```
-
-##### 5 GB
-
-```{r dplyr.groupby2014.1e8}
-plot(d, "dplyr", 1e8, "groupby2014")
-```
-
-##### 50 GB {.active}
-
-```{r dplyr.groupby2014.1e9}
-plot(d, "dplyr", 1e9, "groupby2014")
-```
 
 ### dask {.tabset .tabset-fade .tabset-pills}
 

@@ -11,7 +11,7 @@ mkdir -p ./duckdb/r-duckdb
 cd duckdb
 git clone https://github.com/duckdb/duckdb-r
 cd duckdb-r 
-git checkout v0.8.1
+git checkout v1.0.0
 cd ..
 ncores=$(nproc --all)
 MAKE="make -j$ncores" R CMD INSTALL -l "./r-duckdb" duckdb-r
