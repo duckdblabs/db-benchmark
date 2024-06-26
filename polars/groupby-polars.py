@@ -29,7 +29,7 @@ with pl.StringCache():
 in_rows = x.shape[0]
 x.write_ipc("/tmp/tmp.ipc")
 del x
-x = pl.read_ipc("/tmp/tmp.ipc", memory_map=True)
+x = pl.read_ipc("tmp.ipc", memory_map=True)
 x = x.lazy()
 
 # materialize
@@ -276,7 +276,7 @@ del ans
 question = "sum v3 count by id1:id6" # q10
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.group_by(["id1","id2","id3","id4","id5","id6"]).agg([pl.sum("v3").alias("v3"), pl.count("v1").alias("count")]).collect()
+ans = x.group_by(["id1","id2","id3","id4","id5","id6"]).agg([pl.sum("v3").alias("v3"), pl.len().alias("count")]).collect()
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -287,7 +287,7 @@ write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_row
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.group_by(["id1","id2","id3","id4","id5","id6"]).agg([pl.sum("v3").alias("v3"), pl.count("v1").alias("count")]).collect()
+ans = x.group_by(["id1","id2","id3","id4","id5","id6"]).agg([pl.sum("v3").alias("v3"), pl.len().alias("count")]).collect()
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
