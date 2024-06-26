@@ -18,18 +18,19 @@ fun = ".groupby"
 cache = "TRUE"
 on_disk = "FALSE"
 
+mount_point = os.environ["MOUNT_POINT"]
 data_name = os.environ["SRC_DATANAME"]
 src_grp = os.path.join("data", data_name + ".csv")
 print("loading dataset %s" % data_name, flush=True)
 
 with pl.StringCache():
-    x = (pl.read_csv(src_grp, dtypes={"id4":pl.Int32, "id5":pl.Int32, "id6":pl.Int32, "v1":pl.Int32, "v2":pl.Int32, "v3":pl.Float64}, low_memory=True)
+    x = (pl.read_csv(src_grp, schema_overrides={"id4":pl.Int32, "id5":pl.Int32, "id6":pl.Int32, "v1":pl.Int32, "v2":pl.Int32, "v3":pl.Float64}, low_memory=True)
          .with_columns(pl.col(["id1", "id2", "id3"]).cast(pl.Categorical)))
 
 in_rows = x.shape[0]
-x.write_ipc("/tmp/tmp.ipc")
+x.write_ipc(f"{mount_point}/polars/tmp.ipc")
 del x
-x = pl.read_ipc("tmp.ipc", memory_map=True)
+x = pl.read_ipc(f"{mount_point}/polars/tmp.ipc", memory_map=True)
 x = x.lazy()
 
 # materialize

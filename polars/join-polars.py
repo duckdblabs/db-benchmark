@@ -27,20 +27,20 @@ if len(src_jn_y) != 3:
 print("loading datasets " + data_name + ", " + y_data_name[0] + ", " + y_data_name[2] + ", " + y_data_name[2], flush=True)
 
 with pl.StringCache():
-  x = (pl.read_csv(src_jn_x, dtypes={"id1":pl.Int32, "id2":pl.Int32, "id3":pl.Int32, "v1":pl.Float64})
+  x = (pl.read_csv(src_jn_x, schema_overrides={"id1":pl.Int32, "id2":pl.Int32, "id3":pl.Int32, "v1":pl.Float64})
        .with_columns(
       pl.col(["id4", "id5", "id6"]).cast(pl.Categorical)
   )
    )
-  small = pl.read_csv(src_jn_y[0], dtypes={"id1":pl.Int32, "v2":pl.Float64})
+  small = pl.read_csv(src_jn_y[0], schema_overrides={"id1":pl.Int32, "v2":pl.Float64})
   small = small.with_columns(
     pl.col("id4").cast(pl.Categorical)
   )
-  medium = (pl.read_csv(src_jn_y[1], dtypes={"id1":pl.Int32, "id2":pl.Int32, "v2":pl.Float64})
+  medium = (pl.read_csv(src_jn_y[1], schema_overrides={"id1":pl.Int32, "id2":pl.Int32, "v2":pl.Float64})
            .with_columns(
             pl.col(["id4", "id5"]).cast(pl.Categorical),
   ))
-  big = (pl.read_csv(src_jn_y[2], dtypes={"id1":pl.Int32, "id2":pl.Int32, "id3":pl.Int32, "v2":pl.Float64})
+  big = (pl.read_csv(src_jn_y[2], schema_overrides={"id1":pl.Int32, "id2":pl.Int32, "id3":pl.Int32, "v2":pl.Float64})
          .with_columns(
     pl.col(["id4", "id5", "id6"]).cast(pl.Categorical)
   ))
@@ -50,25 +50,27 @@ print(len(small), flush=True)
 print(len(medium), flush=True)
 print(len(big), flush=True)
 
+mount_point = os.environ["MOUNT_POINT"]
+
 with pl.StringCache():
-  x.write_ipc("/tmp/x.ipc")
+  x.write_ipc(f"{mount_point}/polars/x.ipc")
   del x
-  x = pl.read_ipc("/tmp/x.ipc", memory_map=True)
+  x = pl.read_ipc(f"{mount_point}/polars/x.ipc", memory_map=True)
   x = x.lazy()
 
-  small.write_ipc("/tmp/small.ipc")
+  small.write_ipc(f"{mount_point}/polars/small.ipc")
   del small
-  small = pl.read_ipc("/tmp/small.ipc", memory_map=True)
+  small = pl.read_ipc(f"{mount_point}/polars/small.ipc", memory_map=True)
   small = small.lazy()
 
-  medium.write_ipc("/tmp/medium.ipc")
+  medium.write_ipc(f"{mount_point}/polars/medium.ipc")
   del medium
-  medium = pl.read_ipc("/tmp/medium.ipc", memory_map=True)
+  medium = pl.read_ipc(f"{mount_point}/polars/medium.ipc", memory_map=True)
   medium = medium.lazy()
 
-  big.write_ipc("/tmp/big.ipc")
+  big.write_ipc(f"{mount_point}/polars/big.ipc")
   del big
-  big = pl.read_ipc("/tmp/big.ipc", memory_map=True)
+  big = pl.read_ipc(f"{mount_point}/polars/big.ipc", memory_map=True)
   big = big.lazy()
 
 # materialize
