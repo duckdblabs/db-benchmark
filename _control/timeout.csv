@@ -1,10 +1,10 @@
 task,in_rows,minutes
-groupby,1e7,60
-groupby,1e8,120
-groupby,1e9,180
-join,1e7,120
-join,1e8,240
-join,1e9,240
+groupby,1e7,10
+groupby,1e8,30
+groupby,1e9,60
+join,1e7,10
+join,1e8,30
+join,1e9,60
 groupby2014,1e7,60
 groupby2014,1e8,120
 groupby2014,1e9,180
