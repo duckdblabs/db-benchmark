@@ -144,7 +144,7 @@ fun = "inner_join"
 
 attach_and_use(con, 'q1.db', 'q1')
 t = system.time({
-  dbExecute(con, "CREATE TABLE q1.ans AS SELECT x.*, small.id4 AS small_id4, v2 FROM x JOIN small USING (id1)")
+  dbExecute(con, "CREATE TEMP TABLE q1.ans AS SELECT x.*, small.id4 AS small_id4, v2 FROM x JOIN small USING (id1)")
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM q1.ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM q1.ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
@@ -154,7 +154,7 @@ invisible(dbExecute(con, "DROP TABLE IF EXISTS q1.ans"))
 detach_and_drop(con, 'q1.db', 'q1')
 attach_and_use(con, 'q1.db', 'q1')
 t = system.time({
-  dbExecute(con, "CREATE TABLE q1.ans AS SELECT x.*, small.id4 AS small_id4, v2 FROM x JOIN small USING (id1)")
+  dbExecute(con, "CREATE TEMP TABLE q1.ans AS SELECT x.*, small.id4 AS small_id4, v2 FROM x JOIN small USING (id1)")
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM q1.ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM q1.ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
@@ -171,7 +171,7 @@ fun = "inner_join"
 
 attach_and_use(con, 'q2.db', 'q2')
 t = system.time({
-  dbExecute(con, "CREATE TABLE q2.ans AS SELECT x.*, medium.id1 AS medium_id1, medium.id4 AS medium_id4, medium.id5 AS medium_id5, v2 FROM x JOIN medium USING (id2)")
+  dbExecute(con, "CREATE TEMP TABLE q2.ans AS SELECT x.*, medium.id1 AS medium_id1, medium.id4 AS medium_id4, medium.id5 AS medium_id5, v2 FROM x JOIN medium USING (id2)")
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM q2.ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM q2.ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
@@ -181,7 +181,7 @@ invisible(dbExecute(con, "DROP TABLE IF EXISTS q2.ans"))
 detach_and_drop(con, 'q2.db', 'q2')
 attach_and_use(con, 'q2.db', 'q2')
 t = system.time({
-  dbExecute(con, "CREATE TABLE q2.ans AS SELECT x.*, medium.id1 AS medium_id1, medium.id4 AS medium_id4, medium.id5 AS medium_id5, v2 FROM x JOIN medium USING (id2)")
+  dbExecute(con, "CREATE TEMP TABLE q2.ans AS SELECT x.*, medium.id1 AS medium_id1, medium.id4 AS medium_id4, medium.id5 AS medium_id5, v2 FROM x JOIN medium USING (id2)")
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM q2.ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM q2.ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
@@ -197,7 +197,7 @@ fun = "left_join"
 
 attach_and_use(con, 'q3.db', 'q3')
 t = system.time({
-  dbExecute(con, "CREATE TABLE q3.ans AS SELECT x.*, medium.id1 AS medium_id1, medium.id4 AS medium_id4, medium.id5 AS medium_id5, v2 FROM x LEFT JOIN medium USING (id2)")
+  dbExecute(con, "CREATE TEMP TABLE q3.ans AS SELECT x.*, medium.id1 AS medium_id1, medium.id4 AS medium_id4, medium.id5 AS medium_id5, v2 FROM x LEFT JOIN medium USING (id2)")
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM q3.ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM q3.ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
@@ -207,7 +207,7 @@ invisible(dbExecute(con, "DROP TABLE IF EXISTS q3.ans"))
 detach_and_drop(con, 'q3.db', 'q3')
 attach_and_use(con, 'q3.db', 'q3')
 t = system.time({
-  dbExecute(con, "CREATE TABLE q3.ans AS SELECT x.*, medium.id1 AS medium_id1, medium.id4 AS medium_id4, medium.id5 AS medium_id5, v2 FROM x LEFT JOIN medium USING (id2)")
+  dbExecute(con, "CREATE TEMP TABLE q3.ans AS SELECT x.*, medium.id1 AS medium_id1, medium.id4 AS medium_id4, medium.id5 AS medium_id5, v2 FROM x LEFT JOIN medium USING (id2)")
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM q3.ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM q3.ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
@@ -223,7 +223,7 @@ fun = "inner_join"
 
 attach_and_use(con, 'q4.db', 'q4')
 t = system.time({
-  dbExecute(con, "CREATE TABLE q4.ans AS SELECT x.*, medium.id1 AS medium_id1, medium.id2 AS medium_id2, medium.id4 AS medium_id4, v2 FROM x JOIN medium USING (id5)")
+  dbExecute(con, "CREATE TEMP TABLE q4.ans AS SELECT x.*, medium.id1 AS medium_id1, medium.id2 AS medium_id2, medium.id4 AS medium_id4, v2 FROM x JOIN medium USING (id5)")
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM q4.ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM q4.ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
@@ -233,7 +233,7 @@ invisible(dbExecute(con, "DROP TABLE IF EXISTS q4.ans"))
 detach_and_drop(con, 'q4.db', 'q4')
 attach_and_use(con, 'q4.db', 'q4')
 t = system.time({
-  dbExecute(con, "CREATE TABLE q4.ans AS SELECT x.*, medium.id1 AS medium_id1, medium.id2 AS medium_id2, medium.id4 AS medium_id4, v2 FROM x JOIN medium USING (id5)")
+  dbExecute(con, "CREATE TEMP TABLE q4.ans AS SELECT x.*, medium.id1 AS medium_id1, medium.id2 AS medium_id2, medium.id4 AS medium_id4, v2 FROM x JOIN medium USING (id5)")
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM q4.ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM q4.ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
@@ -249,7 +249,7 @@ fun = "inner_join"
 
 attach_and_use(con, 'q5.db', 'q5')
 t = system.time({
-  dbExecute(con, "CREATE TABLE q5.ans AS SELECT x.*, big.id1 AS big_id1, big.id2 AS big_id2, big.id4 AS big_id4, big.id5 AS big_id5, big.id6 AS big_id6, v2 FROM x JOIN big USING (id3)")
+  dbExecute(con, "CREATE TEMP TABLE q5.ans AS SELECT x.*, big.id1 AS big_id1, big.id2 AS big_id2, big.id4 AS big_id4, big.id5 AS big_id5, big.id6 AS big_id6, v2 FROM x JOIN big USING (id3)")
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM q5.ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM q5.ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
@@ -259,7 +259,7 @@ invisible(dbExecute(con, "DROP TABLE IF EXISTS q5.ans"))
 detach_and_drop(con, 'q5.db', 'q5')
 attach_and_use(con, 'q5.db', 'q5')
 t = system.time({
-  dbExecute(con, "CREATE TABLE q5.ans AS SELECT x.*, big.id1 AS big_id1, big.id2 AS big_id2, big.id4 AS big_id4, big.id5 AS big_id5, big.id6 AS big_id6, v2 FROM x JOIN big USING (id3)")
+  dbExecute(con, "CREATE TEMP TABLE q5.ans AS SELECT x.*, big.id1 AS big_id1, big.id2 AS big_id2, big.id4 AS big_id4, big.id5 AS big_id5, big.id6 AS big_id6, v2 FROM x JOIN big USING (id3)")
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM q5.ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM q5.ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
