@@ -251,6 +251,7 @@ time_logs = function(path=getwd()) {
   ct = clean_time(lt)
   # remove duckdb-latest for now
   ct = ct %>% filter(!(solution == 'duckdb-latest'))
+  ct = ct %>% filter(!(solution == 'polars' & task=='groupby' & (question == 'sum v1 mean v3 by id3'  | question == 'sum v1:v3 by id6' ) ))
   d = model_time(ct)
   ll <- load_logs(path=path)
   ll$solution[ll$solution == "arrow"] <- "R-arrow"
