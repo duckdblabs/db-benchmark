@@ -251,7 +251,7 @@ time_logs = function(path=getwd()) {
   # remove duckdb-latest for now
   ct = ct %>% filter(!(solution == 'duckdb-latest'))
   # Filter old polars results from that use float64 all pre-v1.0.0 to int32. 
-  # answers with float32 differ by more than 0.001 * (answer_with_float64)
+  # the answers between float32 and float64 are outside the tolerance, but still close enough
   ct = ct %>% filter(!(solution == 'polars' & task=='groupby' & version%like%"^0.*" & 
                       (question == 'sum v1 mean v3 by id3'  | question == 'sum v1:v3 by id6' )))
   d = model_time(ct)
