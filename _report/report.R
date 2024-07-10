@@ -104,7 +104,6 @@ model_time = function(d) {
     stop("timings is a 0 row table")
   #d[!is.na(chk) & solution=="dask", .(unq_chk=paste(unique(chk), collapse=","), unqn_chk=uniqueN(chk)), .(task, solution, data, question)][unqn_chk>1L] 
   approxUniqueN1 = function(x, tolerance=1e-3, debug=FALSE) { ## dask is fine on 1e-6,
-    # message(paste('ok made it this far with x=',x))
     l = lapply(as.list(rbindlist(lapply(strsplit(as.character(x), ";", fixed=TRUE), as.list))), type.convert, as.is = TRUE)
     int = sapply(l, is.integer)
     dbl = sapply(l, is.double)
@@ -251,7 +250,10 @@ time_logs = function(path=getwd()) {
   ct = clean_time(lt)
   # remove duckdb-latest for now
   ct = ct %>% filter(!(solution == 'duckdb-latest'))
-  ct = ct %>% filter(!(solution == 'polars' & task=='groupby' & (question == 'sum v1 mean v3 by id3'  | question == 'sum v1:v3 by id6' ) ))
+  # Filter old polars results from that use float64 all pre-v1.0.0 to int32. 
+  # answers with float32 differ by more than 0.001 * (answer_with_float64)
+  ct = ct %>% filter(!(solution == 'polars' & task=='groupby' & version%like%"^0.*" & 
+                      (question == 'sum v1 mean v3 by id3'  | question == 'sum v1:v3 by id6' )))
   d = model_time(ct)
   ll <- load_logs(path=path)
   ll$solution[ll$solution == "arrow"] <- "R-arrow"
