@@ -15,4 +15,4 @@ source path.env
 julia -q -e 'using Pkg; Pkg.add(["InMemoryDatasets","DLMReader", "PooledArrays", "Arrow", "CSV"])'
 julia -q -e 'include("$(pwd())/_helpers/helpersds.jl"); pkgmeta = getpkgmeta("InMemoryDatasets"); println(string(pkgmeta["version"])); pkgmeta = getpkgmeta("DLMReader"); println(string(pkgmeta["version"]))'
 
-./juliadf/ver-juliads.sh
+./juliadf/ver-juliadf.sh
