@@ -14,13 +14,10 @@ duckdb data/groupby_large.duckdb  -c "copy G1_1e9_1e2_0_1 to 'data/G1_1e9_1e2_0_
 duckdb data/groupby_large.duckdb  -c "copy G1_1e9_1e2_5_0 to 'data/G1_1e9_1e2_5_0.csv' (FORMAT CSV)"
 
 # expand join-small datasets to csv
-duckdb data/join_large.duckdb  -c "copy J1_1e9_NA_0_0 to 'data/J1_NA_0_0.csv' (FORMAT CSV)"
-duckdb data/join_large.duckdb  -c "copy J1_1e9_1e9_0_0 to 'data/J1_1e9_0_0.csv' (FORMAT CSV)"
-duckdb data/join_large.duckdb  -c "copy J1_1e9_1e6_0_0 to 'data/J1_1e6_0_0.csv' (FORMAT CSV)"
-duckdb data/join_large.duckdb  -c "copy J1_1e9_1e3_0_0 to 'data/J1_1e3_0_0.csv' (FORMAT CSV)"
-
-
-cp _control/data_large.csv _control/data.csv
+duckdb data/join_large.duckdb  -c "copy J1_1e9_NA_0_0 to 'data/J1_1e9_NA_0_0.csv' (FORMAT CSV)"
+duckdb data/join_large.duckdb  -c "copy J1_1e9_1e9_0_0 to 'data/J1_1e9_1e9_0_0.csv' (FORMAT CSV)"
+duckdb data/join_large.duckdb  -c "copy J1_1e9_1e6_0_0 to 'data/J1_1e9_1e6_0_0.csv' (FORMAT CSV)"
+duckdb data/join_large.duckdb  -c "copy J1_1e9_1e3_0_0 to 'data/J1_1e9_1e3_0_0.csv' (FORMAT CSV)"
 
 
 echo "Running all solutions on large (50GB) datasets"
@@ -30,5 +27,5 @@ echo "Running all solutions on large (50GB) datasets"
 ###
 echo "done..."
 echo "removing data files"
-rm data/*.csv
-rm data/*.duckdb
+#rm data/*.csv
+#rm data/*.duckdb
