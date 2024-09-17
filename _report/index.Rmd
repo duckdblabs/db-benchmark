@@ -145,7 +145,7 @@ loop_benchplot(dt_join, report_name="join", syntax.dict=join.syntax.dict, except
 ![](./join/J1_1e7_NA_0_0_advanced.png)
 -->
 
-#### 5 GB {.active}
+#### 5 GB
 
 ##### **basic questions**
 
@@ -158,7 +158,7 @@ loop_benchplot(dt_join, report_name="join", syntax.dict=join.syntax.dict, except
 ![](./join/J1_1e8_NA_0_0_advanced.png)
 -->
 
-#### 50 GB
+#### 50 GB {.active}
 
 ##### **basic questions**
 
