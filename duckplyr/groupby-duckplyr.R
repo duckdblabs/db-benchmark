@@ -19,7 +19,7 @@ data_name = Sys.getenv("SRC_DATANAME")
 src_grp = file.path("data", paste(data_name, "csv", sep="."))
 cat(sprintf("loading dataset %s\n", data_name))
 
-x = as_duckplyr_tibble(data.table::fread(src_grp, showProgress=FALSE, stringsAsFactors=TRUE, na.strings="", data.table=FALSE))
+x = as_duckplyr_tibble(data.table::fread(src_grp, showProgress=FALSE, na.strings="", data.table=FALSE))
 print(nrow(x))
 
 task_init = proc.time()[["elapsed"]]
