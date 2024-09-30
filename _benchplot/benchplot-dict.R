@@ -299,10 +299,12 @@ groupby.data.exceptions = {list(                                                
                   "G1_1e8_2e0_0_0")                                                # q3
   )},
   "juliadf" = {list(
-    "timeout" = "G1_1e8_2e0_0_0",
-    "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0") # CSV.File
+    # "timeout" = "G1_1e8_2e0_0_0",
+    # "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0"), # CSV.File
+    "Segfault loading csv: JuliaLang#55765" = c("G1_1e7_1e2_0_0","G1_1e7_1e1_0_0","G1_1e7_2e0_0_0","G1_1e7_1e2_0_1","G1_1e7_1e2_5_0","G1_1e8_1e2_0_0","G1_1e8_1e1_0_0","G1_1e8_2e0_0_0","G1_1e8_1e2_0_1","G1_1e8_1e2_5_0","G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0")
   )},
   "juliads" = {list(
+    "Segfault loading csv: JuliaLang#55765" = c("G1_1e7_1e2_0_0","G1_1e7_1e1_0_0","G1_1e7_2e0_0_0","G1_1e7_1e2_0_1","G1_1e7_1e2_5_0","G1_1e8_1e2_0_0","G1_1e8_1e1_0_0","G1_1e8_2e0_0_0","G1_1e8_1e2_0_1","G1_1e8_1e2_5_0","G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0")
   )},
   "clickhouse" = {list(
   )},
@@ -485,9 +487,11 @@ join.data.exceptions = {list(                                                   
     "out of memory" = c("J1_1e9_NA_0_0")                                                  # q1 even when using on-disk, after 47m (480m timeout)
   )},
   "juliadf" = {list(
-    "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")                  # CSV.File
+    # "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")                  # CSV.File
+    "Segfault loading csv: JuliaLang#55765" = c("J1_1e7_NA_0_0", "J1_1e7_NA_5_0", "J1_1e7_NA_0_1", "J1_1e8_NA_0_0", "J1_1e8_NA_5_0", "J1_1e8_NA_0_1", "J1_1e9_NA_0_0")
   )},
   "juliads" = {list(
+    "Segfault loading csv: JuliaLang#55765" = c("J1_1e7_NA_0_0", "J1_1e7_NA_5_0", "J1_1e7_NA_0_1", "J1_1e8_NA_0_0", "J1_1e8_NA_5_0", "J1_1e8_NA_0_1", "J1_1e9_NA_0_0")
   )},
   "clickhouse" = {list(
   )},
