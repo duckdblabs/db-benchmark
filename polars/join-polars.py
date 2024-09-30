@@ -53,24 +53,24 @@ print(len(big), flush=True)
 mount_point = os.environ["MOUNT_POINT"]
 
 with pl.StringCache():
-  x.write_ipc(f"{mount_point}/polars/x.ipc", future=True)
+  x.write_ipc(f"{mount_point}/polars/x.ipc")
   del x
-  x = pl.read_ipc(f"{mount_point}/polars/x.ipc", memory_map=True)
+  x = pl.read_ipc(f"{mount_point}/polars/x.ipc") 
   x = x.lazy()
 
-  small.write_ipc(f"{mount_point}/polars/small.ipc", future=True)
+  small.write_ipc(f"{mount_point}/polars/small.ipc")
   del small
-  small = pl.read_ipc(f"{mount_point}/polars/small.ipc", memory_map=True)
+  small = pl.read_ipc(f"{mount_point}/polars/small.ipc")
   small = small.lazy()
 
-  medium.write_ipc(f"{mount_point}/polars/medium.ipc", future=True)
+  medium.write_ipc(f"{mount_point}/polars/medium.ipc")
   del medium
-  medium = pl.read_ipc(f"{mount_point}/polars/medium.ipc", memory_map=True)
+  medium = pl.read_ipc(f"{mount_point}/polars/medium.ipc")
   medium = medium.lazy()
 
-  big.write_ipc(f"{mount_point}/polars/big.ipc", future=True)
+  big.write_ipc(f"{mount_point}/polars/big.ipc")
   del big
-  big = pl.read_ipc(f"{mount_point}/polars/big.ipc", memory_map=True)
+  big = pl.read_ipc(f"{mount_point}/polars/big.ipc")
   big = big.lazy()
 
 # materialize

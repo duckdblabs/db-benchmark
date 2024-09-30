@@ -39,7 +39,7 @@ solution.dict = {list(
   "spark" = list(name=c(short="spark", long="spark"), color=c(strong="#8000FFFF", light="#CC66FF")),
   "dask" = list(name=c(short="dask", long="dask"), color=c(strong="slategrey", light="lightgrey")),
   "juliadf" = list(name=c(short="DF.jl", long="DataFrames.jl"), color=c(strong="deepskyblue", light="darkturquoise")),
-  "juliads" = list(name=c(short="IMD.jl", long="InMemoryDatasets.jl"), color=c(strong="#b80000", light="#ff1f1f")),
+  "juliads" = list(name=c(short="IMD.jl", long="InMemData.jl"), color=c(strong="#b80000", light="#ff1f1f")),
   "clickhouse" = list(name=c(short="clickhouse", long="ClickHouse"), color=c(strong="hotpink4", light="hotpink1")),
   "polars" = list(name=c(short="polars", long="Polars"), color=c(strong="deepskyblue4", light="deepskyblue3")),
   "R-arrow" = list(name=c(short="R-arrow", long="R-arrow"), color=c(strong="aquamarine3", light="aquamarine1")),
@@ -301,10 +301,10 @@ groupby.data.exceptions = {list(                                                
   "juliadf" = {list(
     # "timeout" = "G1_1e8_2e0_0_0",
     # "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0"), # CSV.File
-    "Segfault loading csv: JuliaLang#55765" = c("G1_1e7_1e2_0_0","G1_1e7_1e1_0_0","G1_1e7_2e0_0_0","G1_1e7_1e2_0_1","G1_1e7_1e2_5_0","G1_1e8_1e2_0_0","G1_1e8_1e1_0_0","G1_1e8_2e0_0_0","G1_1e8_1e2_0_1","G1_1e8_1e2_5_0","G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0")
+    "CSV import Segfault: JuliaLang#55765" = c("G1_1e7_1e2_0_0","G1_1e7_1e1_0_0","G1_1e7_2e0_0_0","G1_1e7_1e2_0_1","G1_1e7_1e2_5_0","G1_1e8_1e2_0_0","G1_1e8_1e1_0_0","G1_1e8_2e0_0_0","G1_1e8_1e2_0_1","G1_1e8_1e2_5_0","G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0")
   )},
   "juliads" = {list(
-    "Segfault loading csv: JuliaLang#55765" = c("G1_1e7_1e2_0_0","G1_1e7_1e1_0_0","G1_1e7_2e0_0_0","G1_1e7_1e2_0_1","G1_1e7_1e2_5_0","G1_1e8_1e2_0_0","G1_1e8_1e1_0_0","G1_1e8_2e0_0_0","G1_1e8_1e2_0_1","G1_1e8_1e2_5_0","G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0")
+    "CSV import Segfault: JuliaLang#55765" = c("G1_1e7_1e2_0_0","G1_1e7_1e1_0_0","G1_1e7_2e0_0_0","G1_1e7_1e2_0_1","G1_1e7_1e2_5_0","G1_1e8_1e2_0_0","G1_1e8_1e1_0_0","G1_1e8_2e0_0_0","G1_1e8_1e2_0_1","G1_1e8_1e2_5_0","G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0")
   )},
   "clickhouse" = {list(
   )},
@@ -488,10 +488,10 @@ join.data.exceptions = {list(                                                   
   )},
   "juliadf" = {list(
     # "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")                  # CSV.File
-    "Segfault loading csv: JuliaLang#55765" = c("J1_1e7_NA_0_0", "J1_1e7_NA_5_0", "J1_1e7_NA_0_1", "J1_1e8_NA_0_0", "J1_1e8_NA_5_0", "J1_1e8_NA_0_1", "J1_1e9_NA_0_0")
+    "CSV import Segfault: JuliaLang#55765" = c("J1_1e7_NA_0_0", "J1_1e7_NA_5_0", "J1_1e7_NA_0_1", "J1_1e8_NA_0_0", "J1_1e8_NA_5_0", "J1_1e8_NA_0_1", "J1_1e9_NA_0_0")
   )},
   "juliads" = {list(
-    "Segfault loading csv: JuliaLang#55765" = c("J1_1e7_NA_0_0", "J1_1e7_NA_5_0", "J1_1e7_NA_0_1", "J1_1e8_NA_0_0", "J1_1e8_NA_5_0", "J1_1e8_NA_0_1", "J1_1e9_NA_0_0")
+    "CSV import Segfault: JuliaLang#55765" = c("J1_1e7_NA_0_0", "J1_1e7_NA_5_0", "J1_1e7_NA_0_1", "J1_1e8_NA_0_0", "J1_1e8_NA_5_0", "J1_1e8_NA_0_1", "J1_1e9_NA_0_0")
   )},
   "clickhouse" = {list(
   )},
