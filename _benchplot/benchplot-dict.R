@@ -34,6 +34,7 @@ solution.dict = {list(
   "collapse" = list(name=c(short="collapse", long="collapse"), color=c(strong="darkturquoise", light="turquoise")),
   "data.table" = list(name=c(short="data.table", long="data.table"), color=c(strong="blue", light="#7777FF")),
   "dplyr" = list(name=c(short="dplyr", long="dplyr"), color=c(strong="red", light="#FF7777")),
+  "duckplyr" = list(name=c(short="duckplyr", long="duckplyr"), color=c(strong="#ddcd07", light="#fff100")),
   "pandas" = list(name=c(short="pandas", long="pandas"), color=c(strong="green4", light="#77FF77")),
   "pydatatable" = list(name=c(short="pydatatable", long="(py)datatable"), color=c(strong="darkorange", light="orange")),
   "spark" = list(name=c(short="spark", long="spark"), color=c(strong="#8000FFFF", light="#CC66FF")),
@@ -92,6 +93,18 @@ groupby.syntax.dict = {list(
     "sum v3 count by id1:id6" = "DT[, .(v3=sum(v3, na.rm=TRUE), count=.N), by=id1:id6]"
   )},
   "dplyr" = {c(
+    "sum v1 by id1" = "DF %>% group_by(id1) %>% summarise(v1=sum(v1, na.rm=TRUE))",
+    "sum v1 by id1:id2" = "DF %>% group_by(id1, id2) %>% summarise(v1=sum(v1, na.rm=TRUE))",
+    "sum v1 mean v3 by id3" = "DF %>% group_by(id3) %>% summarise(v1=sum(v1, na.rm=TRUE), v3=mean(v3, na.rm=TRUE))",
+    "mean v1:v3 by id4" = "DF %>% group_by(id4) %>% summarise_at(.funs=\"mean\", .vars=c(\"v1\",\"v2\",\"v3\"), na.rm=TRUE)",
+    "sum v1:v3 by id6" = "DF %>% group_by(id6) %>% summarise_at(.funs=\"sum\", .vars=c(\"v1\",\"v2\",\"v3\"), na.rm=TRUE)",
+    "median v3 sd v3 by id4 id5" = "DF %>% group_by(id4, id5) %>% summarise(median_v3=median(v3, na.rm=TRUE), sd_v3=sd(v3, na.rm=TRUE))",
+    "max v1 - min v2 by id3" = "DF %>% group_by(id3) %>% summarise(range_v1_v2=max(v1, na.rm=TRUE)-min(v2, na.rm=TRUE))",
+    "largest two v3 by id6" = "DF %>% select(id6, largest2_v3=v3) %>% filter(!is.na(largest2_v3)) %>% arrange(desc(largest2_v3)) %>% group_by(id6) %>% filter(row_number() <= 2L)",
+    "regression v1 v2 by id2 id4" = "DF %>% group_by(id2, id4) %>% summarise(r2=cor(v1, v2, use=\"na.or.complete\")^2)",
+    "sum v3 count by id1:id6" = "DF %>% group_by(id1, id2, id3, id4, id5, id6) %>% summarise(v3=sum(v3, na.rm=TRUE), count=n())"
+  )},
+  "duckplyr" = {c(
     "sum v1 by id1" = "DF %>% group_by(id1) %>% summarise(v1=sum(v1, na.rm=TRUE))",
     "sum v1 by id1:id2" = "DF %>% group_by(id1, id2) %>% summarise(v1=sum(v1, na.rm=TRUE))",
     "sum v1 mean v3 by id3" = "DF %>% group_by(id3) %>% summarise(v1=sum(v1, na.rm=TRUE), v3=mean(v3, na.rm=TRUE))",
@@ -252,6 +265,7 @@ groupby.syntax.dict = {list(
   "collapse" =    list(),
   "data.table" =  list(),
   "dplyr" =       list(),
+  "duckplyr" =    list(),
   "pandas" =      list(),
   "pydatatable" = list(),
   "spark" =       list("not yet implemented: SPARK-26589" = "median v3 sd v3 by id4 id5"),
@@ -364,6 +378,13 @@ join.syntax.dict = {list(
     "medium inner on factor" = "inner_join(DF, medium, by='id5')",
     "big inner on int" = "inner_join(DF, big, by='id3')"
   )},
+  "duckplyr" = {c(
+    "small inner on int" = "inner_join(DF, small, by='id1')",
+    "medium inner on int" = "inner_join(DF, medium, by='id2')",
+    "medium outer on int" = "left_join(DF, medium, by='id2')",
+    "medium inner on factor" = "inner_join(DF, medium, by='id5')",
+    "big inner on int" = "inner_join(DF, big, by='id3')"
+  )},
   "juliadf" = {c(
     "small inner on int" = "innerjoin(DF, small, on = :id1, makeunique=true, matchmissing=:equal)",
     "medium inner on int" = "innerjoin(DF, medium, on = :id2, makeunique=true, matchmissing=:equal)",
@@ -446,6 +467,7 @@ join.query.exceptions = {list(
   "collapse" =    list(),
   "data.table" =  list(),
   "dplyr" =       list(),
+  "duckplyr" =    list(),
   "pandas" =      list(),
   "pydatatable" = list(),
   "spark" =       list(),
