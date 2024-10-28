@@ -48,7 +48,7 @@ jobs:
 
     - name: Install all solutions
       shell: bash
-      run: source path.env && python3 _utils/install_all_solutions.py ${{ matrix.solution }}
+      run: source path.env && python3 _setup_utils/install_all_solutions.py ${{ matrix.solution }}
 
     - name: Turn swap off
       shell: bash
@@ -135,7 +135,7 @@ jobs:
 
     - name: Install all solutions
       shell: bash
-      run: source path.env && python3 _utils/install_all_solutions.py all
+      run: source path.env && python3 _setup_utils/install_all_solutions.py all
 
     - name: Turn swap off
       shell: bash
