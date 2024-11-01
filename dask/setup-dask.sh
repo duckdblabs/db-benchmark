@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-virtualenv dask/py-dask --python=python3.12
+virtualenv dask/py-dask --python=python3
 source dask/py-dask/bin/activate
 
 # install binaries
