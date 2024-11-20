@@ -8,6 +8,8 @@ data.table,groupby2014
 dplyr,groupby
 dplyr,join
 dplyr,groupby2014
+duckplyr,groupby
+duckplyr,join
 pandas,groupby
 pandas,join
 pandas,groupby2014
