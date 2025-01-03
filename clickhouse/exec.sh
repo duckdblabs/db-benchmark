@@ -31,7 +31,7 @@ echo '# clickhouse/exec.sh: creating tables and loading data'
 THREADS=$(($(nproc --all) /2))
 HAS_NULL=$(clickhouse-client --query "SELECT splitByChar('_','$SRC_DATANAME')[4]>0 FORMAT TSV")
 IS_SORTED=$(clickhouse-client --query "SELECT splitByChar('_','$SRC_DATANAME')[5]=1 FORMAT TSV")
-ON_DISK=0
+COMPRESS=0
 
 if [ $1 == 'groupby' ]; then
   clickhouse-client --query "DROP TABLE IF EXISTS $SRC_DATANAME"
@@ -57,7 +57,7 @@ elif [ $1 == 'join' ]; then
   RHS1=$(echo $RHS | cut -d' ' -f1)
   RHS2=$(echo $RHS | cut -d' ' -f2)
   RHS3=$(echo $RHS | cut -d' ' -f3)
-  ON_DISK=$(clickhouse-client --query "SELECT (splitByChar('_','$SRC_DATANAME')[2])::Float32 >= 1e9::Float32 FORMAT TSV")
+  COMPRESS=$(clickhouse-client --query "SELECT (splitByChar('_','$SRC_DATANAME')[2])::Float32 >= 1e9::Float32 FORMAT TSV")
 
   # cleanup
   clickhouse-client --query "DROP TABLE IF EXISTS $SRC_DATANAME"
@@ -65,31 +65,31 @@ elif [ $1 == 'join' ]; then
   clickhouse-client --query "DROP TABLE IF EXISTS $RHS2"
   clickhouse-client --query "DROP TABLE IF EXISTS $RHS3"
 
-  echo IS_SORTED ${IS_SORTED} HAS_NULL ${HAS_NULL} ON_DISK ${ON_DISK}
+  echo IS_SORTED ${IS_SORTED} HAS_NULL ${HAS_NULL} COMPRESS ${COMPRESS}
   # schemas
   if [ $HAS_NULL -eq 1 ]; then
     if [ $IS_SORTED -eq 1 ]; then
-      clickhouse-client --query "CREATE TABLE $SRC_DATANAME (id1 Nullable(Int32), id2 Nullable(Int32), id3 Nullable(Int32), id4 LowCardinality(Nullable(String)), id5 LowCardinality(Nullable(String)), id6 Nullable(String), v1 Nullable(Float64)) ENGINE = MergeTree() ORDER BY (id1, id2, id3, id4, id5, id6);"
-      clickhouse-client --query "CREATE TABLE $RHS1 (id1 Nullable(Int32), id4 LowCardinality(Nullable(String)), v2 Nullable(Float64)) ENGINE = MergeTree() ORDER BY  (id1, id4);"
-      clickhouse-client --query "CREATE TABLE $RHS2 (id1 Nullable(Int32), id2 Nullable(Int32), id4 LowCardinality(Nullable(String)), id5 LowCardinality(Nullable(String)), v2 Nullable(Float64)) ENGINE = MergeTree() ORDER BY (id1, id2, id4, id5);"
-      clickhouse-client --query "CREATE TABLE $RHS3 (id1 Nullable(Int32), id2 Nullable(Int32), id3 Nullable(Int32), id4 LowCardinality(Nullable(String)), id5 LowCardinality(Nullable(String)), id6 Nullable(String), v2 Nullable(Float64)) ENGINE = MergeTree() ORDER BY (id1, id2, id3, id4, id5, id6);"
+      clickhouse-client --query "CREATE TABLE $SRC_DATANAME (id1 Nullable(Int32), id2 Nullable(Int32), id3 Nullable(Int32), id4 Nullable(String), id5 Nullable(String), id6 Nullable(String), v1 Nullable(Float64)) ENGINE = MergeTree() ORDER BY (id1, id2, id3, id4, id5, id6);"
+      clickhouse-client --query "CREATE TABLE $RHS1 (id1 Nullable(Int32), id4 Nullable(String), v2 Nullable(Float64)) ENGINE = MergeTree() ORDER BY  (id1, id4);"
+      clickhouse-client --query "CREATE TABLE $RHS2 (id1 Nullable(Int32), id2 Nullable(Int32), id4 Nullable(String), id5 Nullable(String), v2 Nullable(Float64)) ENGINE = MergeTree() ORDER BY (id1, id2, id4, id5);"
+      clickhouse-client --query "CREATE TABLE $RHS3 (id1 Nullable(Int32), id2 Nullable(Int32), id3 Nullable(Int32), id4 Nullable(String), id5 Nullable(String), id6 Nullable(String), v2 Nullable(Float64)) ENGINE = MergeTree() ORDER BY (id1, id2, id3, id4, id5, id6);"
     else
-      clickhouse-client --query "CREATE TABLE $SRC_DATANAME (id1 Nullable(Int32), id2 Nullable(Int32), id3 Nullable(Int32), id4 LowCardinality(Nullable(String)), id5 LowCardinality(Nullable(String)), id6 Nullable(String), v1 Nullable(Float64)) ENGINE = MergeTree() ORDER BY tuple();"
-      clickhouse-client --query "CREATE TABLE $RHS1 (id1 Nullable(Int32), id4 LowCardinality(Nullable(String)), v2 Nullable(Float64)) ENGINE = MergeTree() ORDER BY tuple();"
-      clickhouse-client --query "CREATE TABLE $RHS2 (id1 Nullable(Int32), id2 Nullable(Int32), id4 LowCardinality(Nullable(String)), id5 LowCardinality(Nullable(String)), v2 Nullable(Float64)) ENGINE = MergeTree() ORDER BY tuple();"
-      clickhouse-client --query "CREATE TABLE $RHS3 (id1 Nullable(Int32), id2 Nullable(Int32), id3 Nullable(Int32), id4 LowCardinality(Nullable(String)), id5 LowCardinality(Nullable(String)), id6 Nullable(String), v2 Nullable(Float64)) ENGINE = MergeTree() ORDER BY tuple();"
+      clickhouse-client --query "CREATE TABLE $SRC_DATANAME (id1 Nullable(Int32), id2 Nullable(Int32), id3 Nullable(Int32), id4 Nullable(String), id5 Nullable(String), id6 Nullable(String), v1 Nullable(Float64)) ENGINE = MergeTree() ORDER BY tuple();"
+      clickhouse-client --query "CREATE TABLE $RHS1 (id1 Nullable(Int32), id4 Nullable(String), v2 Nullable(Float64)) ENGINE = MergeTree() ORDER BY tuple();"
+      clickhouse-client --query "CREATE TABLE $RHS2 (id1 Nullable(Int32), id2 Nullable(Int32), id4 Nullable(String), id5 Nullable(String), v2 Nullable(Float64)) ENGINE = MergeTree() ORDER BY tuple();"
+      clickhouse-client --query "CREATE TABLE $RHS3 (id1 Nullable(Int32), id2 Nullable(Int32), id3 Nullable(Int32), id4 Nullable(String), id5 Nullable(String), id6 Nullable(String), v2 Nullable(Float64)) ENGINE = MergeTree() ORDER BY tuple();"
     fi
   else
     if [ $IS_SORTED -eq 1 ]; then
-      clickhouse-client --query "CREATE TABLE $SRC_DATANAME (id1 Int32, id2 Int32, id3 Int32, id4 LowCardinality(String), id5 LowCardinality(String), id6 String, v1 Float64) ENGINE = MergeTree() ORDER BY (id1, id2, id3, id4, id5, id6);"
-      clickhouse-client --query "CREATE TABLE $RHS1 (id1 Int32, id4 LowCardinality(String), v2 Float64) ENGINE = MergeTree() ORDER BY  (id1, id4);"
-      clickhouse-client --query "CREATE TABLE $RHS2 (id1 Int32, id2 Int32, id4 LowCardinality(String), id5 LowCardinality(String), v2 Float64) ENGINE = MergeTree() ORDER BY (id1, id2, id4, id5);"
-      clickhouse-client --query "CREATE TABLE $RHS3 (id1 Int32, id2 Int32, id3 Int32, id4 LowCardinality(String), id5 LowCardinality(String), id6 String, v2 Float64) ENGINE = MergeTree() ORDER BY (id1, id2, id3, id4, id5, id6);"
+      clickhouse-client --query "CREATE TABLE $SRC_DATANAME (id1 Int32, id2 Int32, id3 Int32, id4 String, id5 String, id6 String, v1 Float64) ENGINE = MergeTree() ORDER BY (id1, id2, id3, id4, id5, id6);"
+      clickhouse-client --query "CREATE TABLE $RHS1 (id1 Int32, id4 String, v2 Float64) ENGINE = MergeTree() ORDER BY  (id1, id4);"
+      clickhouse-client --query "CREATE TABLE $RHS2 (id1 Int32, id2 Int32, id4 String, id5 String, v2 Float64) ENGINE = MergeTree() ORDER BY (id1, id2, id4, id5);"
+      clickhouse-client --query "CREATE TABLE $RHS3 (id1 Int32, id2 Int32, id3 Int32, id4 String, id5 String, id6 String, v2 Float64) ENGINE = MergeTree() ORDER BY (id1, id2, id3, id4, id5, id6);"
     else
-      clickhouse-client --query "CREATE TABLE $SRC_DATANAME (id1 Int32, id2 Int32, id3 Int32, id4 LowCardinality(String), id5 LowCardinality(String), id6 String, v1 Float64) ENGINE = MergeTree() ORDER BY tuple();"
-      clickhouse-client --query "CREATE TABLE $RHS1 (id1 Int32, id4 LowCardinality(String), v2 Float64) ENGINE = MergeTree() ORDER BY tuple();"
-      clickhouse-client --query "CREATE TABLE $RHS2 (id1 Int32, id2 Int32, id4 LowCardinality(String), id5 LowCardinality(String), v2 Float64) ENGINE = MergeTree() ORDER BY tuple();"
-      clickhouse-client --query "CREATE TABLE $RHS3 (id1 Int32, id2 Int32, id3 Int32, id4 LowCardinality(String), id5 LowCardinality(String), id6 String, v2 Float64) ENGINE = MergeTree() ORDER BY tuple();"
+      clickhouse-client --query "CREATE TABLE $SRC_DATANAME (id1 Int32, id2 Int32, id3 Int32, id4 String, id5 String, id6 String, v1 Float64) ENGINE = MergeTree() ORDER BY tuple();"
+      clickhouse-client --query "CREATE TABLE $RHS1 (id1 Int32, id4 String, v2 Float64) ENGINE = MergeTree() ORDER BY tuple();"
+      clickhouse-client --query "CREATE TABLE $RHS2 (id1 Int32, id2 Int32, id4 String, id5 String, v2 Float64) ENGINE = MergeTree() ORDER BY tuple();"
+      clickhouse-client --query "CREATE TABLE $RHS3 (id1 Int32, id2 Int32, id3 Int32, id4 String, id5 String, id6 String, v2 Float64) ENGINE = MergeTree() ORDER BY tuple();"
     fi
   fi
 
@@ -111,7 +111,7 @@ elif [ $1 == 'join' ]; then
 else
   echo "clickhouse task $1 not implemented" >&2 && exit 1
 fi
-export ON_DISK
+export COMPRESS
 export THREADS
 
 # cleanup timings from last run if they have not been cleaned up after parsing

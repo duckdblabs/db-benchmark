@@ -26,8 +26,8 @@ ch_stop() {
 
 ch_query() {
   ENGINE=Memory
-  if [ $ON_DISK -eq 1 ]; then
-  ENGINE="MergeTree ORDER BY tuple()"
+  if [ $COMPRESS -eq 1 ]; then
+  ENGINE="Memory settings compress=1"
   fi
   sudo touch '/var/lib/clickhouse/flags/force_drop_table' && sudo chmod 666 '/var/lib/clickhouse/flags/force_drop_table'
   clickhouse-client --query "DROP TABLE IF EXISTS ans;"
@@ -51,6 +51,13 @@ ch_make_2_runs() {
   RUNNAME="${TASK}_${SRC_DATANAME}_q${Q}_r${RUN}"
   ch_query
   ch_logrun
+
+  if [ $COMPRESS -eq 1 ]; then
+    # It will take some time for memory freed by Memory engine to be returned back to the system.
+    # Without a sleep we might get a MEMORY_LIMIT exception during the second run of the query.
+    # It is done only when $COMPRESS=1 because this variable is set to true only for the largest dataset.
+    sleep 60
+  fi
 
   RUN=2
   RUNNAME="${TASK}_${SRC_DATANAME}_q${Q}_r${RUN}"
