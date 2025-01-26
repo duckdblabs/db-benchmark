@@ -17,7 +17,7 @@ jobs:
   strategy:
     fail-fast: false
     matrix:
-      solution: [data.table, collapse, dplyr, pandas, pydatatable, spark, juliadf, juliads, polars, R-arrow, duckdb, datafusion, dask, clickhouse]
+      solution: [data.table, collapse, dplyr, duckplyr, pandas, pydatatable, spark, juliadf, juliads, polars, R-arrow, duckdb, datafusion, dask, clickhouse]
   name: Regression Tests solo solutions
   runs-on: ubuntu-20.04
   env:
