@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-print("# groupby-dask.py", flush=True)
-
 import os
 import gc
 import sys
@@ -16,6 +14,12 @@ from typing import Any
 
 exec(open("./_helpers/helpers.py").read())
 
+logging.basicConfig(
+    level=logging.INFO,
+    format='{ %(name)s:%(lineno)d @ %(asctime)s } - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
 # TODO: Case
 ver = dk.__version__
 git = dk.__git_revision__
@@ -29,7 +33,7 @@ def dask_client() -> distributed.Client:
     return distributed.Client(processes=True, silence_logs=logging.ERROR)
 
 def load_dataset(src_grp: str) -> dd.DataFrame:
-    print("loading dataset %s" % data_name, flush=True)
+    logger.info("Loading dataset %s" % data_name)
     x = dd.read_csv(
         src_grp,
         dtype={"id1":"category","id2":"category","id3":"category","id4":"Int32","id5":"Int32","id6":"Int32","v1":"Int32","v2":"Int32","v3":"float64"},
@@ -178,6 +182,7 @@ def run_query(
     question: str,
     runs: int = 2,
 ):
+    logger.info("Running query: '%s'" % question)
     try:
         for run in range(1, runs+1):
             gc.collect() # TODO: Able to do this in worker processes? Want to?
@@ -185,7 +190,7 @@ def run_query(
             # Calculate ans
             t_start = timeit.default_timer()
             ans = query.query(x)
-            print(ans.shape, flush=True)
+            logger.debug("Answer shape: %s" % (ans.shape, ))
             t = timeit.default_timer() - t_start
             m = memory_usage()
 
@@ -216,11 +221,11 @@ def run_query(
             )
             if run == runs:
                 # Print head / tail on last run
-                print(ans.head(3), flush=True)
-                print(ans.tail(3), flush=True)
+                logger.debug("Answer head:\n%s" % ans.head(3))
+                logger.debug("Answer tail:\n%s" % ans.tail(3))
             del ans
     except Exception as err:
-        print("ERROR: Query '%s' failed!" % question)
+        logger.error("Query '%s' failed!" % question)
         print(err)
 
 def run_task(
@@ -230,10 +235,10 @@ def run_task(
     client = dask_client()
     x = load_dataset(src_grp)
     in_rows = len(x)
-    print(in_rows, flush=True)
+    logger.info("Input dataset rows: %s" % in_rows)
 
     task_init = timeit.default_timer()
-    print("grouping...", flush=True)
+    logger.info("Grouping...")
 
     run_query(
         data_name=data_name,
@@ -315,9 +320,10 @@ def run_task(
         question= "sum v3 count by id1:id6", # q10
     )
 
-    print("grouping finished, took %0.fs" % (timeit.default_timer()-task_init), flush=True)
+    logger.info("Grouping finished, took %0.fs" % (timeit.default_timer()-task_init))
 
 if __name__ == '__main__':
+    logger.info("# groupby-dask.py")
     data_name = os.environ['SRC_DATANAME']
     on_disk = False #data_name.split("_")[1] == "1e9" # on-disk data storage #126
     fext = "parquet" if on_disk else "csv"
@@ -325,7 +331,7 @@ if __name__ == '__main__':
 
     na_flag = int(data_name.split("_")[3])
     if na_flag > 0:
-        print("skip due to na_flag>0: #171", flush=True, file=sys.stderr)
+        logger.error("Skip due to na_flag>0: #171")
         exit(0) # not yet implemented #171, currently groupby's dropna=False argument is ignored
 
     run_task(
