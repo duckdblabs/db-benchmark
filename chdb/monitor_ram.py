@@ -22,7 +22,7 @@ while i < max_loops:
     f.write(f"RAM usage: {ram_usage} GB \n")
     f.write(f"RSS usage: {rss_usage} GB \n \n")
     f.close()
-    
+
     # Wait for 10 seconds before polling again
     time.sleep(5)
     i += 1
