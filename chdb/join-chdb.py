@@ -144,6 +144,9 @@ write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_row
 conn.query("DROP TABLE IF EXISTS ans")
 gc.collect()
 if compress:
+    # It will take some time for memory freed by Memory engine to be returned back to the system.
+    # Without a sleep we might get a MEMORY_LIMIT exception during the second run of the query.
+    # It is done only when compress is true because this variable is set to true only for the largest dataset.
     time.sleep(60)
 t_start = timeit.default_timer()
 QUERY=f"CREATE TABLE ans ENGINE = {query_engine} AS SELECT x.*, small.id4 AS small_id4, v2 FROM db_benchmark.x AS x INNER JOIN db_benchmark.small AS small USING (id1) {settings}"
@@ -159,7 +162,7 @@ chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk='NA', chk_time_sec=chkt, on_disk='TRUE', machine_type=machine_type)
 print(conn.query("SELECT * FROM ans LIMIT 3"), flush=True)
 if int(nr) > 3:
-  print(conn.query(f"SELECT * FROM ans LIMIT {int(nr) - 3}, 3"), flush=True)
+    print(conn.query(f"SELECT * FROM ans LIMIT {int(nr) - 3}, 3"), flush=True)
 conn.query("DROP TABLE IF EXISTS ans")
 
 question = "medium inner on int" # q2
@@ -194,7 +197,7 @@ chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk='NA', chk_time_sec=chkt, on_disk='TRUE', machine_type=machine_type)
 print(conn.query("SELECT * FROM ans LIMIT 3"), flush=True)
 if int(nr) > 3:
-  print(conn.query(f"SELECT * FROM ans LIMIT {int(nr) - 3}, 3"), flush=True)
+    print(conn.query(f"SELECT * FROM ans LIMIT {int(nr) - 3}, 3"), flush=True)
 conn.query("DROP TABLE IF EXISTS ans")
 
 question = "medium outer on int" # q3
@@ -229,7 +232,7 @@ chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk='NA', chk_time_sec=chkt, on_disk='TRUE', machine_type=machine_type)
 print(conn.query("SELECT * FROM ans LIMIT 3"), flush=True)
 if int(nr) > 3:
-  print(conn.query(f"SELECT * FROM ans LIMIT {int(nr) - 3}, 3"), flush=True)
+    print(conn.query(f"SELECT * FROM ans LIMIT {int(nr) - 3}, 3"), flush=True)
 conn.query("DROP TABLE IF EXISTS ans")
 
 question = "medium inner on factor" # q4
@@ -264,7 +267,7 @@ chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk='NA', chk_time_sec=chkt, on_disk='TRUE', machine_type=machine_type)
 print(conn.query("SELECT * FROM ans LIMIT 3"), flush=True)
 if int(nr) > 3:
-  print(conn.query(f"SELECT * FROM ans LIMIT {int(nr) - 3}, 3"), flush=True)
+    print(conn.query(f"SELECT * FROM ans LIMIT {int(nr) - 3}, 3"), flush=True)
 conn.query("DROP TABLE IF EXISTS ans")
 
 question = "big inner on int" # q5
@@ -299,7 +302,7 @@ chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk='NA', chk_time_sec=chkt, on_disk='TRUE', machine_type=machine_type)
 print(conn.query("SELECT * FROM ans LIMIT 3"), flush=True)
 if int(nr) > 3:
-  print(conn.query(f"SELECT * FROM ans LIMIT {int(nr) - 3}, 3"), flush=True)
+    print(conn.query(f"SELECT * FROM ans LIMIT {int(nr) - 3}, 3"), flush=True)
 conn.query("DROP TABLE IF EXISTS ans")
 
 print("joining finished, took %0.fs" % (timeit.default_timer() - task_init), flush=True)
