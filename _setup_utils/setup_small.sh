@@ -11,7 +11,7 @@ sudo apt-get -qq install make
 
 sudo apt-get -qq install wget curl openssl build-essential
 sudo apt-get -qq install -y r-base-dev virtualenv
-sudo apt-get -qq install openjdk-8-jdk
+sudo apt-get -qq install openjdk-17-jdk
 
 sudo apt-get install -y zlib1g-dev
 sudo apt-get install -y pandoc unzip

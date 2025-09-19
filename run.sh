@@ -31,7 +31,7 @@ fi
 
 
 if [[ $MACHINE_TYPE != 'c6id.metal' && $MACHINE_TYPE != 'c6id.8xlarge' && $MACHINE_TYPE != 'c6id.4xlarge' ]]; then
-  echo "Machine type $MACHINE_TYPE is not valid. Must be \`c6d.metal\` or \`c6id.4xlarge'\`"
+  echo "Machine type $MACHINE_TYPE is not valid. Must be \`c6id.metal\` or \`c6id.4xlarge'\`"
   exit 1
 fi
 

@@ -19,7 +19,7 @@ jobs:
     matrix:
       solution: [data.table, collapse, dplyr, pandas, pydatatable, spark, juliadf, juliads, polars, R-arrow, duckdb, datafusion, dask, clickhouse]
   name: Solo solutions
-  runs-on: ubuntu-20.04
+  runs-on: ubuntu-latest
   env:
     CC: gcc-10
     CXX: g++-10

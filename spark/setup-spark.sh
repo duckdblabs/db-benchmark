@@ -8,7 +8,7 @@ virtualenv spark/py-spark --python=python3
 
 
 # put to paths
-echo 'export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64' >> path.env
+echo 'export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64' >> path.env
 
 source path.env
 

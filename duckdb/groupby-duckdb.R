@@ -37,7 +37,6 @@ if (on_disk) {
 table_type = "TEMP"
 if (machine_type == 'c6id.4xlarge' && on_disk) {
   dbExecute(con, "pragma memory_limit='25G'")
-  table_type = ""
 }
 
 dbExecute(con, "SET enable_progress_bar = false;")
@@ -50,19 +49,12 @@ git = dbGetQuery(con, "SELECT source_id FROM pragma_version()")[[1L]]
 invisible(dbExecute(con, "CREATE TABLE y(id1 VARCHAR, id2 VARCHAR, id3 VARCHAR, id4 INT, id5 INT, id6 INT, v1 INT, v2 INT, v3 FLOAT)"))
 invisible(dbExecute(con, sprintf("COPY y FROM '%s' (AUTO_DETECT TRUE)", src_grp)))
 
-# if there are no nulls (which duckdb enums can't handle, make enums)
-if (!uses_NAs) {
-  invisible(dbExecute(con, "CREATE TYPE id1ENUM AS ENUM (SELECT id1 FROM y)"))
-  invisible(dbExecute(con, "CREATE TYPE id2ENUM AS ENUM (SELECT id2 FROM y)"))
+invisible(dbExecute(con, "CREATE TYPE id1ENUM AS ENUM (SELECT id1 FROM y where id1 IS NOT NULL)"))
+invisible(dbExecute(con, "CREATE TYPE id2ENUM AS ENUM (SELECT id2 FROM y where id2 NOT NULL)"))
 
-  invisible(dbExecute(con, "CREATE TABLE x(id1 id1ENUM, id2 id2ENUM, id3 VARCHAR, id4 INT, id5 INT, id6 INT, v1 INT, v2 INT, v3 FLOAT)"))
-  invisible(dbExecute(con, "INSERT INTO x (SELECT * FROM y)"))
-  invisible(dbExecute(con, "DROP TABLE IF EXISTS y"))
-} else {
-  # otherwise rename y
-  invisible(dbExecute(con, "ALTER TABLE y RENAME TO x"))
-}
-
+invisible(dbExecute(con, "CREATE TABLE x(id1 id1ENUM, id2 id2ENUM, id3 VARCHAR, id4 INT, id5 INT, id6 INT, v1 INT, v2 INT, v3 FLOAT)"))
+invisible(dbExecute(con, "INSERT INTO x (SELECT * FROM y)"))
+invisible(dbExecute(con, "DROP TABLE IF EXISTS y"))
 
 
 print(in_nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM x")$cnt)
@@ -213,7 +205,7 @@ print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                             
 print(dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT count(*) FROM ans) - 4")) ## tail
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 
-if (machine_type != "c6id.4xlarge") {
+if (!(machine_type == "c6id.4xlarge" && on_disk)) {
   question = "largest two v3 by id6" # q8
   t = system.time({
     dbExecute(con, sprintf("CREATE %s TABLE ans AS SELECT id6, v3 AS largest2_v3 FROM (SELECT id6, v3, row_number() OVER (PARTITION BY id6 ORDER BY v3 DESC) AS order_v3 FROM x WHERE v3 IS NOT NULL) sub_query WHERE order_v3 <= 2", table_type))

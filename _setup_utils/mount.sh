@@ -1,9 +1,11 @@
 # script to format mount and copy data.
 
 # remove a leftover instance mount
-rm -rf ~/db-benchmark-metal
+rm -rf /var/lib/mount/db-benchmark-metal
 
 # format the mount
+
+source path.env
 
 mount_name=$(sudo lsblk | awk '
 NR > 1 && $1 ~ /^nvme/ && $7 == "" {

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-virtualenv dask/py-dask --python=python3.10
+virtualenv dask/py-dask --python=python3
 source dask/py-dask/bin/activate
 
 # install binaries
@@ -15,3 +15,5 @@ python3 -m pip install "dask[complete]"
 # quit()
 
 deactivate
+
+./dask/ver-dask.sh

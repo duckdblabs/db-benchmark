@@ -155,7 +155,9 @@ ns = solution.path(s)
 ext = file.ext(s)
 localcmd = if (s %in% c("clickhouse","h2o","juliadf", "juliads")) { # custom launcher bash script, for clickhouse h2o juliadf
   sprintf("exec.sh %s", t)
-} else sprintf("%s-%s.%s", t, ns, ext)
+} else if (s %in% c("dask")) {
+  sprintf("%s_%s.%s", t, ns, ext)
+}else sprintf("%s-%s.%s", t, ns, ext)
 cmd = sprintf("./%s/%s", ns, localcmd)
 cmd
 ret = system(cmd, ignore.stdout=as.logical(args[["quiet"]]))

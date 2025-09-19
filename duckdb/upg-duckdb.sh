@@ -1,17 +1,15 @@
 #!/bin/bash
 set -e
 
-# upgrade all packages in duckdb library only if new arrow is out
-echo 'upgrading duckdb, installing 0.8.1'
-
 rm -rf ./duckdb/r-duckdb
 mkdir -p ./duckdb/r-duckdb
 
 
 cd duckdb
+rm -rf duckdb-r
 git clone https://github.com/duckdb/duckdb-r
 cd duckdb-r 
-git checkout v1.0.0
+git checkout v1.2.0
 cd ..
 ncores=$(nproc --all)
 MAKE="make -j$ncores" R CMD INSTALL -l "./r-duckdb" duckdb-r

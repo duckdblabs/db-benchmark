@@ -160,6 +160,8 @@ launch = function(dt, mockup, out_dir="out") {
     uniqueN(dt$nodename)==1L, # this should be single value of current nodename
     !anyNA(dt$solution), !anyNA(dt$task), !anyNA(dt$data)
   )
+  # unset LD_LIBRARY_PATH for julia see https://github.com/JuliaLang/julia/issues/55765#issuecomment-2641247134
+  Sys.setenv(LD_LIBRARY_PATH="")
   machine_type = Sys.getenv("MACHINE_TYPE")
   stopifnot(is.character(machine_type))
   batch = Sys.getenv("BATCH", NA)
