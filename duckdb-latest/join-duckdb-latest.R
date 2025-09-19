@@ -8,7 +8,7 @@ suppressPackageStartupMessages({
   library("DBI", lib.loc="./duckdb-latest/r-duckdb-latest", warn.conflicts=FALSE)
   library("duckdb", lib.loc="./duckdb-latest/r-duckdb-latest", warn.conflicts=FALSE)
 })
-#ver = packageVersion("duckdb")
+ver = packageVersion("duckdb")
 #git = "" # set up later on after connecting to db
 task = "join"
 solution = "duckdb-latest"
@@ -50,37 +50,37 @@ invisible(dbExecute(con, sprintf("PRAGMA THREADS=%d", ncores)))
 git = dbGetQuery(con, "SELECT source_id FROM pragma_version()")[[1L]]
 ver = dbGetQuery(con, "Select library_version from pragma_version()")[[1L]]
 
-#invisible({
-#  dbExecute(con, sprintf("CREATE TABLE x_csv AS SELECT * FROM read_csv_auto('%s')", src_jn_x))
-#  dbExecute(con, sprintf("CREATE TABLE small_csv AS SELECT * FROM read_csv_auto('%s')", src_jn_y[1L]))
-#  dbExecute(con, sprintf("CREATE TABLE medium_csv AS SELECT * FROM read_csv_auto('%s')", src_jn_y[2L]))
-#  dbExecute(con, sprintf("CREATE TABLE big_csv AS SELECT * FROM read_csv_auto('%s')", src_jn_y[3L]))
-#})
+invisible({
+ dbExecute(con, sprintf("CREATE TABLE x_csv AS SELECT * FROM read_csv_auto('%s')", src_jn_x))
+ dbExecute(con, sprintf("CREATE TABLE small_csv AS SELECT * FROM read_csv_auto('%s')", src_jn_y[1L]))
+ dbExecute(con, sprintf("CREATE TABLE medium_csv AS SELECT * FROM read_csv_auto('%s')", src_jn_y[2L]))
+ dbExecute(con, sprintf("CREATE TABLE big_csv AS SELECT * FROM read_csv_auto('%s')", src_jn_y[3L]))
+})
 
-#id4_enum_statement = "SELECT id4 from (SELECT id4 FROM x_csv UNION ALL SELECT id4 FROM small_csv UNION ALL SELECT id4 from medium_csv UNION ALL SELECT id4 from big_csv) where id4 IS NOT NULL"
-#id5_enum_statement = "SELECT id5 from (SELECT id5 FROM x_csv UNION ALL SELECT id5 from medium_csv UNION ALL SELECT id5 from big_csv) where id5 IS NOT NULL"
-#invisible(dbExecute(con, sprintf("CREATE TYPE id4ENUM AS ENUM (%s)", id4_enum_statement)))
-#invisible(dbExecute(con, sprintf("CREATE TYPE id5ENUM AS ENUM (%s)", id5_enum_statement)))
+id4_enum_statement = "SELECT id4 from (SELECT id4 FROM x_csv UNION ALL SELECT id4 FROM small_csv UNION ALL SELECT id4 from medium_csv UNION ALL SELECT id4 from big_csv) where id4 IS NOT NULL"
+id5_enum_statement = "SELECT id5 from (SELECT id5 FROM x_csv UNION ALL SELECT id5 from medium_csv UNION ALL SELECT id5 from big_csv) where id5 IS NOT NULL"
+invisible(dbExecute(con, sprintf("CREATE TYPE id4ENUM AS ENUM (%s)", id4_enum_statement)))
+invisible(dbExecute(con, sprintf("CREATE TYPE id5ENUM AS ENUM (%s)", id5_enum_statement)))
 
-#invisible(dbExecute(con, "CREATE TABLE small(id1 INT64, id4 id4ENUM, v2 DOUBLE)"))
-#invisible(dbExecute(con, "INSERT INTO small (SELECT * from small_csv)"))
+invisible(dbExecute(con, "CREATE TABLE small(id1 INT64, id4 id4ENUM, v2 DOUBLE)"))
+invisible(dbExecute(con, "INSERT INTO small (SELECT * from small_csv)"))
 
-#invisible(dbExecute(con, "CREATE TABLE medium(id1 INT64, id2 INT64, id4 id4ENUM, id5 id5ENUM, v2 DOUBLE)"))
-#invisible(dbExecute(con, "INSERT INTO medium (SELECT * FROM medium_csv)"))
+invisible(dbExecute(con, "CREATE TABLE medium(id1 INT64, id2 INT64, id4 id4ENUM, id5 id5ENUM, v2 DOUBLE)"))
+invisible(dbExecute(con, "INSERT INTO medium (SELECT * FROM medium_csv)"))
 
-#invisible(dbExecute(con, "CREATE TABLE big(id1 INT64, id2 INT64, id3 INT64, id4 id4ENUM, id5 id5ENUM, id6 VARCHAR, v2 DOUBLE)"))
-#invisible(dbExecute(con, "INSERT INTO big (Select * from big_csv)"))
+invisible(dbExecute(con, "CREATE TABLE big(id1 INT64, id2 INT64, id3 INT64, id4 id4ENUM, id5 id5ENUM, id6 VARCHAR, v2 DOUBLE)"))
+invisible(dbExecute(con, "INSERT INTO big (Select * from big_csv)"))
 
-#invisible(dbExecute(con, "CREATE TABLE x(id1 INT64, id2 INT64, id3 INT64, id4 id4ENUM, id5 id5ENUM, id6 VARCHAR, v1 DOUBLE)"))
-#invisible(dbExecute(con, "INSERT INTO x (SELECT * FROM x_csv);"))
+invisible(dbExecute(con, "CREATE TABLE x(id1 INT64, id2 INT64, id3 INT64, id4 id4ENUM, id5 id5ENUM, id6 VARCHAR, v1 DOUBLE)"))
+invisible(dbExecute(con, "INSERT INTO x (SELECT * FROM x_csv);"))
 
 # drop all the csv ingested tables
-#invisible({
-#  dbExecute(con, "DROP TABLE x_csv")
-#  dbExecute(con, "DROP TABLE small_csv")
-#  dbExecute(con, "DROP TABLE medium_csv")
-#  dbExecute(con, "DROP TABLE big_csv")
-#})
+invisible({
+  dbExecute(con, "DROP TABLE x_csv")
+  dbExecute(con, "DROP TABLE small_csv")
+  dbExecute(con, "DROP TABLE medium_csv")
+  dbExecute(con, "DROP TABLE big_csv")
+})
 
 print(in_nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM x")$cnt)
 print(dbGetQuery(con, "SELECT count(*) AS cnt FROM small")$cnt)

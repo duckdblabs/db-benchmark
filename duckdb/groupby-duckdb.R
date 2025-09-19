@@ -40,6 +40,8 @@ if (machine_type == 'c6id.4xlarge' && on_disk) {
   table_type = ""
 }
 
+dbExecute(con, "SET enable_progress_bar = false;")
+
 ncores = parallel::detectCores()
 invisible(dbExecute(con, sprintf("PRAGMA THREADS=%d", ncores)))
 git = dbGetQuery(con, "SELECT source_id FROM pragma_version()")[[1L]]
