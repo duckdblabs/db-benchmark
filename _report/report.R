@@ -274,9 +274,6 @@ time_logs = function(path=getwd()) {
 
   ct = clean_time(lt)
   
-  # ct = ct %>% filter(machine_type != 'c6id.metal')
-
-  # remove duckdb-latest for now
   d = model_time(ct)
   ll <- load_logs(path=path)
 
@@ -287,6 +284,8 @@ time_logs = function(path=getwd()) {
   
   lq = merge_logs_questions(l, q)
   ld = merge_time_logsquestions(d, lq)
+  # remove duckdb-latest for now
+  ld = ld %>% filter(solution != 'duckdb-latest')
   lld = transform(ld)
   lld
 }

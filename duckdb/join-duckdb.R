@@ -209,6 +209,10 @@ invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 
 dbDisconnect(con, shutdown=TRUE)
 
+if (on_disk) {
+  unlink(db_file)
+}
+
 cat(sprintf("joining finished, took %.0fs\n", proc.time()[["elapsed"]]-task_init))
 
 if( !interactive() ) q("no", status=0)
