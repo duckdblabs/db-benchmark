@@ -93,13 +93,13 @@ jobs:
           if [ $ncores -eq 16 ]; then export MACHINE_TYPE="c6id.4xlarge"; fi
           if [ $ncores -eq 32 ]; then export MACHINE_TYPE="c6id.8xlarge"; fi
           if [ $ncores -eq 128 ]; then export MACHINE_TYPE="c6id.metal"; fi
-          if [[ ${{ inputs.sizes }} == *"small"* ]]; then
+          if [[ "${{ inputs.sizes }}" == *"small"* ]]; then
             MACHINE_TYPE=$MACHINE_TYPE ./_run/run_small.sh
           fi
-          if [[ ${{ inputs.sizes }} == *"medium"* ]]; then
+          if [[ "${{ inputs.sizes }}" == *"medium"* ]]; then
             MACHINE_TYPE=$MACHINE_TYPE ./_run/run_medium.sh
           fi
-          if [[ ${{ inputs.sizes }} == *"large"* ]]; then
+          if [[ "${{ inputs.sizes }}" == *"large"* ]]; then
             MACHINE_TYPE=$MACHINE_TYPE ./_run/run_large.sh
           fi
           
