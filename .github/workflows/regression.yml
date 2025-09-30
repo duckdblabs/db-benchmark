@@ -115,7 +115,7 @@ jobs:
  regression-test-benchmark-runner-all-solutions:
   needs: regression-test-benchmark-runner-solo-solutions
   name: Regression Tests all solutions
-  runs-on: ubuntu-20.04
+  runs-on: ubuntu-latest
   env:
     CC: gcc-10
     CXX: g++-10
