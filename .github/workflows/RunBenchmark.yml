@@ -6,8 +6,6 @@ on:
         type: string
       instance_id:
         type: string
-      include_clickhouse:
-        type: bool
       sizes:
         type: string
 
@@ -20,7 +18,6 @@ env:
   gh_issue_repo: duckdblabs/db-benchmark
   instance_id: ${{ inputs.instance_id }}
   solutions: ${{ inputs.solutions }}
-  include_clickhouse: ${{ inputs.include_clickhouse }}
 
 
 jobs:
@@ -44,7 +41,7 @@ jobs:
           gh issue create --repo ${{ env.gh_issue_repo }} --title "Could not start DB-benchmark machine" --body "AWS box with instance-id ${{ env.instance_id }} could not be started"
 
   run-benchmark:
-    name: Regression Tests all solutions
+    name: Run Benchmark
     env:
       CC: gcc-10
       CXX: g++-10
@@ -67,10 +64,9 @@ jobs:
         working-directory: /var/lib/mount/db-benchmark-metal
         run: |
           python3 _setup_utils/install_all_solutions.py ${{ env.solutions }}
-          if ${{ env.include_clickhouse }}; then
-            # installing/updating clickhouse needs sudo priviledges
-            sudo python3 _setup_utils/install_all_solutions.py clickhouse
-          fi
+          # installing/updating clickhouse needs sudo priviledges
+          # always install/update clickhouse if you can
+          sudo python3 _setup_utils/install_all_solutions.py clickhouse
 
       - name: Modify run.conf to only have new versions
         shell: bash
