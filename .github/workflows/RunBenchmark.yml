@@ -89,6 +89,7 @@ jobs:
           DO_REPORT: 1
           DO_PUBLISH: 0
         run: |
+          mkdir -p data
           ncores=`python3 -c 'import multiprocessing as mp; print(mp.cpu_count())'`
           if [ $ncores -eq 16 ]; then export MACHINE_TYPE="c6id.4xlarge"; fi
           if [ $ncores -eq 32 ]; then export MACHINE_TYPE="c6id.8xlarge"; fi
