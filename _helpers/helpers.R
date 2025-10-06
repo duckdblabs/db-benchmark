@@ -3,9 +3,9 @@ write.log = function(
   task=NA_character_, data=NA_character_, in_rows=NA_integer_, question=NA_character_, out_rows=NA_integer_,
   out_cols=NA_integer_, solution=NA_character_, version=NA_character_, git=NA_character_, fun=NA_character_,
   run=NA_integer_, time_sec=NA_real_, mem_gb=NA_real_, cache=NA, chk=NA_character_, chk_time_sec=NA_real_,
-  on_disk=FALSE
+  on_disk=FALSE, machine_type=''
 ) {
-  stopifnot(is.character(task), is.character(data), is.character(solution), is.character(fun), is.logical(on_disk))
+  stopifnot(is.character(task), is.character(data), is.character(solution), is.character(fun), is.logical(on_disk), is.character(machine_type))
   log.file=Sys.getenv("CSV_TIME_FILE", "time.csv")
   batch=Sys.getenv("BATCH", NA)
   nodename=toString(Sys.info()[["nodename"]])
@@ -17,7 +17,7 @@ write.log = function(
                 task=task, data=data, in_rows=trunc(in_rows), question=as.character(question), out_rows=trunc(out_rows), # trunc to support big int in double
                 out_cols=as.integer(out_cols), solution=solution, version=as.character(version), git=as.character(git), fun=fun,
                 run=as.integer(run), time_sec=time_sec, mem_gb=mem_gb, cache=cache, chk=chk, chk_time_sec=chk_time_sec,
-                comment=comment, on_disk=on_disk)
+                comment=comment, on_disk=on_disk, machine_type=machine_type)
   csv_verbose = Sys.getenv("CSV_VERBOSE", "false")
   if (as.logical(csv_verbose)) cat("# ", paste(sapply(df, format, scientific=FALSE), collapse=","), "\n", sep="")
   if (!file.size(log.file)) file.remove(log.file)

@@ -16,6 +16,8 @@ solution = "juliadf";
 fun = "join";
 cache = true;
 on_disk = false;
+machine_type = ENV["MACHINE_TYPE"]
+isondisk(indata) = parse(Float64, split(indata, "_")[2])>=10^10 || (parse(Float64, split(indata, "_")[2]) >= 1^9 && machine_type == "c6id.4xlarge")
 
 data_name = ENV["SRC_DATANAME"];
 src_jn_x = string("data/", data_name, ".csv");
@@ -24,6 +26,8 @@ src_jn_y = [string("data/", y_data_name[1], ".csv"), string("data/", y_data_name
 if length(src_jn_y) != 3
   error("Something went wrong in preparing files used for join")
 end;
+
+on_disk = isondisk(data_name)
 
 println(string("loading datasets ", data_name, ", ", y_data_name[1], ", ", y_data_name[2], ", ", y_data_name[3])); flush(stdout);
 
@@ -69,13 +73,13 @@ GC.gc(false);
 t = @elapsed (ANS = innerjoin(x_df, small_df, on = :id1, makeunique=true, matchmissing=:equal); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = [sum(skipmissing(ANS.v1)), sum(skipmissing(ANS.v2))];
-write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
+write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk, machine_type);
 ANS = 0;
 GC.gc(false);
 t = @elapsed (ANS = innerjoin(x_df, small_df, on = :id1, makeunique=true, matchmissing=:equal); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = [sum(skipmissing(ANS.v1)), sum(skipmissing(ANS.v2))];
-write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
+write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk, machine_type);
 println(first(ANS, 3));
 println(last(ANS, 3));
 ANS = 0;
@@ -85,13 +89,13 @@ GC.gc(false);
 t = @elapsed (ANS = innerjoin(x_df, medium_df, on = :id2, makeunique=true, matchmissing=:equal); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = [sum(skipmissing(ANS.v1)), sum(skipmissing(ANS.v2))];
-write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
+write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk, machine_type);
 ANS = 0;
 GC.gc(false);
 t = @elapsed (ANS = innerjoin(x_df, medium_df, on = :id2, makeunique=true, matchmissing=:equal); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = [sum(skipmissing(ANS.v1)), sum(skipmissing(ANS.v2))];
-write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
+write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk, machine_type);
 println(first(ANS, 3));
 println(last(ANS, 3));
 ANS = 0;
@@ -101,13 +105,13 @@ GC.gc(false);
 t = @elapsed (ANS = leftjoin(x_df, medium_df, on = :id2, makeunique=true, matchmissing=:equal); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = [sum(skipmissing(ANS.v1)), sum(skipmissing(ANS.v2))];
-write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
+write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk, machine_type);
 ANS = 0;
 GC.gc(false);
 t = @elapsed (ANS = leftjoin(x_df, medium_df, on = :id2, makeunique=true, matchmissing=:equal); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = [sum(skipmissing(ANS.v1)), sum(skipmissing(ANS.v2))];
-write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
+write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk, machine_type);
 println(first(ANS, 3));
 println(last(ANS, 3));
 ANS = 0;
@@ -118,13 +122,13 @@ t = @elapsed (ANS = innerjoin(x_df, medium_df, on = :id5, makeunique=true, match
 m = memory_usage();
 t_start = time_ns();
 chkt = @elapsed chk = [sum(skipmissing(ANS.v1)), sum(skipmissing(ANS.v2))];
-write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
+write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk, machine_type);
 ANS = 0;
 GC.gc(false);
 t = @elapsed (ANS = innerjoin(x_df, medium_df, on = :id5, makeunique=true, matchmissing=:equal); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = [sum(skipmissing(ANS.v1)), sum(skipmissing(ANS.v2))];
-write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
+write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk, machine_type);
 println(first(ANS, 3));
 println(last(ANS, 3));
 ANS = 0;
@@ -134,13 +138,13 @@ GC.gc(false);
 t = @elapsed (ANS = innerjoin(x_df, big_df, on = :id3, makeunique=true, matchmissing=:equal); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = [sum(skipmissing(ANS.v1)), sum(skipmissing(ANS.v2))];
-write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
+write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk, machine_type);
 ANS = 0;
 GC.gc(false);
 t = @elapsed (ANS = innerjoin(x_df, big_df, on = :id3, makeunique=true, matchmissing=:equal); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = [sum(skipmissing(ANS.v1)), sum(skipmissing(ANS.v2))];
-write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
+write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk, machine_type);
 println(first(ANS, 3));
 println(last(ANS, 3));
 ANS = 0;

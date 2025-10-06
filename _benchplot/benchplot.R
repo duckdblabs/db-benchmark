@@ -1,8 +1,12 @@
 ## Based on Matt Dowle scripts from 2014
 ## https://github.com/h2oai/db-benchmark/commit/fce1b8c9177afb49471fcf483a438f619f1a992b
 ## Original grouping benchmark can be found in: https://github.com/Rdatatable/data.table/wiki/Benchmarks-:-Grouping
+suppressPackageStartupMessages(library(bit64))
 
-format_comma = function(x) format(as.integer(x), big.mark=",")
+format_comma = function(x) {
+  format(as.integer64(x), big.mark=",")
+}
+
 format_num = function(x, digits=3L) { # at least 3+1 chars on output, there is surely some setting to achieve that better with base R but it is not obvious to find that among all features there
   cx = sprintf("%0.2f", x)
   int = sapply(strsplit(cx, ".", fixed=TRUE), `[`, 1L)

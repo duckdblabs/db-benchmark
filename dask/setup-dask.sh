@@ -15,3 +15,5 @@ python3 -m pip install "dask[complete]"
 # quit()
 
 deactivate
+
+./dask/ver-dask.sh

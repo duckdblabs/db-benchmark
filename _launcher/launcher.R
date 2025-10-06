@@ -130,14 +130,14 @@ lookup_run_batch = function(dt) {
 }
 
 # log runs to logs.csv so we now there was attempt to compute a script even if solution crashes before logging any timing
-log_run = function(solution, task, data, action = c("start","finish","skip"), batch, nodename, ret=NA_character_, stderr=NA_integer_, comment="", mockup=FALSE, verbose=TRUE) {
-  stopifnot(is.character(task), length(task)==1L, !is.na(task), is.character(ret), length(ret)==1L)
+log_run = function(solution, task, data, action = c("start","finish","skip"), batch, nodename, ret=NA_character_, stderr=NA_integer_, comment="", mockup=FALSE, verbose=TRUE, machine_type=NULL) {
+  stopifnot(is.character(task), length(task)==1L, !is.na(task), is.character(ret), length(ret)==1L, is.character(machine_type))
   action = match.arg(action)
   timestamp=as.numeric(Sys.time())
   lg = as.data.table(c(
     list(nodename=nodename, batch=batch, solution=solution),
     upgraded.solution(solution), # list(version, git) based on VERSION and REVISION files, and extra validation so VERSION has to be always present
-    list(task=task, data=data, timestamp=timestamp, action=action, stderr=stderr, ret=ret)
+    list(task=task, data=data, timestamp=timestamp, action=action, stderr=stderr, ret=ret, machine_type=machine_type)
   ))
   logs.csv = Sys.getenv("CSV_LOGS_FILE","logs.csv")
   if (!mockup) fwrite(lg, file=logs.csv, append=file.exists(logs.csv), col.names=!file.exists(logs.csv))
@@ -160,6 +160,10 @@ launch = function(dt, mockup, out_dir="out") {
     uniqueN(dt$nodename)==1L, # this should be single value of current nodename
     !anyNA(dt$solution), !anyNA(dt$task), !anyNA(dt$data)
   )
+  # unset LD_LIBRARY_PATH for julia see https://github.com/JuliaLang/julia/issues/55765#issuecomment-2641247134
+  Sys.setenv(LD_LIBRARY_PATH="")
+  machine_type = Sys.getenv("MACHINE_TYPE")
+  stopifnot(is.character(machine_type))
   batch = Sys.getenv("BATCH", NA)
   last_run = -Inf
   .nodename = unique(dt$nodename)
@@ -186,13 +190,13 @@ launch = function(dt, mockup, out_dir="out") {
         ret_file = sprintf("%s/run_%s_%s_%s.ret", out_dir, ns, t, d)
         if (!is.na(this_run$run_batch)) {
           comment = sprintf("%s run on %s", substr(this_run$compare, 1L, 7L), format(as.Date(as.POSIXct(this_run$run_batch, origin="1970-01-01")), "%Y%m%d"))
-          log_run(s, t, d, action="skip", batch=batch, nodename=.nodename, ret=readret(ret_file), stderr=wcl(err_file), comment=comment, mockup=mockup) # action 'skip' also logs number of stderr lines from previos run and previous exit code
+          log_run(s, t, d, action="skip", batch=batch, nodename=.nodename, ret=readret(ret_file), stderr=wcl(err_file), comment=comment, mockup=mockup, machine_type=machine_type) # action 'skip' also logs number of stderr lines from previos run and previous exit code
           next
         }
         # make at least 15s interval between running two scripts
         if ((wait <- last_run + 15 - as.numeric(Sys.time())) > 0)
           Sys.sleep(wait)
-        log_run(s, t, d, action="start", batch=batch, nodename=.nodename, mockup=mockup)
+        log_run(s, t, d, action="start", batch=batch, nodename=.nodename, mockup=mockup, machine_type=machine_type)
         if (!mockup) {
           if (file.exists(out_file)) file.remove(out_file)
           if (file.exists(err_file)) file.remove(err_file)
@@ -219,7 +223,7 @@ launch = function(dt, mockup, out_dir="out") {
                         shcmd, this_run$timeout_s, proc.time()[[3L]]-p, warn), file="timeout-exit-codes.out", append=TRUE)
           cat(paste0(ret,"\n"), file=ret_file, append=FALSE)
         }
-        last_run = log_run(s, t, d, action="finish", batch=batch, nodename=.nodename, ret=readret(ret_file), stderr=wcl(err_file), mockup=mockup)
+        last_run = log_run(s, t, d, action="finish", batch=batch, nodename=.nodename, ret=readret(ret_file), stderr=wcl(err_file), mockup=mockup, machine_type=machine_type)
       }
     }
   }

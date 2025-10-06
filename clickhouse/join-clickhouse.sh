@@ -5,7 +5,7 @@ source ./clickhouse/ch.sh
 SOLUTION=clickhouse
 TASK=join
 
-echo SRC ${SRC_DATANAME} RHS1 ${RHS1} RHS2 ${RHS2} RHS3 ${RHS3} ON_DISK ${ON_DISK} THREADS ${THREADS}
+echo SRC ${SRC_DATANAME} RHS1 ${RHS1} RHS2 ${RHS2} RHS3 ${RHS3} COMPRESS ${COMPRESS} THREADS ${THREADS}
 
 # /* q1: question='small inner on int' */
 Q=1

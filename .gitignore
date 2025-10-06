@@ -5,6 +5,8 @@ metastore_db/*
 *.csv
 !time.csv
 !logs.csv
+!_control/data_small.csv
+!_control/data_large.csv
 *.md5
 .Rproj.user
 .Rhistory

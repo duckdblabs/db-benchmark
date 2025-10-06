@@ -47,6 +47,15 @@ if (any(is.na(dt$timeout_s))) stop("missing entries in ./_control/timeout.csv fo
 # detect if script has been already run before for currently installed version/revision
 lookup_run_batch(dt)
 
+machine_type = getenv("MACHINE_TYPE")
+dt[,machine_type := machine_type]
+
+skipped_benchmarks = fread("./_control/skipped_benchmarks.csv", logical01=TRUE, colClasses=c("character","character","character","character"))
+print("skipping benchmarks defined in _control/skipped_benchmarks.csv")
+print(skipped_benchmarks)
+
+dt = dt[!skipped_benchmarks, on = c("solution", "task", "data", "machine_type")]
+
 # print list of solutions that are going to be run in this batch so we know upfront which will be skipped
 cat("Benchmark solutions to run: ", dt[is.na(run_batch), paste(unique(solution),collapse=", ")], "\n", sep="")
 

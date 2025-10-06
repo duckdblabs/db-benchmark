@@ -54,32 +54,34 @@ dt_join = lld[task=="join"]
 ```
 
 ```{r helpers}
-loop_benchplot = function(dt_task, report_name, syntax.dict, exceptions, solution.dict, question.txt.fun = NULL, title.txt.fun = NULL, data_namev, q_groupv, cutoff=NULL, pending=NULL) {
+loop_benchplot = function(dt_task, report_name, syntax.dict, exceptions, solution.dict, question.txt.fun = NULL, title.txt.fun = NULL, data_namev, q_groupv, cutoff=NULL, pending=NULL, machine_types) {
   for (data_name in data_namev) {
-    for (q_group in q_groupv) {
-      message(sprintf("benchplot %s %s %s", report_name, data_name, q_group))
-      benchplot(
-        x = dt_task[data==data_name & question_group==q_group],
-        filename = file.path("public", report_name, sprintf("%s_%s.png", data_name, q_group)),
-        solution.dict = solution.dict,
-        syntax.dict = syntax.dict,
-        exceptions = exceptions,
-        question.txt.fun = question.txt.fun,
-        title.txt.fun = title.txt.fun,
-        cutoff = cutoff,
-        pending = pending,
-        url.footer = "https://duckdblabs.github.io/db-benchmark",
-        interactive = FALSE
-      )
+    for (m_type in machine_types) {
+      for (q_group in q_groupv) {
+        message(sprintf("benchplot %s %s %s", report_name, data_name, q_group))
+        benchplot(
+          x = dt_task[data==data_name & question_group==q_group & machine_type==m_type],
+          filename = file.path("public", report_name, sprintf("%s_%s_%s.png", data_name, q_group, m_type)),
+          solution.dict = solution.dict,
+          syntax.dict = syntax.dict,
+          exceptions = exceptions,
+          question.txt.fun = question.txt.fun,
+          title.txt.fun = title.txt.fun,
+          cutoff = cutoff,
+          pending = pending,
+          url.footer = "https://duckdblabs.github.io/db-benchmark",
+          interactive = FALSE
+        )
+      }
     }
   }
 }
-link = function(data_name, q_group, report_name) {
-  fnam = sprintf("%s_%s.png", data_name, q_group)
+link = function(data_name, q_group, report_name, machine_type) {
+  fnam = sprintf("%s_%s_%s.png", data_name, q_group, machine_type)
   paste(sprintf("[%s](%s)", q_group, file.path(report_name, fnam)), collapse=", ")
 }
 hours_took = function(lld) {
-  lld_script_time = lld[, .(n_script_time_sec=uniqueN(script_time_sec), script_time_sec=unique(script_time_sec)), .(solution, task, data)]
+  lld_script_time = lld[, .(n_script_time_sec=uniqueN(script_time_sec), script_time_sec=unique(script_time_sec)), .(solution, task, data, machine_type)]
   if (nrow(lld_script_time[n_script_time_sec>1L]))
     stop("There are multiple different 'script_time_sec' for single solution+task+data on report 'index'")
   lld_script_time[, round(sum(script_time_sec, na.rm=TRUE)/60/60, 1)]
@@ -88,86 +90,135 @@ hours_took = function(lld) {
 
 ```{r report_groupby, message=FALSE}
 data_name = get_data_levels()[["groupby"]]
-loop_benchplot(dt_groupby, report_name="groupby", syntax.dict=groupby.syntax.dict, exceptions=groupby.exceptions, solution.dict=solution.dict, data_namev=data_name, q_groupv=c("basic","advanced"), title.txt.fun = header_title_fun, question.txt.fun = groupby_q_title_fun, cutoff = "spark", pending = "Modin")
+machine_types = get_machine_types()
+loop_benchplot(dt_groupby, report_name="groupby", syntax.dict=groupby.syntax.dict, exceptions=groupby.exceptions, solution.dict=solution.dict, data_namev=data_name, q_groupv=c("basic","advanced"), title.txt.fun = header_title_fun, question.txt.fun = groupby_q_title_fun, cutoff = "spark", pending = "Modin", machine_types)
 ```
 
 ```{r report_join, message=FALSE}
 data_name = get_data_levels()[["join"]]
-loop_benchplot(dt_join, report_name="join", syntax.dict=join.syntax.dict, exceptions=join.exceptions, solution.dict=solution.dict, data_namev=data_name, q_groupv=c("basic"), title.txt.fun = header_title_fun, question.txt.fun = join_q_title_fun, cutoff = "spark", pending = "Modin")
+machine_types = get_machine_types()
+loop_benchplot(dt_join, report_name="join", syntax.dict=join.syntax.dict, exceptions=join.exceptions, solution.dict=solution.dict, data_namev=data_name, q_groupv=c("basic"), title.txt.fun = header_title_fun, question.txt.fun = join_q_title_fun, cutoff = "spark", pending = "Modin", machine_types)
 ```
 
 
-## Task {.tabset .tabset-fade .tabset-pills}
+## Machine Type {.tabset .tabset-fade .tabset-pills}
 
-### groupby {.tabset .tabset-fade .tabset-pills}
+### Small (16 cores / 32GB memory)
 
-#### 0.5 GB
+#### Task {.tabset .tabset-fade .tabset-pills}
 
-##### **basic questions**
+##### groupby {.tabset .tabset-fade .tabset-pills}
 
-![](./groupby/G1_1e7_1e2_0_0_basic.png)
+###### 0.5 GB
 
-##### **advanced questions**
+####### **basic questions**
 
-![](./groupby/G1_1e7_1e2_0_0_advanced.png)
+![](./groupby/G1_1e7_1e2_0_0_basic_c6id.4xlarge.png)
 
-#### 5 GB
+####### **advanced questions**
 
-##### **basic questions**
+![](./groupby/G1_1e7_1e2_0_0_advanced_c6id.4xlarge.png)
 
-![](./groupby/G1_1e8_1e2_0_0_basic.png)
+###### 5 GB {.active}
 
-##### **advanced questions**
+####### **basic questions**
 
-![](./groupby/G1_1e8_1e2_0_0_advanced.png)
+![](./groupby/G1_1e8_1e2_0_0_basic_c6id.4xlarge.png)
 
-#### 50 GB {.active}
+####### **advanced questions**
 
-##### **basic questions**
+![](./groupby/G1_1e8_1e2_0_0_advanced_c6id.4xlarge.png)
 
-![](./groupby/G1_1e9_1e2_0_0_basic.png)
+###### 50 GB 
 
-##### **advanced questions**
+####### **basic questions**
 
-![](./groupby/G1_1e9_1e2_0_0_advanced.png)
+![](./groupby/G1_1e9_1e2_0_0_basic_c6id.4xlarge.png)
 
-### join {.tabset .tabset-fade .tabset-pills}
+####### **advanced questions**
 
-#### 0.5 GB
+![](./groupby/G1_1e9_1e2_0_0_advanced_c6id.4xlarge.png)
 
-##### **basic questions**
+##### join {.tabset .tabset-fade .tabset-pills}
 
-![](./join/J1_1e7_NA_0_0_basic.png)
+###### 0.5 GB
+
+####### **basic questions**
+
+![](./join/J1_1e7_NA_0_0_basic_c6id.4xlarge.png)
+
+###### 5 GB 
+
+####### **basic questions**
+
+![](./join/J1_1e8_NA_0_0_basic_c6id.4xlarge.png)
+
+###### 50 GB 
+
+####### **basic questions**
+
+![](./join/J1_1e9_NA_0_0_basic_c6id.4xlarge.png)
+
+### X-Large (128 cores / 256GB memory)
+
+#### Task {.tabset .tabset-fade .tabset-pills}
+
+##### groupby {.tabset .tabset-fade .tabset-pills}
+
+###### 0.5 GB
+
+####### **basic questions**
+
+![](./groupby/G1_1e7_1e2_0_0_basic_c6id.metal.png)
+
+####### **advanced questions**
+
+![](./groupby/G1_1e7_1e2_0_0_advanced_c6id.metal.png)
+
+###### 5 GB
+
+####### **basic questions**
+
+![](./groupby/G1_1e8_1e2_0_0_basic_c6id.metal.png)
+
+####### **advanced questions**
+
+![](./groupby/G1_1e8_1e2_0_0_advanced_c6id.metal.png)
+
+###### 50 GB {.active}
+
+####### **basic questions**
+
+![](./groupby/G1_1e9_1e2_0_0_basic_c6id.metal.png)
+
+####### **advanced questions**
+
+![](./groupby/G1_1e9_1e2_0_0_advanced_c6id.metal.png)
+
+##### join {.tabset .tabset-fade .tabset-pills}
+
+###### 0.5 GB
+
+####### **basic questions**
+
+![](./join/J1_1e7_NA_0_0_basic_c6id.metal.png)
+
+###### 5 GB
+
+####### **basic questions**
+
+![](./join/J1_1e8_NA_0_0_basic_c6id.metal.png)
+
+###### 50 GB {.active}
+
+####### **basic questions**
+
+![](./join/J1_1e9_NA_0_0_basic_c6id.metal.png)
 
 <!--
 ##### **advanced questions**
 
 ![](./join/J1_1e7_NA_0_0_advanced.png)
--->
-
-#### 5 GB
-
-##### **basic questions**
-
-![](./join/J1_1e8_NA_0_0_basic.png)
-
-
-<!--
-##### **advanced questions**
-
-![](./join/J1_1e8_NA_0_0_advanced.png)
--->
-
-#### 50 GB {.active}
-
-##### **basic questions**
-
-![](./join/J1_1e9_NA_0_0_basic.png)
-
-<!--
-##### **advanced questions**
-
-![](./join/J1_1e9_NA_0_0_advanced.png)
 -->
 
 ---
@@ -202,7 +253,7 @@ Timings are presented for datasets having random order, no NAs (missing values).
 ### join timings
 
 ```{r pivot_join}
-sdcols = c("solution","question_group","question","data","in_rows","na","sorted","time_sec_1","time_sec_2","version","git","chk_time_sec_1","na_time_sec","out_rows","out_cols")
+sdcols = c("solution","question_group","question","data","in_rows","na","sorted","time_sec_1","time_sec_2","version","git","chk_time_sec_1","na_time_sec","out_rows","out_cols","machine_type")
 data = dt_join[, .SD, .SDcols=sdcols]
 rpivotTable::rpivotTable(
   data,
@@ -215,19 +266,23 @@ rpivotTable::rpivotTable(
 )
 ```
 
+## Errors
+
+Since adding the new machine type, many updates need to be made to report generation in order to accommodate the extra dimension of the benchmark. One area where this maintenance has not yet occured is with error reporting. Please be patient while this is worked on. Many error "Not Tested" errors are placeholders for "Out of Memory" errors. I can re-run certain benchmarks on request, but please double check that they will not run out of memory. If you see an error that doesn't make sense and you are sure is not an out of memory error feel free to file an issue.
+
 
 ## Requesting an updated run
 
-The benchmark will now be updated with PR requests. To publish new results for a solution(s), you can open a PR with changes to solutions scripts or VERSION files, with updates to the time.csv and log.csv files of a run on a c6id.metal machine. To facilitate creating an instance identical to the one with the current results, the script `_utils/format_and_mount.sh`  was created. The script does the following 
+The benchmark will now be updated with PR requests. To publish new results for a solution(s), you can open a PR with changes to solutions scripts or VERSION files, with updates to the time.csv and log.csv files of a run on a c6id.metal machine or c6id.4xlarge. If using a c6id.4xlarge, we recommend a dedicated instance, to avoid variable performance due to noisy neighbors. To facilitate creating an instance identical to the one with the current results, the script `_setup_utils/mount.sh` and `_setup_utils/setup_small` were created. The script does the following 
 
-1. Formats and mounts an nvme drive so that solutions have access to instance storage
+1. Formats and mounts an nvme drive so that solutions have access to instance storage. This prevents variability in performance due to network storage. 
 2. Creates a new directory `db-benchmark-metal` on the nvme drive. This directory is a clone of the repository
 
 Once the `db-benchmark-metal` directory is created, you will need to 
-1. Create or generate all the datasets. The benchmark will not be updated if only a subset of datasets are tested. 
-2. Install the solutions you wish to have updated
-3. Update the solution(s) groupby or join scripts with any desired changes
-4. Run the benchmark on your solution
+1. Install the solutions you wish to have updated
+2. Update the solution(s) groupby or join scripts with any desired changes
+3. Modify the run.conf file so that your desired solution/task is run. 
+4. Run the benchmark on your solution by calling _run/partitioned_run.sh (note this will download the data and then delete it after the run. If you wish to have the benchmark data persist, comment out the lines removing the dta.)
 5. Generate the report to see how the results compare to other solutions
 6. Create your PR! (make sure the new time.csv and logs.csv files are included!)
 
@@ -237,9 +292,9 @@ The PR will then be reviewed by the DuckDB Labs team where we will run the bench
 ## Notes
 
 
-- You are welcome to run this benchmark yourself! All scripts related to setting up environment, data and benchmark are in the repository [repository](https://github.com/duckdblabs/db-benchmark) in the `utils` directory.
-- Data used to generate benchmark plots on this website can be obtained from [time.csv](./time.csv) (together with [logs.csv](./logs.csv)). See [_report/report.R](https://github.com/duckdblabs/db-benchmark/blob/master/_report/report.R) for quick introduction how to work with those.
-- Solutions are using in-memory data storage to achieve best timing. In case a solution runs out of memory (we use 250GB machine), it will use nvme storage if correctly set up. In such a case solution name is denoted by a `*` suffix on the legend.
+- You are welcome to run this benchmark yourself! All scripts related to setting up environment, data and benchmark are in the repository [repository](https://github.com/duckdblabs/db-benchmark) in the `_setup_utils` directory. Please remember to run `_setup_utils/mount.sh` so you know you are running on the instance storage and not network backed storage.
+- Data used to generate benchmark plots on this website can be obtained from [time.csv](./time.csv) (together with [logs.csv](./logs.csv)). See [_report/report.R](https://github.com/duckdblabs/db-benchmark/blob/master/_report/report.R) for quick introduction how to work with those. You can also download them from aws s3 without requiring any credentials.
+- Solutions are using in-memory data storage to achieve best timing. In case a solution runs out of memory (for the smaller machine), it will use nvme storage if correctly set up. In these cases, the solution name is denoted by a `*` suffix on the legend.
 - ClickHouse and DuckDB queries are `CREATE TABLE ans AS SELECT ...` to match the functionality provided by other solutions in terms of caching results of queries, see [#151](https://github.com/h2oai/db-benchmark/issues/151).
 - We ensure that calculations are not deferred by solution.
 - Because of the above, as of current moment, join timings of python datatable suffers from an extra deep copy. As a result of that extra overhead it suffers additionally with out of memory error for 1e9 join q5 _big-to-big_ join.
@@ -265,7 +320,8 @@ as.data.table(na.omit(fread("./_control/nodenames.csv")[lld_nodename, on="nodena
 
 ## Scope
 
-We limit the scope to what can be achieved on a single machine. Laptop size memory (8GB) and server size memory (250GB) are in scope. Out-of-memory using local disk such as NVMe is in scope. Multi-node systems such as Spark running in single machine mode is in scope, too. Machines are getting bigger: EC2 X1 has 2TB RAM and 1TB NVMe disk is under $300. If you can perform the task on a single machine, then perhaps you should. To our knowledge, nobody has yet compared this software in this way and published results too.
+We limit the scope to what can be achieved on a single machine. Laptop size memory (8GB) and server size memory (250GB) are in scope. Out-of-memory using local disk such as NVMe is in scope. Multi-node systems such as Spark running in single machine mode is in scope, too. Machines are getting bigger: EC2 X1 has 2TB RAM and 1TB NVMe disk is under $300. If you can perform the task on a single machine, then perhaps you should. To our knowledge, nobody has yet compared this software in this way and published results too. Some solutions are not run on smaller machines. You can request a run for your solution, but there is no guarantee when the run will take place.
+
 
 ## Why db-benchmark?
 
@@ -276,10 +332,10 @@ Because we have been asked many times to do so, the first task and initial motiv
 ## Explore more data cases
 
 ```{r link_all_benchplot}
-lld[order(task, data), .(task, in_rows, data, knasorted, question_group)
+lld[order(task, data), .(task, in_rows, data, knasorted, question_group, machine_type)
     ][, unique(.SD)
-      ][, .(benchplot=link(data, question_group, task)), .(task, in_rows, knasorted)
-        ][, .(task, `in rows`=in_rows, `data description`=knasorted, benchplot)
+      ][, .(benchplot=link(data, question_group, task, machine_type)), .(task, in_rows, knasorted, machine_type)
+        ][, .(task, `in rows`=in_rows, `data description`=knasorted, `machine type`=machine_type, benchplot)
           ][, kk(.SD)]
 ```
 

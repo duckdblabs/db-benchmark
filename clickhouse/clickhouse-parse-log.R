@@ -7,6 +7,7 @@ args = commandArgs(TRUE) # args = c("groupby","G1_1e6_1e2_0_0")
 stopifnot(length(args)==2L)
 task = args[1L]
 data_name = args[2L]
+machine_type = Sys.getenv("MACHINE_TYPE")
 
 library(data.table)
 # sort files according to question and run
@@ -34,7 +35,7 @@ stopifnot(all(d$task==task), all(d$data_name==data_name))
 d[,
   write.log(run=as.integer(run), timestamp=as.numeric(timestamp), task=as.character(task), data=as.character(data_name), in_rows=as.numeric(.in_rows), question=as.character(question),
             out_rows=as.numeric(NA), out_cols=as.integer(NA), solution=as.character(solution), version=as.character(version), git=as.character(NA), fun=as.character(fun), 
-            time_sec=as.numeric(time_sec), mem_gb=as.numeric(NA), cache=as.logical(cache), chk=as.character(NA), chk_time_sec=as.numeric(NA), on_disk=as.logical(on_disk)),
+            time_sec=as.numeric(time_sec), mem_gb=as.numeric(NA), cache=as.logical(cache), chk=as.character(NA), chk_time_sec=as.numeric(NA), on_disk=as.logical(on_disk), machine_type=as.character(machine_type)),
   by = seq_len(nrow(d))] -> nul
 
 cat("# clickhouse-parse-log.R: parsing timings to time.csv finished\n")

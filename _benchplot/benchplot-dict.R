@@ -267,10 +267,12 @@ groupby.syntax.dict = {list(
 )}
 groupby.data.exceptions = {list(                                                             # exceptions as of run 1575727624
   "collapse" = {list(
+    "Not Tested" = c("G1_1e9_1e2_0_0")
   )},
   "data.table" = {list(
     "timeout" = c("G1_1e9_1e1_0_0",                                                          # not always happened, q8 probably #110
-                  "G1_1e9_2e0_0_0")                                                          # q4 #110 also sometimes segfaults during fread but not easily reproducible
+                  "G1_1e9_2e0_0_0"),
+    "Not Tested" = c("G1_1e9_1e2_0_0")                                                       # q4 #110 also sometimes segfaults during fread but not easily reproducible
   )},
   "dplyr" = {list(
     "timeout" = c("G1_1e8_2e0_0_0"),                                                         # q10
@@ -285,7 +287,8 @@ groupby.data.exceptions = {list(                                                
     "csv reader NAs bug: datatable#2808" = c("G1_1e9_1e2_5_0")
   )},
   "spark" = {list(
-    "timeout" = "G1_1e9_1e2_5_0" ## seems that both runs have finished but second run timing was not logged to time.csv due to timeout
+    "timeout" = "G1_1e9_1e2_5_0",  ## seems that both runs have finished but second run timing was not logged to time.csv due to timeout
+    "Not Tested" = c("G1_1e9_1e2_0_0")
   )},
   "dask" = {list(
     "not yet implemented: dask#6986" = c("G1_1e7_1e2_5_0","G1_1e8_1e2_5_0","G1_1e9_1e2_5_0"), # #171
@@ -307,9 +310,11 @@ groupby.data.exceptions = {list(                                                
     "CSV import Segfault: JuliaLang#55765" = c("G1_1e7_1e2_0_0","G1_1e7_1e1_0_0","G1_1e7_2e0_0_0","G1_1e7_1e2_0_1","G1_1e7_1e2_5_0","G1_1e8_1e2_0_0","G1_1e8_1e1_0_0","G1_1e8_2e0_0_0","G1_1e8_1e2_0_1","G1_1e8_1e2_5_0","G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0")
   )},
   "clickhouse" = {list(
+    "Out of Memory" = c("G1_1e9_1e2_0_0")
   )},
   "polars" = {list(
     # "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0") # q10
+    "Not Tested" = c("G1_1e9_1e2_0_0")
   )},
   "R-arrow" = {list(
     # "timeout" = c(), # q10
@@ -325,7 +330,9 @@ groupby.data.exceptions = {list(                                                
     # "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0"),
     # "incorrect: duckdb#1737" = c("G1_1e7_1e2_5_0","G1_1e8_1e2_5_0")
   )},
-  "datafusion" = {list()}
+  "datafusion" = {list(
+    "Not Tested" = c("G1_1e9_1e2_0_0")
+  )}
 )}
 groupby.exceptions = task.exceptions(groupby.query.exceptions, groupby.data.exceptions)
 
@@ -463,6 +470,7 @@ join.query.exceptions = {list(
 )}
 join.data.exceptions = {list(                                                             # exceptions as of run 1575727624
   "collapse" = {list(
+    "Not tested" = c("J1_1e9_NA_0_0")
   )},
   "data.table" = {list(
     "timeout" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")                  # fread
@@ -478,7 +486,8 @@ join.data.exceptions = {list(                                                   
     "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_0_1")                                  # q5 out of memory due to a deep copy
   )},
   "spark" = {list(
-    "timeout" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")                        # q5 using new 8h timeout #126
+    # "timeout" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1"),                        # q5 using new 8h timeout #126
+    "Not tested" = c("J1_1e9_NA_0_0")
   )},
   "dask" = {list(
     "internal error: dask#7015" = c("J1_1e7_NA_0_0","J1_1e7_NA_5_0","J1_1e7_NA_0_1",      # dask/dask#7015
@@ -494,6 +503,7 @@ join.data.exceptions = {list(                                                   
     "CSV import Segfault: JuliaLang#55765" = c("J1_1e7_NA_0_0", "J1_1e7_NA_5_0", "J1_1e7_NA_0_1", "J1_1e8_NA_0_0", "J1_1e8_NA_5_0", "J1_1e8_NA_0_1", "J1_1e9_NA_0_0")
   )},
   "clickhouse" = {list(
+    "Out of Memory" = c("J1_1e9_NA_0_0")
   )},
   "polars" = {list(
     "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")
@@ -504,15 +514,17 @@ join.data.exceptions = {list(                                                   
   )},
   "duckdb" = {list(
     # "internal error: duckdb#1739" = c("J1_1e7_NA_0_0","J1_1e7_NA_5_0","J1_1e7_NA_0_1","J1_1e8_NA_0_0","J1_1e8_NA_5_0","J1_1e8_NA_0_1"),
-    "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")#,
+    # "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")#,
     #"incorrect: duckdb#1737" = c("J1_1e7_NA_5_0","J1_1e8_NA_5_0")
   )},
   "duckdb-latest" = {list(
     # "internal error: duckdb#1739" = c("J1_1e7_NA_0_0","J1_1e7_NA_5_0","J1_1e7_NA_0_1","J1_1e8_NA_0_0","J1_1e8_NA_5_0","J1_1e8_NA_0_1"),
-    "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")#,
+    # "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")#,
     #"incorrect: duckdb#1737" = c("J1_1e7_NA_5_0","J1_1e8_NA_5_0")
   )},
-  "datafusion" = {list()}
+  "datafusion" = {list(
+    "Not tested" = c("J1_1e9_NA_0_0")
+  )}
 )}
 join.exceptions = task.exceptions(join.query.exceptions, join.data.exceptions)
 

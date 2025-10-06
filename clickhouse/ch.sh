@@ -3,7 +3,7 @@ ch_installed() {
 }
 
 ch_active() {
-  clickhouse-client --query="SELECT 0;" > /dev/null 2>&1
+  clickhouse-client --user db_benchmark --query="SELECT 0;" > /dev/null 2>&1
   local ret=$?;
   if [[ $ret -eq 0 ]]; then return 0; elif [[ $ret -eq 210 ]]; then return 1; else echo "Unexpected return code from clickhouse-client: $ret" >&2 && return 1; fi;
 }
@@ -26,22 +26,25 @@ ch_stop() {
 
 ch_query() {
   ENGINE=Memory
+  if [ $COMPRESS -eq 1 ]; then
+  ENGINE="Memory settings compress=1"
+  fi
   if [ $ON_DISK -eq 1 ]; then
   ENGINE="MergeTree ORDER BY tuple()"
   fi
   sudo touch '/var/lib/clickhouse/flags/force_drop_table' && sudo chmod 666 '/var/lib/clickhouse/flags/force_drop_table'
-  clickhouse-client --query "DROP TABLE IF EXISTS ans;"
-  clickhouse-client --log_comment ${RUNNAME} --query "CREATE TABLE ans ENGINE = ${ENGINE} AS ${QUERY} SETTINGS max_insert_threads=${THREADS}, max_threads=${THREADS};"
+  clickhouse-client --user db_benchmark --query "DROP TABLE IF EXISTS ans;"
+  clickhouse-client --user db_benchmark --log_comment ${RUNNAME} --query "CREATE TABLE ans ENGINE = ${ENGINE} AS ${QUERY} SETTINGS max_insert_threads=${THREADS}, max_threads=${THREADS};"
   local ret=$?;
   if [[ $ret -eq 0 ]]; then return 0; elif [[ $ret -eq 210 ]]; then return 1; else echo "Unexpected return code from clickhouse-client: $ret" >&2 && return 1; fi;
-  clickhouse-client --query "SELECT * FROM ans LIMIT 3;"
+  clickhouse-client --user db_benchmark --query "SELECT * FROM ans LIMIT 3;"
   sudo touch '/var/lib/clickhouse/flags/force_drop_table' && sudo chmod 666 '/var/lib/clickhouse/flags/force_drop_table'
-  clickhouse-client --query "DROP TABLE ans;"
+  clickhouse-client --user db_benchmark --query "DROP TABLE ans;"
 }
 
 ch_logrun() {
-  clickhouse-client --query "SYSTEM FLUSH LOGS;"
-  clickhouse-client --query "SELECT ${RUN} AS run, toUnixTimestamp(now()) AS timestamp, '${TASK}' AS task, '${SRC_DATANAME}' AS data_name, NULL AS in_rows, '${QUESTION}' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, '${FUNCTION}' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk FROM system.query_log WHERE type='QueryFinish' AND log_comment='${RUNNAME}' ORDER BY query_start_time DESC LIMIT 1 FORMAT CSVWithNames;" > clickhouse/log/${RUNNAME}.csv
+  clickhouse-client --user db_benchmark --query "SYSTEM FLUSH LOGS;"
+  clickhouse-client --user db_benchmark --query "SELECT ${RUN} AS run, toUnixTimestamp(now()) AS timestamp, '${TASK}' AS task, '${SRC_DATANAME}' AS data_name, NULL AS in_rows, '${QUESTION}' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, '${FUNCTION}' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk FROM system.query_log WHERE type='QueryFinish' AND log_comment='${RUNNAME}' ORDER BY query_start_time DESC LIMIT 1 FORMAT CSVWithNames;" > clickhouse/log/${RUNNAME}.csv
   local ret=$?;
   if [[ $ret -eq 0 ]]; then return 0; elif [[ $ret -eq 210 ]]; then return 1; else echo "Unexpected return code from clickhouse-client: $ret" >&2 && return 1; fi;
 }
@@ -51,6 +54,13 @@ ch_make_2_runs() {
   RUNNAME="${TASK}_${SRC_DATANAME}_q${Q}_r${RUN}"
   ch_query
   ch_logrun
+
+  if [ $COMPRESS -eq 1 ]; then
+    # It will take some time for memory freed by Memory engine to be returned back to the system.
+    # Without a sleep we might get a MEMORY_LIMIT exception during the second run of the query.
+    # It is done only when $COMPRESS=1 because this variable is set to true only for the largest dataset.
+    sleep 60
+  fi
 
   RUN=2
   RUNNAME="${TASK}_${SRC_DATANAME}_q${Q}_r${RUN}"

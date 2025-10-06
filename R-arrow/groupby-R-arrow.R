@@ -19,6 +19,7 @@ cache = TRUE
 on_disk = FALSE
 
 data_name = Sys.getenv("SRC_DATANAME")
+machine_type = Sys.getenv("MACHINE_TYPE")
 src_grp = file.path("data", paste(data_name, "csv", sep="."))
 cat(sprintf("loading dataset %s\n", data_name))
 
@@ -37,7 +38,7 @@ t = system.time({
 m = memory_usage()
 chk <- summarise(ungroup(ans), v1=sum(bit64::as.integer64(v1)))
 chkt = system.time(chk <- collect(chk))[["elapsed"]]
-write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 rm(ans)
 t = system.time({
     ans <- collect(x %>% group_by(id1) %>% summarise(v1=sum(v1, na.rm=TRUE)))
@@ -45,7 +46,7 @@ t = system.time({
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk <- collect(summarise(ungroup(ans), v1=sum(bit64::as.integer64(v1)))))[["elapsed"]]
-write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 ans <- collect(ans)
 print(head(ans, 3))
 print(tail(ans, 3))
@@ -58,7 +59,7 @@ t = system.time({
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk <- collect(summarise(ungroup(ans), v1=sum(bit64::as.integer64(v1)))))[["elapsed"]]
-write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 rm(ans)
 t = system.time({
   ans<-collect(x %>% group_by(id1, id2) %>% summarise(v1=sum(v1, na.rm=TRUE)))
@@ -66,7 +67,7 @@ t = system.time({
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk <- collect(summarise(ungroup(ans), v1=sum(bit64::as.integer64(v1)))))[["elapsed"]]
-write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 ans <- collect(ans)
 print(head(ans, 3))
 print(tail(ans, 3))
@@ -79,7 +80,7 @@ t = system.time({
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk <- collect(summarise(ungroup(ans), v1=sum(bit64::as.integer64(v1)), v3=sum(v3))))[["elapsed"]]
-write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 rm(ans)
 t = system.time({
   ans<- collect(x %>% group_by(id3) %>% summarise(v1=sum(v1, na.rm=TRUE), v3=mean(v3, na.rm=TRUE)))
@@ -87,7 +88,7 @@ t = system.time({
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk <- collect(summarise(ungroup(ans), v1=sum(bit64::as.integer64(v1)), v3=sum(v3))))[["elapsed"]]
-write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 ans <- collect(ans)
 print(head(ans, 3))
 print(tail(ans, 3))
@@ -100,7 +101,7 @@ t = system.time({
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk <- collect(summarise(ungroup(ans), v1=sum(v1), v2=sum(v2), v3=sum(v3))))[["elapsed"]]
-write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 rm(ans)
 t = system.time({
   ans<- collect(x %>% group_by(id4) %>% summarise(v1=mean(v1, na.rm=TRUE), v2=mean(v2, na.rm=TRUE), v3=mean(v3, na.rm=TRUE)))
@@ -108,7 +109,7 @@ t = system.time({
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk <- collect(summarise(ungroup(ans), v1=sum(v1), v2=sum(v2), v3=sum(v3))))[["elapsed"]]
-write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 ans <- collect(ans)
 print(head(ans, 3))
 print(tail(ans, 3))
@@ -121,7 +122,7 @@ t = system.time({
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk <- collect(summarise(ungroup(ans), v1=sum(bit64::as.integer64(v1)), v2=sum(bit64::as.integer64(v2)), v3=sum(v3))))[["elapsed"]]
-write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 rm(ans)
 t = system.time({
   ans<-collect(x %>% group_by(id6) %>% summarise(v1=sum(v1, na.rm=TRUE), v2=sum(v2, na.rm=TRUE), v3=sum(v3, na.rm=TRUE)))
@@ -129,7 +130,7 @@ t = system.time({
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk <- collect(summarise(ungroup(ans), v1=sum(bit64::as.integer64(v1)), v2=sum(bit64::as.integer64(v2)), v3=sum(v3))))[["elapsed"]]
-write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 ans <- collect(ans)
 print(head(ans, 3))
 print(tail(ans, 3))
@@ -142,7 +143,7 @@ t = system.time({
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk <- collect(summarise(ungroup(ans), median_v3=sum(median_v3), sd_v3=sum(sd_v3))))[["elapsed"]]
-write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 rm(ans)
 t = system.time({
   ans<- collect(x %>% group_by(id4, id5) %>% summarise(median_v3=median(v3, na.rm=TRUE), sd_v3=sd(v3, na.rm=TRUE)))
@@ -150,7 +151,7 @@ t = system.time({
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk <- collect(summarise(ungroup(ans), median_v3=sum(median_v3), sd_v3=sum(sd_v3))))[["elapsed"]]
-write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 ans <- collect(ans)
 print(head(ans, 3))
 print(tail(ans, 3))
@@ -163,7 +164,7 @@ t = system.time({
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk <- collect(summarise(ungroup(ans), range_v1_v2=sum(bit64::as.integer64(range_v1_v2)))))[["elapsed"]]
-write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 rm(ans)
 t = system.time({
   ans<- collect(x %>% group_by(id3) %>% summarise(range_v1_v2=max(v1, na.rm=TRUE)-min(v2, na.rm=TRUE)))
@@ -171,7 +172,7 @@ t = system.time({
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk <- collect(summarise(ungroup(ans), range_v1_v2=sum(bit64::as.integer64(range_v1_v2)))))[["elapsed"]]
-write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 ans <- collect(ans)
 print(head(ans, 3))
 print(tail(ans, 3))
@@ -184,7 +185,7 @@ rm(ans)
 # })[["elapsed"]]
 # m = memory_usage()
 # chkt = system.time(chk <- collect(summarise(ungroup(ans), largest2_v3=sum(largest2_v3))))[["elapsed"]]
-# write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 # rm(ans)
 # t = system.time({
 #   ans<- collect(x %>% select(id6, largest2_v3=v3) %>% filter(!is.na(largest2_v3)) %>% arrange(desc(largest2_v3)) %>% group_by(id6) %>% filter(row_number() <= 2L))
@@ -192,7 +193,7 @@ rm(ans)
 # })[["elapsed"]]
 # m = memory_usage()
 # chkt = system.time(chk <- collect(summarise(ungroup(ans), largest2_v3=sum(largest2_v3))))[["elapsed"]]
-# write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 # ans <- collect(ans)
 # print(head(ans, 3))
 # print(tail(ans, 3))
@@ -205,7 +206,7 @@ rm(ans)
 # })[["elapsed"]]
 # m = memory_usage()
 # chkt = system.time(chk <- collect(summarise(ungroup(ans), r2=sum(r2))))[["elapsed"]]
-# write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 # rm(ans)
 # t = system.time({
 #   ans <- collect(x %>% group_by(id2, id4) %>% summarise(r2=cor(v1, v2, use="na.or.complete")^2))
@@ -213,7 +214,7 @@ rm(ans)
 # })[["elapsed"]]
 # m = memory_usage()
 # chkt = system.time(chk <- collect(summarise(ungroup(ans), r2=sum(r2))))[["elapsed"]]
-# write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 # ans <- collect(ans)
 # print(head(ans, 3))
 # print(tail(ans, 3))
@@ -226,7 +227,7 @@ rm(ans)
 # })[["elapsed"]]
 # m = memory_usage()
 # chkt = system.time(chk <- collect(summarise(ungroup(ans), v3=sum(v3), count=sum(bit64::as.integer64(count)))))[["elapsed"]]
-# write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 # rm(ans)
 # t = system.time({
 #   ans <- collect(x %>% group_by(id1, id2, id3, id4, id5, id6) %>% summarise(v3=sum(v3, na.rm=TRUE), count=n()))
@@ -234,7 +235,7 @@ rm(ans)
 # })[["elapsed"]]
 # m = memory_usage()
 # chkt = system.time(chk <- collect(summarise(ungroup(ans), v3=sum(v3), count=sum(bit64::as.integer64(count)))))[["elapsed"]]
-# write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 # ans <- collect(ans)
 # print(head(ans, 3))
 # print(tail(ans, 3))

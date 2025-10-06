@@ -18,7 +18,7 @@ publishGhPages(){
   git fetch -q upstream gh-pages
   rm -f err.txt
   git checkout -q gh-pages
-  git reset -q --hard "4eadfc22cc86eade8c91f7809aae01a9753c4d90"
+  git reset -q --hard "645f86716bfb3b44c53eacf1f2bf234e75ea41ec"
 
   rm -f err.txt
   cp -r ../public/* ./

@@ -18,7 +18,8 @@ fun = ".sql"
 cache = "TRUE"
 
 data_name = os.environ['SRC_DATANAME']
-on_disk = data_name.split("_")[1] == "1e9" # on-disk data storage #126
+machine_type = os.environ["MACHINE_TYPE"]
+on_disk = data_name.split("_")[1] >= "1e9" # on-disk data storage #126
 src_jn_x = os.path.join("data", data_name+".csv")
 y_data_name = join_to_tbls(data_name)
 src_jn_y = [os.path.join("data", y_data_name[0]+".csv"), os.path.join("data", y_data_name[1]+".csv"), os.path.join("data", y_data_name[2]+".csv")]
@@ -28,6 +29,8 @@ if len(src_jn_y) != 3:
 mem_usage = "220g"
 if "TEST_RUN" in os.environ:
      mem_usage = "2g"
+if machine_type == 'c6id.4xlarge':
+     mem_usage = "30g"
 
 from pyspark.conf import SparkConf
 spark = SparkSession.builder \
@@ -86,7 +89,7 @@ ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
 chk = spark.sql("select sum(v1) as v1, sum(v2) as v2 from ans").collect()[0].asDict().values()
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
@@ -100,7 +103,7 @@ ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
 chk = spark.sql("select sum(v1) as v1, sum(v2) as v2 from ans").collect()[0].asDict().values()
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 ans.unpersist()
@@ -118,7 +121,7 @@ ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
 chk = spark.sql("select sum(v1) as v1, sum(v2) as v2 from ans").collect()[0].asDict().values()
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
@@ -132,7 +135,7 @@ ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
 chk = spark.sql("select sum(v1) as v1, sum(v2) as v2 from ans").collect()[0].asDict().values()
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 ans.unpersist()
@@ -150,7 +153,7 @@ ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
 chk = spark.sql("select sum(v1) as v1, sum(v2) as v2 from ans").collect()[0].asDict().values()
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
@@ -164,7 +167,7 @@ ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
 chk = spark.sql("select sum(v1) as v1, sum(v2) as v2 from ans").collect()[0].asDict().values()
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 ans.unpersist()
@@ -182,7 +185,7 @@ ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
 chk = spark.sql("select sum(v1) as v1, sum(v2) as v2 from ans").collect()[0].asDict().values()
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
@@ -196,7 +199,7 @@ ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
 chk = spark.sql("select sum(v1) as v1, sum(v2) as v2 from ans").collect()[0].asDict().values()
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 ans.unpersist()
@@ -214,7 +217,7 @@ ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
 chk = spark.sql("select sum(v1) as v1, sum(v2) as v2 from ans").collect()[0].asDict().values()
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
@@ -228,7 +231,7 @@ ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
 chk = spark.sql("select sum(v1) as v1, sum(v2) as v2 from ans").collect()[0].asDict().values()
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
 print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 ans.unpersist()

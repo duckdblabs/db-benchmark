@@ -1,0 +1,156 @@
+name: Run benchmark
+on:
+  workflow_dispatch:
+    inputs:
+      solutions:
+        type: string
+      instance_id:
+        type: string
+      sizes:
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.head_ref || '' }}-${{ github.base_ref || '' }}-${{ github.ref != 'refs/heads/master' || github.sha }}
+  cancel-in-progress: true
+
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  gh_issue_repo: duckdblabs/db-benchmark
+  instance_id: ${{ inputs.instance_id }}
+  solutions: ${{ inputs.solutions }}
+
+
+jobs:
+  start-aws-machine:
+    name: Start aws-small-machine
+    runs-on: ubuntu-latest
+    environment: aws-secrets
+    steps:
+      - name: Start EC2 runner
+        shell: bash
+        env:
+          AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          AWS_DEFAULT_REGION: us-east-1
+        run: aws ec2 start-instances --instance-id ${{ env.instance_id }}
+
+      - name: Create issue if failure
+        shell: bash
+        if: ${{ failure() && contains(github.ref_name, 'main') }}
+        run: |
+          gh issue create --repo ${{ env.gh_issue_repo }} --title "Could not start DB-benchmark machine" --body "AWS box with instance-id ${{ env.instance_id }} could not be started"
+
+  run-benchmark:
+    name: Run Benchmark
+    env:
+      CC: gcc-10
+      CXX: g++-10
+      GEN: ninja
+    runs-on: self-hosted
+    environment: aws-secrets
+    permissions:                # Job-level permissions configuration starts here
+      contents: write           # 'write' access to repository contents
+      pull-requests: write      # 'write' access to pull requests
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: run mount
+        shell: bash
+        run: |
+          ./_setup_utils/mount.sh
+
+      - name: Install or Upgrade all solutions
+        shell: bash
+        working-directory: /var/lib/mount/db-benchmark-metal
+        run: |
+          python3 _setup_utils/install_all_solutions.py ${{ env.solutions }}
+          # installing/updating clickhouse needs sudo priviledges
+          # always install/update clickhouse if you can
+          sudo python3 _setup_utils/install_all_solutions.py clickhouse
+
+      - name: Modify run.conf to only have new versions
+        shell: bash
+        working-directory: /var/lib/mount/db-benchmark-metal
+        run: |
+          git diff --name-only **/VERSION > updated_solutions.txt
+          cat updated_solutions.txt
+          export new_solutions="${{ env.solutions }}"
+          echo "testing solutions: " $new_solutions
+          sed -i "s/export RUN_SOLUTIONS=.*/export RUN_SOLUTIONS=\"${new_solutions}\"/g" run.conf
+
+      - name: Run the benchmark
+        shell: bash
+        working-directory: /var/lib/mount/db-benchmark-metal
+        env:
+          DO_REPORT: 1
+          DO_PUBLISH: 0
+        run: |
+          mkdir -p data
+          ncores=`python3 -c 'import multiprocessing as mp; print(mp.cpu_count())'`
+          if [ $ncores -eq 16 ]; then export MACHINE_TYPE="c6id.4xlarge"; fi
+          if [ $ncores -eq 32 ]; then export MACHINE_TYPE="c6id.8xlarge"; fi
+          if [ $ncores -eq 128 ]; then export MACHINE_TYPE="c6id.metal"; fi
+          if [[ "${{ inputs.sizes }}" == *"small"* ]]; then
+            MACHINE_TYPE=$MACHINE_TYPE ./_run/run_small.sh
+          fi
+          if [[ "${{ inputs.sizes }}" == *"medium"* ]]; then
+            MACHINE_TYPE=$MACHINE_TYPE ./_run/run_medium.sh
+          fi
+          if [[ "${{ inputs.sizes }}" == *"large"* ]]; then
+            MACHINE_TYPE=$MACHINE_TYPE ./_run/run_large.sh
+          fi
+          
+      - name: name new branch
+        shell: bash
+        run: |
+          echo "new_branch_name=results-`date +%Y-%m-%d-%Hh%Mm`" >> $GITHUB_ENV
+          echo ${{ env.new_branch_name }}
+
+      - name: Commit updates
+        shell: bash
+        working-directory: /var/lib/mount/db-benchmark-metal
+        run: |
+          git config --global user.email ""
+          git config --global user.name "Run Benchmark action"
+          git remote add upstream git@github.com:duckdblabs/db-benchmark
+          git fetch upstream
+          git switch -c ${{ env.new_branch_name }}
+          git add time.csv logs.csv **/VERSION
+          git add run.conf
+          git commit -m "new results"
+          git push upstream ${{ env.new_branch_name }}
+
+      - name: Create Archive
+        if: always()
+        shell: bash
+        working-directory: /var/lib/mount/db-benchmark-metal
+        run: |
+          mkdir -p out
+          echo "guarantee not empty dir" > out/guarantee.txt
+          zip -r out-dir.zip out/ public/
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: out-dir.zip
+          path: /var/lib/mount/db-benchmark-metal/out-dir.zip
+          if-no-files-found: error
+
+  shutdown:
+    name: shut down
+    environment: aws-secrets
+    if: always()
+    runs-on: ubuntu-latest
+    needs:
+      - start-aws-machine
+      - run-benchmark
+
+    steps:
+      - name: shutdown
+        shell: bash
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-1
+        run: aws ec2 stop-instances --instance-id ${{ env.instance_id }}
+

@@ -6,7 +6,7 @@ get_report_status_file = function(path=getwd()) {
   file.path(path, "report-done")
 }
 get_report_solutions = function() {
-  c("collapse", "data.table", "dplyr", "pandas", "pydatatable", "spark", "dask", "juliadf", "juliads", "clickhouse", "cudf", "polars", "duckdb", "datafusion", "arrow", "R-arrow")
+  c("duckdb-latest", "collapse", "data.table", "dplyr", "pandas", "pydatatable", "spark", "dask", "juliadf", "juliads", "clickhouse", "cudf", "polars", "duckdb", "datafusion", "arrow", "R-arrow")
 }
 get_data_levels = function() {
   ## groupby
@@ -21,8 +21,15 @@ get_data_levels = function() {
   in_rows = c("1e7","1e8","1e9")
   k_na_sort = "1e2_0_0"
   groupby2014 = paste("G0", paste(rep(in_rows, each=length(k_na_sort)), k_na_sort, sep="_"), sep="_")
+
   list(groupby=groupby, join=join, groupby2014=groupby2014)
 }
+
+# machine types cannot have '.'
+get_machine_types = function() {
+  c('c6id.metal', 'c6id.4xlarge')
+}
+
 get_excluded_batch = function() {
   c(
     1552478772L, 1552482879L # testing different data as 1e9_1e2_0_0 to test logical compression of measures
@@ -138,13 +145,14 @@ model_time = function(d) {
     stop("Value of 'out_cols' varies for different runs for single question")
   if (nrow(d[, .(unqn_on_disk=uniqueN(on_disk)), .(task, solution, data, batch)][unqn_on_disk>1L]))
     stop("Value of 'on_disk' varies for different questions/runs for single solution+data+batch") # on_disk should be const in script
-  d = dcast(d, nodename+batch+in_rows+question+solution+fun+on_disk+cache+version+git+task+data ~ run, value.var=c("timestamp","time_sec","mem_gb","chk_time_sec","chk","out_rows","out_cols"))
+  d = dcast(d, nodename+batch+in_rows+question+solution+fun+on_disk+cache+version+git+task+data+machine_type ~ run, value.var=c("timestamp","time_sec","mem_gb","chk_time_sec","chk","out_rows","out_cols"))
   d[, c("chk_2","out_rows_2","out_cols_2") := NULL]
   setnames(d, c("chk_1","out_rows_1","out_cols_1"), c("chk","out_rows","out_cols"))
   d
 }
+
 model_logs = function(l) {
-  l = dcast(l, nodename+batch+solution+version+git+task+data ~ action, value.var=c("timestamp","stderr"))
+  l = dcast(l, nodename+batch+solution+version+git+task+data+machine_type ~ action, value.var=c("timestamp","stderr"))
   l[, stderr_start := NULL]
   setnames(l, c("stderr_finish","timestamp_start","timestamp_finish"), c("script_stderr","script_start","script_finish"))
   l
@@ -162,6 +170,7 @@ merge_logs_questions = function(l, q) {
                  nodename, batch, solution, task, data,
                  question=x.question, question_group=x.question_group,
                  version=i.version, git=i.git,
+                 machine_type=i.machine_type,
                  script_start=i.script_start, script_finish=i.script_finish, script_stderr=i.script_stderr
                )]
   lq
@@ -173,7 +182,7 @@ merge_time_logsquestions = function(d, lq) {
     stop("Solution version in 'version' does not match between 'time' and 'logs', different 'version' reported from solution script vs launcher script")
   if (nrow(ld[as.character(git)!=as.character(i.git)])) # one side NAs are skipped
     stop("Solution revision in 'git' does not match between 'time' and 'logs', , different 'git' reported from solution script vs launcher script")
-  ld = d[lq, on=c("nodename","batch","version","git","solution","task","data","question"), nomatch=NA] # re-join to get i's version git
+  ld = d[lq, on=c("nodename","batch","version","git","solution","task","data","question", "machine_type"), nomatch=NA] # re-join to get i's version git
   ld
 }
 
@@ -207,10 +216,25 @@ ftdata = function(x, task) {
   }
 }
 transform = function(ld) {
-  ld[, max_batch:=max(batch), c("solution","task","data")]
-  ld[, script_recent:=FALSE][batch==max_batch, script_recent:=TRUE][, max_batch:=NULL]
-  ld[, "na_time_sec":=FALSE][is.na(time_sec_1) | is.na(time_sec_2), "na_time_sec":=TRUE]
-  ld[, "on_disk" := on_disk[1L], by=c("batch","solution","task","data")] # on_disk is a constant across whole script, fill trailing NA so advanced question group will not stay NA if basic had that info #126
+  ld[,max_batch:=0]
+  new_ld = ld[0]
+
+  machine_types = get_machine_types()
+  for (m_type in machine_types) {
+    a = ld[machine_type == m_type]
+    a[, max_batch:=max(batch), c("solution","task","data")]
+    a[, script_recent:=FALSE][batch==max_batch, script_recent:=TRUE][, max_batch:=NULL]
+    a[, "na_time_sec":=FALSE][is.na(time_sec_1) | is.na(time_sec_2), "na_time_sec":=TRUE]
+    a[, "on_disk" := on_disk[1L], by=c("batch","solution","task","data")] # on_disk is a constant across whole script, fill trailing NA so advanced question group will not stay NA if basic had that info #126
+    new_ld <- rbind(new_ld, a, fill=TRUE)
+  }
+
+  ld = new_ld
+
+  # ld[, max_batch:=max(batch), c("solution","task","data","machine_type")]
+  # ld[, script_recent:=FALSE][batch==max_batch, script_recent:=TRUE][, max_batch:=NULL]
+  # ld[, "na_time_sec":=FALSE][is.na(time_sec_1) | is.na(time_sec_2), "na_time_sec":=TRUE]
+  # ld[, "on_disk" := on_disk[1L], by=c("batch","solution","task","data")] # on_disk is a constant across whole script, fill trailing NA so advanced question group will not stay NA if basic had that info #126
 
   { # clickhouse memory/mergetree table engine handling for historical timings only, all new uses mergetree and G1 prefix #137
     ld[, "engine":=NA_character_]
@@ -228,7 +252,7 @@ transform = function(ld) {
   }
   
   ld[, c(list(nodename=nodename, batch=batch, ibatch=as.integer(ft(as.character(batch))), solution=solution,
-              question=question, question_group=question_group, fun=fun, on_disk=on_disk, cache=cache, version=version, git=git, task=task, data=data, engine=engine),
+              question=question, question_group=question_group, fun=fun, on_disk=on_disk, cache=cache, version=version, git=git, task=task, data=data, engine=engine, machine_type=machine_type),
          ftdata(data, task=as.character(task)), .SD),
      .SDcols=c(paste(rep(c("timestamp","time_sec","mem_gb","chk_time_sec"), each=2), 1:2, sep="_"),
                paste("script", c("finish","start","stderr","recent"), sep="_"),
@@ -238,7 +262,7 @@ transform = function(ld) {
   lld[, "iquestion":=as.integer(droplevels(question)), by="task"]
   # complete set of data flag
   lld[, `:=`(task_dataN=uniqueN(data)),.(task)]
-  lld[, "complete" := uniqueN(data)==task_dataN, .(task, solution, batch)]
+  lld[, "complete" := uniqueN(data)==task_dataN, .(task, solution, batch, machine_type)]
   lld[, "task_dataN" := NULL]
   lld[]
 }
@@ -249,17 +273,19 @@ time_logs = function(path=getwd()) {
   lt <- load_time(path=getwd())
 
   ct = clean_time(lt)
+
   # remove duckdb-latest for now
-  ct = ct %>% filter(!(solution == 'duckdb-latest'))
+  ct = ct %>% filter(!(solution == 'duckdb-latest'))  
   d = model_time(ct)
   ll <- load_logs(path=path)
+
   ll$solution[ll$solution == "arrow"] <- "R-arrow"
   l = model_logs(clean_logs(ll))
+
   q = model_questions(clean_questions(load_questions(path=path)))
   
   lq = merge_logs_questions(l, q)
   ld = merge_time_logsquestions(d, lq)
-  
   lld = transform(ld)
   lld
 }

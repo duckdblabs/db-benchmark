@@ -1,5 +1,10 @@
 <clickhouse>
-	<path>/var/lib/clickhouse-nvme-mount/</path>
+	<!-- equivalent to $MOUNT_POINT/clickhouse-nvme-mount -->
+	<path>/var/lib/mount/clickhouse-nvme-mount/</path>
 	<max_table_size_to_drop>0</max_table_size_to_drop>
 	<max_partition_size_to_drop>0</max_partition_size_to_drop>
+	<listen_host>0.0.0.0</listen_host>
+	<tcp_port>9000</tcp_port>
+	<http_port>8123</http_port>
+	<tmp_path>/var/lib/mount/clickhouse-tmp/</tmp_path>
 </clickhouse>

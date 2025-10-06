@@ -6,7 +6,7 @@ on:
     paths-ignore:
       - '**.md'
       - '.github/workflows/**'
-      - '!.github/workflows/Regression.yml'
+      - '!.github/workflows/regression.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.head_ref || '' }}-${{ github.base_ref || '' }}-${{ github.ref != 'refs/heads/master' || github.sha }}
@@ -17,9 +17,9 @@ jobs:
   strategy:
     fail-fast: false
     matrix:
-      solution: [data.table, collapse, dplyr, pandas, pydatatable, spark, juliadf, juliads, polars, R-arrow, duckdb, datafusion, dask, clickhouse]
-  name: Regression Tests solo solutions
-  runs-on: ubuntu-20.04
+      solution: [data.table, collapse, dplyr, pandas, spark, polars, R-arrow, duckdb, datafusion, dask, clickhouse]
+  name: Solo solutions
+  runs-on: ubuntu-latest
   env:
     CC: gcc-10
     CXX: g++-10
@@ -36,7 +36,7 @@ jobs:
 
     - name: Install libraries
       shell: bash
-      run: ./_utils/setup-small.sh
+      run: ./_setup_utils/setup_small.sh
 
     - name: Generate 500mb datasets
       shell: bash
@@ -50,7 +50,7 @@ jobs:
       shell: bash
       run: source path.env && python3 _setup_utils/install_all_solutions.py ${{ matrix.solution }}
 
-    - name: Turn swap off
+    - name: Turn swap off 
       shell: bash
       run: sudo swapoff -a
 
@@ -61,23 +61,32 @@ jobs:
       shell: bash
       if: ${{ matrix.solution == 'clickhouse' || matrix.solution == 'all' }}
       run: |
-        python3 _utils/prep_solutions.py --task=groupby --solution=clickhouse
+        python3 _setup_utils/prep_solutions.py --task=groupby --solution=clickhouse
         source path.env
-        TEST_RUN=true TEST_MOUNT_DIR=$GITHUB_WORKSPACE ./run.sh
+        MACHINE_TYPE="c6id.4xlarge" TEST_RUN=true TEST_MOUNT_DIR=$GITHUB_WORKSPACE ./run.sh
+        sleep 60
+        MACHINE_TYPE="c6id.metal" TEST_RUN=true TEST_MOUNT_DIR=$GITHUB_WORKSPACE ./run.sh
+        sleep 60
 
     - name: Run mini GroupBy benchmark
       shell: bash
       run: |
-        python3 _utils/prep_solutions.py --task=groupby --solution=${{ matrix.solution }}
+        python3 _setup_utils/prep_solutions.py --task=groupby --solution=${{ matrix.solution }}
         source path.env
-        TEST_RUN=true TEST_MOUNT_DIR=$GITHUB_WORKSPACE ./run.sh
+        MACHINE_TYPE="c6id.4xlarge" TEST_RUN=true TEST_MOUNT_DIR=$GITHUB_WORKSPACE ./run.sh
+        sleep 60
+        MACHINE_TYPE="c6id.metal" TEST_RUN=true TEST_MOUNT_DIR=$GITHUB_WORKSPACE ./run.sh
+        sleep 60
 
     - name: Run mini Join benchmark
       shell: bash
       run: |
-        python3 _utils/prep_solutions.py --task=join --solution=${{ matrix.solution }}
+        python3 _setup_utils/prep_solutions.py --task=join --solution=${{ matrix.solution }}
         source path.env
-        TEST_RUN=true TEST_MOUNT_DIR=$GITHUB_WORKSPACE ./run.sh
+        MACHINE_TYPE="c6id.4xlarge" TEST_RUN=true TEST_MOUNT_DIR=$GITHUB_WORKSPACE ./run.sh
+        sleep 60
+        MACHINE_TYPE="c6id.metal" TEST_RUN=true TEST_MOUNT_DIR=$GITHUB_WORKSPACE ./run.sh
+        sleep 60
 
     - name: Validate benchmark results and report generation
       shell: bash
@@ -96,7 +105,7 @@ jobs:
       shell: bash
       run: tail -n +1 */VERSION
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       if: always()
       with:
         name: ${{ matrix.solution }}-out.zip
@@ -106,7 +115,7 @@ jobs:
  regression-test-benchmark-runner-all-solutions:
   needs: regression-test-benchmark-runner-solo-solutions
   name: Regression Tests all solutions
-  runs-on: ubuntu-20.04
+  runs-on: ubuntu-latest
   env:
     CC: gcc-10
     CXX: g++-10
@@ -123,7 +132,7 @@ jobs:
 
     - name: Install libraries
       shell: bash
-      run: ./_utils/setup-small.sh
+      run: ./_setup_utils/setup_small.sh
 
     - name: Generate 500mb datasets
       shell: bash
@@ -144,16 +153,20 @@ jobs:
     - name: Run mini GroupBy benchmark
       shell: bash
       run: |
-        python3 _utils/prep_solutions.py --task=groupby --solution=all
+        python3 _setup_utils/prep_solutions.py --task=groupby --solution=all
         source path.env
-        TEST_RUN=true TEST_MOUNT_DIR=$GITHUB_WORKSPACE ./run.sh
+        MACHINE_TYPE="c6id.4xlarge" TEST_RUN=true TEST_MOUNT_DIR=$GITHUB_WORKSPACE ./run.sh
+        sleep 60
+        MACHINE_TYPE="c6id.metal" TEST_RUN=true TEST_MOUNT_DIR=$GITHUB_WORKSPACE ./run.sh
 
     - name: Run mini Join benchmark
       shell: bash
       run: |
-        python3 _utils/prep_solutions.py --task=join --solution=all
+        python3 _setup_utils/prep_solutions.py --task=join --solution=all
         source path.env
-        TEST_RUN=true TEST_MOUNT_DIR=$GITHUB_WORKSPACE ./run.sh
+        MACHINE_TYPE="c6id.4xlarge" TEST_RUN=true TEST_MOUNT_DIR=$GITHUB_WORKSPACE ./run.sh
+        sleep 60
+        MACHINE_TYPE="c6id.metal" TEST_RUN=true TEST_MOUNT_DIR=$GITHUB_WORKSPACE ./run.sh
 
     - name: Validate benchmark results and report generation
       shell: bash
@@ -172,7 +185,7 @@ jobs:
       shell: bash
       run: tail -n +1 */VERSION
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       if: always()
       with:
         name: all-out.zip

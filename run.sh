@@ -29,6 +29,13 @@ else
   Rscript -e 'swap_all<-data.table::fread("free -h | grep Swap", header=FALSE)[, -1L][, as.numeric(gsub("[^0-9.]", "", unlist(.SD)))]; swap_off<-!is.na(s<-sum(swap_all)) && s==0; q("no", status=as.numeric(swap_off))' && echo "# Benchmark run $BATCH aborted. swap is enabled, 'free -h' has to report only 0s for Swap, run 'swapoff -a' before calling 'run.sh'" && exit;
 fi
 
+
+if [[ $MACHINE_TYPE != 'c6id.metal' && $MACHINE_TYPE != 'c6id.8xlarge' && $MACHINE_TYPE != 'c6id.4xlarge' ]]; then
+  echo "Machine type $MACHINE_TYPE is not valid. Must be \`c6id.metal\` or \`c6id.4xlarge'\`"
+  exit 1
+fi
+
+
 # ensure directories exists
 mkdir -p ./out
 if [[ ! -d ./data ]]; then echo "# Benchmark run $BATCH aborted. './data' directory does not exists" && exit; fi;
@@ -46,6 +53,7 @@ source ./path.env
 if [[ $TEST_RUN == "true" ]]
 then
     export MOUNT_POINT=$TEST_MOUNT_DIR
+    export SPILL_DIR=$TEST_MOUNT_DIR
 fi
 
 # upgrade tools and VERSION, REVISION metadata files
