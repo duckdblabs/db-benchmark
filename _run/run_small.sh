@@ -11,5 +11,4 @@ echo "Running all solutions on small (0.5GB) datasets"
 echo "done..."
 echo "removing small data files"
 rm data/*.csv
-rm data/*.duckdb
 

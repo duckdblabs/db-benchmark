@@ -10,6 +10,5 @@ echo "Running all solutions on medium (5GB) datasets"
 ###
 echo "done..."
 echo "removing small data files"
-rm data/*.csv
 rm data/*.duckdb
 

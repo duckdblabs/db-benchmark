@@ -6,8 +6,6 @@ on:
         type: string
       instance_id:
         type: string
-      include_clickhouse:
-        type: bool
       sizes:
         type: string
 
@@ -20,7 +18,6 @@ env:
   gh_issue_repo: duckdblabs/db-benchmark
   instance_id: ${{ inputs.instance_id }}
   solutions: ${{ inputs.solutions }}
-  include_clickhouse: ${{ inputs.include_clickhouse }}
 
 
 jobs:
@@ -44,7 +41,7 @@ jobs:
           gh issue create --repo ${{ env.gh_issue_repo }} --title "Could not start DB-benchmark machine" --body "AWS box with instance-id ${{ env.instance_id }} could not be started"
 
   run-benchmark:
-    name: Regression Tests all solutions
+    name: Run Benchmark
     env:
       CC: gcc-10
       CXX: g++-10
@@ -67,10 +64,9 @@ jobs:
         working-directory: /var/lib/mount/db-benchmark-metal
         run: |
           python3 _setup_utils/install_all_solutions.py ${{ env.solutions }}
-          if ${{ env.include_clickhouse }}; then
-            # installing/updating clickhouse needs sudo priviledges
-            sudo python3 _setup_utils/install_all_solutions.py clickhouse
-          fi
+          # installing/updating clickhouse needs sudo priviledges
+          # always install/update clickhouse if you can
+          sudo python3 _setup_utils/install_all_solutions.py clickhouse
 
       - name: Modify run.conf to only have new versions
         shell: bash
@@ -89,17 +85,18 @@ jobs:
           DO_REPORT: 1
           DO_PUBLISH: 0
         run: |
+          mkdir -p data
           ncores=`python3 -c 'import multiprocessing as mp; print(mp.cpu_count())'`
           if [ $ncores -eq 16 ]; then export MACHINE_TYPE="c6id.4xlarge"; fi
           if [ $ncores -eq 32 ]; then export MACHINE_TYPE="c6id.8xlarge"; fi
           if [ $ncores -eq 128 ]; then export MACHINE_TYPE="c6id.metal"; fi
-          if [[ ${{ inputs.sizes }} == *"small"* ]]; then
+          if [[ "${{ inputs.sizes }}" == *"small"* ]]; then
             MACHINE_TYPE=$MACHINE_TYPE ./_run/run_small.sh
           fi
-          if [[ ${{ inputs.sizes }} == *"medium"* ]]; then
+          if [[ "${{ inputs.sizes }}" == *"medium"* ]]; then
             MACHINE_TYPE=$MACHINE_TYPE ./_run/run_medium.sh
           fi
-          if [[ ${{ inputs.sizes }} == *"large"* ]]; then
+          if [[ "${{ inputs.sizes }}" == *"large"* ]]; then
             MACHINE_TYPE=$MACHINE_TYPE ./_run/run_large.sh
           fi
           

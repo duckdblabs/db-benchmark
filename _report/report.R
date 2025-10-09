@@ -6,7 +6,7 @@ get_report_status_file = function(path=getwd()) {
   file.path(path, "report-done")
 }
 get_report_solutions = function() {
-  c("collapse", "data.table", "dplyr", "pandas", "pydatatable", "spark", "dask", "juliadf", "juliads", "clickhouse", "cudf", "polars", "duckdb", "datafusion", "arrow", "R-arrow", "chdb")
+  c("duckdb-latest", "collapse", "data.table", "dplyr", "pandas", "pydatatable", "spark", "dask", "juliadf", "juliads", "clickhouse", "cudf", "polars", "duckdb", "datafusion", "arrow", "R-arrow", "chdb")
 }
 get_data_levels = function() {
   ## groupby
@@ -273,11 +273,9 @@ time_logs = function(path=getwd()) {
   lt <- load_time(path=getwd())
 
   ct = clean_time(lt)
-  
-  # ct = ct %>% filter(machine_type != 'c6id.metal')
 
   # remove duckdb-latest for now
-  ct = ct %>% filter(!(solution == 'duckdb-latest'))
+  ct = ct %>% filter(!(solution == 'duckdb-latest'))  
   d = model_time(ct)
   ll <- load_logs(path=path)
 
