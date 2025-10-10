@@ -1,5 +1,8 @@
 # download and expand large data
 
+rm data/*.csv
+rm data/*.duckdb
+
 # get groupby large (50GB datasets)
 aws s3 cp s3://duckdb-data-for-ec2-regression-tests/db-benchmark-data/groupby_large.duckdb data/groupby_large.duckdb
 # get join small (50GB datasets)
