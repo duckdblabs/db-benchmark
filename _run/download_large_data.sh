@@ -2,12 +2,12 @@
 
 # get groupby large (50GB datasets)
 if [ ! -f data/groupby_large.duckdb ]; then
-	aws s3 cp s3://duckdb-data-for-ec2-regression-tests/db-benchmark-data/groupby_large.duckdb data/groupby_large.duckdb
+	aws s3 cp s3://duckdb-data-for-ec2-regression-tests/db-benchmark-data/groupby_large.duckdb data/groupby_large.duckdb --quiet
 fi
 
 # get join large (50GB datasets)
 if [ ! -f data/join_large.duckdb ]; then
-	aws s3 cp s3://duckdb-data-for-ec2-regression-tests/db-benchmark-data/join_large.duckdb data/join_large.duckdb
+	aws s3 cp s3://duckdb-data-for-ec2-regression-tests/db-benchmark-data/join_large.duckdb data/join_large.duckdb --quiet
 fi
 
 
