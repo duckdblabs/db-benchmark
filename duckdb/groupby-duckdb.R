@@ -36,7 +36,7 @@ if (on_disk) {
 
 table_type = "TEMP"
 if (machine_type == 'c6id.4xlarge' && on_disk) {
-  dbExecute(con, "pragma memory_limit='25G'")
+  dbExecute(con, "pragma memory_limit='20G'")
 }
 
 dbExecute(con, "SET enable_progress_bar = false;")
@@ -106,27 +106,25 @@ print(dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT count(*) FROM ans
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 
 
-if (!(machine_type == 'c6id.4xlarge' && on_disk)) {
-  question = "sum v1 mean v3 by id3" # q3
-  t = system.time({
-    dbExecute(con, sprintf("CREATE %s TABLE ans AS SELECT id3, sum(v1) AS v1, avg(v3) AS v3 FROM x GROUP BY id3", table_type))
-    print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
-  })[["elapsed"]]
-  m = memory_usage()
-  chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1, sum(v3) AS v3 FROM ans"))[["elapsed"]]
-  write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
-  invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
-  t = system.time({
-    dbExecute(con, sprintf("CREATE %s TABLE ans AS SELECT id3, sum(v1) AS v1, avg(v3) AS v3 FROM x GROUP BY id3", table_type))
-    print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
-  })[["elapsed"]]
-  m = memory_usage()
-  chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1, sum(v3) AS v3 FROM ans"))[["elapsed"]]
-  write.log(run=2L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
-  print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                                      ## head
-  print(dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT count(*) FROM ans) - 4")) ## tail
-  invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
-}
+question = "sum v1 mean v3 by id3" # q3
+t = system.time({
+dbExecute(con, sprintf("CREATE %s TABLE ans AS SELECT id3, sum(v1) AS v1, avg(v3) AS v3 FROM x GROUP BY id3", table_type))
+print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+})[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1, sum(v3) AS v3 FROM ans"))[["elapsed"]]
+write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
+invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
+t = system.time({
+dbExecute(con, sprintf("CREATE %s TABLE ans AS SELECT id3, sum(v1) AS v1, avg(v3) AS v3 FROM x GROUP BY id3", table_type))
+print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+})[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(v1) AS v1, sum(v3) AS v3 FROM ans"))[["elapsed"]]
+write.log(run=2L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
+print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                                      ## head
+print(dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT count(*) FROM ans) - 4")) ## tail
+invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 
 question = "mean v1:v3 by id4" # q4
 t = system.time({
@@ -209,27 +207,25 @@ print(dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT count(*) FROM ans
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 
 
-if (!(machine_type == 'c6id.4xlarge' && on_disk)) {
-  question = "largest two v3 by id6" # q8
-  t = system.time({
-    dbExecute(con, sprintf("CREATE %s TABLE ans AS SELECT id6, unnest(max(v3, 2)) largest2_v3 FROM x WHERE v3 IS NOT NULL GROUP BY id6", table_type))
-    print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
-  })[["elapsed"]]
-  m = memory_usage()
-  chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(largest2_v3) AS largest2_v3 FROM ans"))[["elapsed"]]
-  write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
-  invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
-  t = system.time({
-    dbExecute(con, sprintf("CREATE %s TABLE ans AS SELECT id6, unnest(max(v3, 2)) largest2_v3 FROM x WHERE v3 IS NOT NULL GROUP BY id6", table_type))
-    print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
-  })[["elapsed"]]
-  m = memory_usage()
-  chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(largest2_v3) AS largest2_v3 FROM ans"))[["elapsed"]]
-  write.log(run=2L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
-  print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                                      ## head
-  print(dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT count(*) FROM ans) - 4")) ## tail
-  invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
-}
+question = "largest two v3 by id6" # q8
+t = system.time({
+dbExecute(con, sprintf("CREATE %s TABLE ans AS SELECT id6, unnest(max(v3, 2)) largest2_v3 FROM x WHERE v3 IS NOT NULL GROUP BY id6", table_type))
+print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+})[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(largest2_v3) AS largest2_v3 FROM ans"))[["elapsed"]]
+write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
+invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
+t = system.time({
+dbExecute(con, sprintf("CREATE %s TABLE ans AS SELECT id6, unnest(max(v3, 2)) largest2_v3 FROM x WHERE v3 IS NOT NULL GROUP BY id6", table_type))
+print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+})[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(largest2_v3) AS largest2_v3 FROM ans"))[["elapsed"]]
+write.log(run=2L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk, machine_type=machine_type)
+print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                                      ## head
+print(dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT count(*) FROM ans) - 4")) ## tail
+invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 
 question = "regression v1 v2 by id2 id4" # q9
 t = system.time({
