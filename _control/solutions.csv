@@ -31,3 +31,5 @@ duckdb-latest,groupby
 duckdb-latest,join
 datafusion,groupby
 datafusion,join
+chdb,groupby
+chdb,join
