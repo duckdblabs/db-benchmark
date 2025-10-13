@@ -57,5 +57,4 @@ pandas,join,J1_1e9_NA_0_0,c6id.4xlarge
 polars,join,J1_1e9_NA_0_0,c6id.4xlarge
 pydatatable,join,J1_1e9_NA_0_0,c6id.4xlarge
 spark,join,J1_1e9_NA_0_0,c6id.4xlarge
-clickhouse,join,J1_1e9_NA_0_0,c6id.4xlarge
 
