@@ -30,7 +30,7 @@ echo "Running all solutions on large (50GB) datasets"
 ./run.sh
 
 
-###
+##
 echo "done..."
 echo "removing data files"
 rm data/*.csv
