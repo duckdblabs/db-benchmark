@@ -280,6 +280,7 @@ time_logs = function(path=getwd()) {
   ll <- load_logs(path=path)
 
   ll$solution[ll$solution == "arrow"] <- "R-arrow"
+  ll = ll %>% filter (!(solution == 'duckdb-latest'))
   l = model_logs(clean_logs(ll))
 
   q = model_questions(clean_questions(load_questions(path=path)))
