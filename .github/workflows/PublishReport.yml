@@ -42,11 +42,8 @@ jobs:
       CC: gcc-10
       CXX: g++-10
       GEN: ninja
-    runs-on: self-hosted
+    runs-on: report-generator
     environment: aws-secrets
-    permissions:                # Job-level permissions configuration starts here
-      contents: write           # 'write' access to repository contents
-      pull-requests: write      # 'write' access to pull requests
     steps:
       - uses: actions/checkout@v4
 
@@ -59,7 +56,7 @@ jobs:
         shell: bash
         working-directory: /var/lib/mount/db-benchmark-metal
         run: |
-          git config --global user.email ""
+          git config --global user.email "Tmonster <Tmonster@users.noreply.github.com>"
           git config --global user.name "Publish report action"
 
       - name: Download the data
