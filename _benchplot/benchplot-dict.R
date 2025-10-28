@@ -281,7 +281,7 @@ groupby.syntax.dict = {list(
 )}
 groupby.data.exceptions = {list(                                                             # exceptions as of run 1575727624
   "collapse" = {list(
-    "Not Tested" = c("G1_1e9_1e2_0_0")
+    "out of memory/Killed" = c("G1_1e9_1e2_0_0")
   )},
   "data.table" = {list(
     "timeout" = c("G1_1e9_1e1_0_0",                                                          # not always happened, q8 probably #110
@@ -324,11 +324,10 @@ groupby.data.exceptions = {list(                                                
     "CSV import Segfault: JuliaLang#55765" = c("G1_1e7_1e2_0_0","G1_1e7_1e1_0_0","G1_1e7_2e0_0_0","G1_1e7_1e2_0_1","G1_1e7_1e2_5_0","G1_1e8_1e2_0_0","G1_1e8_1e1_0_0","G1_1e8_2e0_0_0","G1_1e8_1e2_0_1","G1_1e8_1e2_5_0","G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0")
   )},
   "clickhouse" = {list(
-    "Out of Memory" = c("G1_1e9_1e2_0_0")
+    "out of Memory" = c("G1_1e9_1e2_0_0")
   )},
   "polars" = {list(
-    # "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0") # q10
-    "Not Tested" = c("G1_1e9_1e2_0_0")
+    "out of memory/Killed" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0") # q10
   )},
   "R-arrow" = {list(
     # "timeout" = c(), # q10
@@ -492,9 +491,9 @@ join.query.exceptions = {list(
   "datafusion" =  list(),
   "chdb" =  list()
 )}
-join.data.exceptions = {list(                                                             # exceptions as of run 1575727624
+join.data.exceptions = {list(                                                            
   "collapse" = {list(
-    "Not tested" = c("J1_1e9_NA_0_0")
+    "out of memory" = c("J1_1e9_NA_0_0")
   )},
   "data.table" = {list(
     "timeout" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")                  # fread
@@ -527,7 +526,7 @@ join.data.exceptions = {list(                                                   
     "CSV import Segfault: JuliaLang#55765" = c("J1_1e7_NA_0_0", "J1_1e7_NA_5_0", "J1_1e7_NA_0_1", "J1_1e8_NA_0_0", "J1_1e8_NA_5_0", "J1_1e8_NA_0_1", "J1_1e9_NA_0_0")
   )},
   "clickhouse" = {list(
-    "Out of Memory" = c("J1_1e9_NA_0_0")
+    "out of Memory" = c("J1_1e9_NA_0_0")
   )},
   "polars" = {list(
     "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")
