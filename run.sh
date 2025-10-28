@@ -102,7 +102,7 @@ if [[ -f ./stop ]]; then echo "# Benchmark run $BATCH has been interrupted after
 # publish report for all tasks
 rm -rf ./public
 rm -f ./report-done
-./generate_report.sh
+._run/generate_report.sh
 
 # publish benchmark, only if all reports successfully generated (logged in ./report-done file), and token file exists
 if [[ -f ./stop ]]; then echo "# Benchmark run $BATCH has been interrupted after $(($(date +%s)-$BATCH))s due to 'stop' file" && rm -f ./stop && rm -f ./run.lock && exit; fi;
