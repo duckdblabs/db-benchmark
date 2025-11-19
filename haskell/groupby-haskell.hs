@@ -16,6 +16,7 @@ import System.Environment (getEnv, lookupEnv)
 import System.IO (hFlush, hPutStrLn, stderr, stdout)
 import System.Posix.Process (getProcessID)
 import System.Process (readProcess)
+import System.IO
 import Text.Read
 
 
@@ -734,7 +735,7 @@ writeLog task dataName inRows question outRows outCols solution version git fun 
 
     fileExists <- doesFileExist csvFile
     if fileExists
-        then appendFile csvFile (logRow ++ "\n")
+        then forceAppend csvFile (logRow ++ "\n")
         else do
             let header =
                     "nodename,batch,timestamp,task,data,in_rows,question,out_rows,out_cols,solution,version,git,fun,run,time_sec,mem_gb,cache,chk,chk_time_sec,comment,on_disk,machine_type\n"
@@ -763,3 +764,10 @@ timeIt action = do
     _ <- print result
     end <- getPOSIXTime
     return (result, realToFrac (end - start))
+
+forceAppend :: FilePath -> String -> IO ()
+forceAppend path content = 
+    withFile path AppendMode $ \h -> do
+        hSetBuffering h NoBuffering
+        hPutStr h content
+        hFlush h

@@ -13,6 +13,10 @@ import System.Directory (doesFileExist)
 import System.Environment (getEnv, lookupEnv)
 import System.IO (hFlush, stdout)
 import System.Process (readProcess)
+import System.Posix.Process
+import System.IO
+import Text.Read
+import Data.Maybe
 
 -- Helper functions for logging
 writeLog ::
@@ -75,7 +79,7 @@ writeLog task dataName inRows question outRows outCols solution version git fun 
 
     fileExists <- doesFileExist csvFile
     if fileExists
-        then appendFile csvFile (logRow ++ "\n")
+        then forceAppend csvFile (logRow ++ "\n")
         else do
             let header =
                     "nodename,batch,timestamp,task,data,in_rows,question,out_rows,out_cols,solution,version,git,fun,run,time_sec,mem_gb,cache,chk,chk_time_sec,comment,on_disk,machine_type\n"
@@ -535,3 +539,10 @@ main = do
     putStrLn $ "Question 5 completed: " ++ show outRows5_2 ++ " rows"
 
     putStrLn "Haskell dataframe join benchmark completed (5 questions implemented)!"
+
+forceAppend :: FilePath -> String -> IO ()
+forceAppend path content = 
+    withFile path AppendMode $ \h -> do
+        hSetBuffering h NoBuffering
+        hPutStr h content
+        hFlush h
