@@ -46,7 +46,8 @@ solution.dict = {list(
   "duckdb" = list(name=c(short="duckdb", long="DuckDB"), color=c(strong="#ddcd07", light="#fff100")),
   "duckdb-latest" = list(name=c(short="duckdb-latest", long="duckdb-latest"), color=c(strong="#ddcd07", light="#fff100")),
   "datafusion" = list(name=c(short="datafusion", long="Datafusion"), color=c(strong="deepskyblue4", light="deepskyblue3")),
-  "chdb" = list(name=c(short="chdb", long="chDB"), color=c(strong="hotpink4", light="hotpink1"))
+  "chdb" = list(name=c(short="chdb", long="chDB"), color=c(strong="hotpink4", light="hotpink1")),
+  "haskell" = list(name=c(short="haskell", long="Haskell"), color=c(strong="#3d0569ff", light="#61298bff")),
 )}
 #barplot(rep(c(0L,1L,1L), length(solution.dict)),
 #        col=rev(c(rbind(sapply(solution.dict, `[[`, "color"), "black"))),
@@ -259,7 +260,19 @@ groupby.syntax.dict = {list(
     "largest two v3 by id6" = "SELECT id6, arrayJoin(arraySlice(arrayReverseSort(groupArray(v3)), 1, 2)) AS v3 FROM (SELECT id6, v3 FROM db_benchmark.x WHERE v3 IS NOT NULL) AS subq GROUP BY id6",
     "regression v1 v2 by id2 id4" = "SELECT id2, id4, pow(corr(v1, v2), 2) AS r2 FROM db_benchmark.x GROUP BY id2, id4",
     "sum v3 count by id1:id6" = "SELECT id1, id2, id3, id4, id5, id6, sum(v3) AS v3, count() AS cnt FROM db_benchmark.x GROUP BY id1, id2, id3, id4, id5, id6"
-  )}
+  )},
+  "haskell" = {c(
+    "sum v1 by id1" = "df |> D.groupby [\"id1\"] |> D.aggregate [\"v1_sum\" .= F.sum (F.col @Int \"v1\")]",
+    "sum v1 by id1:id2" = "df |> D.groupby [\"id1\", \"id2\"] |> D.aggregate [\"v1_sum\" .= F.sum (F.col @Int \"v1\")]",
+    "sum v1 mean v3 by id3" = "df |> D.groupby [\"id3\"] |> D.aggregate [\"v1_sum\" .= F.sum (F.col @Int \"v1\"), \"v3_mean\" .= F.mean (F.col @Double \"v3\")]",
+    "mean v1:v3 by id4" = "df |> D.groupby [\"id4\"] |> D.aggregate [\"v1_mean\" .= F.mean (F.col @Int \"v1\"), \"v2_mean\" .= F.mean (F.col @Int \"v2\"), \"v3_mean\" .= F.mean (F.col @Double \"v3\")]",
+    "sum v1:v3 by id6" = "df |> D.groupby [\"id6\"] |> D.aggregate [\"v1_sum\" .= F.sum (F.col @Int \"v1\"), \"v2_sum\" .= F.sum (F.col @Int \"v2\"), \"v3_sum\" .= F.sum (F.col @Double \"v3\")]",
+    "median v3 sd v3 by id4 id5" = "df |> D.groupby [\"id4\", \"id5\"] |> D.aggregate [\"v3_median\" .= F.median (F.col @Doublee \"v3\"), \"v3_sd\" .= F.stddev (F.col @Double \"v3\")]",
+    "max v1 - min v2 by id3" = "df |> D.groupby [\"id3\"] |> D.aggregate [\"diff\" .= F.maximum (F.col @Int \"v1\") - F.minimum (F.col @Int \"v2\")]",
+    "largest two v3 by id6" = "",
+    "regression v1 v2 by id2 id4" = "",
+    "sum v3 count by id1:id6" = "df |> D.groupBy [\"id1\",\"id2\",\"id3\",\"id4\",\"id5\",\"id6\"]).agg([F.sum (F.col @Double \"v3\") `F.as` \"v3\", F..count (F.col @Int \"v1\") `F.as` \"count\"]"
+  )},
 )}
  groupby.query.exceptions = {list(
   "collapse" =    list(),
@@ -277,7 +290,8 @@ groupby.syntax.dict = {list(
   "duckdb"     =  list(),
   "duckdb-latest"     =  list(),
   "datafusion" =  list(),
-  "chdb" =  list()
+  "chdb" =  list(),
+  "haskell" = list()
 )}
 groupby.data.exceptions = {list(                                                             # exceptions as of run 1575727624
   "collapse" = {list(
@@ -348,6 +362,8 @@ groupby.data.exceptions = {list(                                                
     "Not Tested" = c("G1_1e9_1e2_0_0")
   )},
   "chdb" = {list(
+  )},
+  "haskell" = {list(
   )}
 )}
 groupby.exceptions = task.exceptions(groupby.query.exceptions, groupby.data.exceptions)
@@ -472,7 +488,14 @@ join.syntax.dict = {list(
     "medium outer on int" = "SELECT x.*, medium.id1 AS medium_id1, medium.id4 AS medium_id4, medium.id5 as medium_id5, v2 FROM db_benchmark.x AS x LEFT JOIN db_benchmark.medium AS medium USING (id2)",
     "medium inner on factor" = "SELECT x.*, medium.id1 AS medium_id1, medium.id2 AS medium_id2, medium.id4 as medium_id4, v2 FROM db_benchmark.x AS x INNER JOIN db_benchmark.medium AS medium USING (id5)",
     "big inner on int" = "SELECT x.*, big.id1 AS big_id1, big.id2 AS big_id2, big.id4 as big_id4, big.id5 AS big_id5, big.id6 AS big_id6, v2 FROM db_benchmark.x AS x INNER JOIN db_benchmark.big AS big USING (id3)"
-  )}
+  )},
+  "haskell" = {c(
+    "small inner on int" = "D.innerJoin [\"id1\"] small small",
+    "medium inner on int" = "D.innerJoin [\"id2\"] medium medium",
+    "medium outer on int" = "D.leftJoin [\"id2\"] medium medium",
+    "medium inner on factor" = "D.innerJoin [\"id5\"] medium medium",
+    "big inner on int" = "D.innerJoin [\"id3\"] big big"
+  )},
 )}
 join.query.exceptions = {list(
   "collapse" =    list(),
@@ -490,7 +513,8 @@ join.query.exceptions = {list(
   "duckdb"     =  list(),
   "duckdb-latest"     =  list(),
   "datafusion" =  list(),
-  "chdb" =  list()
+  "chdb" =  list(),
+  "haskell" = list()
 )}
 join.data.exceptions = {list(                                                             # exceptions as of run 1575727624
   "collapse" = {list(
@@ -550,6 +574,8 @@ join.data.exceptions = {list(                                                   
     "Not tested" = c("J1_1e9_NA_0_0")
   )},
   "chdb" = {list(
+  )},
+  "haskell" = {list(
   )}
 )}
 join.exceptions = task.exceptions(join.query.exceptions, join.data.exceptions)
