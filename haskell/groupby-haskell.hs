@@ -40,7 +40,6 @@ main = do
     hSetBuffering stdout NoBuffering
     putStrLn "# groupby-haskell.hs"
 
-    -- 1. Setup Environment & Config
     dataName    <- getEnv "SRC_DATANAME"
     machineType <- getEnv "MACHINE_TYPE"
     let srcFile = "../data/" ++ dataName ++ ".csv"
@@ -56,8 +55,7 @@ main = do
 runBenchmark :: String -> String -> String -> IO ()
 runBenchmark srcFile dataName machineType = do
     putStrLn $ "loading dataset " ++ dataName
-    
-    -- Load Data
+
     df <- D.readCsv srcFile
     let (inRows, _) = D.dimensions df
     print inRows
@@ -152,8 +150,7 @@ runQuestion :: BenchConfig
             -> IO ()
 runQuestion cfg inputDF qLabel groupFn aggFn chkFn = do
     forM_ [1, 2] $ \runNum -> do
-        
-        -- 1. Measure Calculation Time & Memory
+
         (resultDF, calcTime) <- timeIt $ do
              let grouped = groupFn inputDF
              let aggregated = aggFn grouped
