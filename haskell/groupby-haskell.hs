@@ -2,7 +2,6 @@
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE Strict #-}
 
 import Control.Monad (forM_, when)
 import Data.List (intercalate)
@@ -66,8 +65,8 @@ runBenchmark srcFile dataName machineType = do
             , cfgDataName = dataName
             , cfgMachineType = machineType
             , cfgSolution = "haskell"
-            , cfgVer = "0.3.3"
-            , cfgGit = "dataframe"
+            , cfgVer = "0.3.3.9"
+            , cfgGit = "NA"
             , cfgFun = "groupBy"
             , cfgCache = "TRUE"
             , cfgOnDisk = "FALSE"
