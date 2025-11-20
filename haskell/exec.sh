@@ -3,4 +3,4 @@ set -e
 
 cd ./haskell
 
-stack run "$1-haskell"
+cabal run -O2 "$1-haskell"

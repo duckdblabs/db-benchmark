@@ -2,8 +2,8 @@
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE Strict #-}
 
-import Control.Exception (evaluate)
 import Control.Monad (forM_, when)
 import Data.List (intercalate)
 import Data.Maybe (fromMaybe)
@@ -59,6 +59,7 @@ runBenchmark srcFile dataName machineType = do
     df <- D.readCsv srcFile
     let (inRows, _) = D.dimensions df
     print inRows
+    print df
 
     let config = BenchConfig 
             { cfgTask = "groupby"
