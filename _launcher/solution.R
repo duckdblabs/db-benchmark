@@ -112,7 +112,7 @@ file.ext = function(x) {
     x,
     "collapse"=, "data.table"=, "dplyr"=, "h2o"=, "R-arrow"=, "duckdb"="R", "duckdb-latest"="R",
     "pandas"="py", "spark"=, "pydatatable"=, "modin"=, "dask"=, "datafusion"=, "polars"="py",
-    "clickhouse"="sh", "juliadf"="jl", "juliads"="jl", "chdb"="py"
+    "clickhouse"="sh", "juliadf"="jl", "juliads"="jl", "chdb"="py", "haskell"="hs",
   )
   if (is.null(ans)) stop(sprintf("solution %s does not have file extension defined in file.ext helper function", x))
   ans
@@ -153,7 +153,7 @@ setenv("SRC_DATANAME", d)
 
 ns = solution.path(s)
 ext = file.ext(s)
-localcmd = if (s %in% c("clickhouse","h2o","juliadf", "juliads")) { # custom launcher bash script, for clickhouse h2o juliadf
+localcmd = if (s %in% c("clickhouse","h2o","juliadf", "juliads", "haskell")) { # custom launcher bash script, for clickhouse h2o juliadf
   sprintf("exec.sh %s", t)
 } else if (s %in% c("dask")) {
   sprintf("%s_%s.%s", t, ns, ext)

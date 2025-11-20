@@ -33,3 +33,5 @@ datafusion,groupby
 datafusion,join
 chdb,groupby
 chdb,join
+haskell,groupby
+haskell,join
