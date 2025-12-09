@@ -5,7 +5,7 @@ import csv
 SOLUTIONS_FILENAME = "_control/solutions.csv"
 RUN_CONF_FILENAME = "run.conf"
 
-SKIPPED_SOLUTIONS = ["juliads", "juliadf"]
+SKIPPED_SOLUTIONS = []
 
 
 def print_usage():
