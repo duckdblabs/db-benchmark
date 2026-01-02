@@ -153,13 +153,29 @@ setenv("SRC_DATANAME", d)
 
 ns = solution.path(s)
 ext = file.ext(s)
-localcmd = if (s %in% c("clickhouse","h2o","juliadf", "juliads")) { # custom launcher bash script, for clickhouse h2o juliadf
+localcmd = if (s %in% c("clickhouse","h2o","juliadf", "juliads")) { # custom launcher bash script, for clickhouse h2o juliadf juliads
   sprintf("exec.sh %s", t)
 } else if (s %in% c("dask")) {
   sprintf("%s_%s.%s", t, ns, ext)
 }else sprintf("%s-%s.%s", t, ns, ext)
 cmd = sprintf("./%s/%s", ns, localcmd)
 cmd
+
+if (s %in% c("juliadf", "juliads")) {
+# There is a bug with libunwind library
+# More info https://github.com/duckdblabs/db-benchmark/issues/135#issuecomment-3632689892
+ld_library_path = Sys.getenv("LD_LIBRARY_PATH")
+ld_preload= Sys.getenv("LD_PRELOAD")
+
+Sys.setenv(LD_LIBRARY_PATH="")
+Sys.setenv(LD_PRELOAD="")
+
+ret = system(cmd, ignore.stdout=as.logical(args[["quiet"]]))
+
+Sys.setenv(LD_LIBRARY_PATH=ld_library_path)
+Sys.setenv(LD_PRELOAD=ld_preload)
+
+} else
 ret = system(cmd, ignore.stdout=as.logical(args[["quiet"]]))
 
 Sys.unsetenv("SRC_DATANAME")
