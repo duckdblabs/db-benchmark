@@ -3,6 +3,7 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
+import Control.Exception (evaluate)
 import Control.Monad (forM_, when)
 import Data.List (intercalate)
 import Data.Maybe (fromMaybe)
@@ -42,7 +43,7 @@ main = do
 
     dataName    <- getEnv "SRC_DATANAME"
     machineType <- getEnv "MACHINE_TYPE"
-    let srcFile = "../data/" ++ dataName ++ ".csv"
+    let srcFile = "./data/" ++ dataName ++ ".csv"
 
     -- Check NA Flag
     let parts = T.splitOn "_" (T.pack dataName)
@@ -251,6 +252,8 @@ writeLog BenchConfig{..} question outRows outCols run timeSec memGb chkValues ch
     exists <- doesFileExist csvFile
     let header = "nodename,batch,timestamp,task,data,in_rows,question,out_rows,out_cols,solution,version,git,fun,run,time_sec,mem_gb,cache,chk,chk_time_sec,comment,on_disk,machine_type\n"
     
+    evaluate logRow
+    print csvFile
     forceAppend csvFile $ (if not exists then header else "") ++ logRow ++ "\n"
 
 roundTo :: Int -> Double -> Double

@@ -43,8 +43,8 @@ main = do
     machineType <- getEnv "MACHINE_TYPE"
     
     let auxTableNames = determineAuxTables dataName
-    let srcMain = "../data/" ++ dataName ++ ".csv"
-    let srcAux  = map (\n -> "../data/" ++ n ++ ".csv") auxTableNames
+    let srcMain = "./data/" ++ dataName ++ ".csv"
+    let srcAux  = map (\n -> "./data/" ++ n ++ ".csv") auxTableNames
 
     putStrLn $ "loading datasets: " ++ dataName ++ ", " ++ intercalate ", " auxTableNames
 
@@ -200,6 +200,7 @@ writeLog BenchConfig{..} question outRows outCols run timeSec memGb chkValues ch
     exists <- doesFileExist csvFile
     let header = "nodename,batch,timestamp,task,data,in_rows,question,out_rows,out_cols,solution,version,git,fun,run,time_sec,mem_gb,cache,chk,chk_time_sec,comment,on_disk,machine_type\n"
     
+    evaluate logRow
     forceAppend csvFile $ (if not exists then header else "") ++ logRow ++ "\n"
 
 roundTo :: Int -> Double -> Double

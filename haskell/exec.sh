@@ -1,6 +1,4 @@
 #!/bin/bash
 set -e
 
-cd ./haskell
-
-cabal run -O2 "$1-haskell"
+cabal --project-dir=./haskell run -O2 "$1-haskell"
