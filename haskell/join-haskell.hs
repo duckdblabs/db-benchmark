@@ -10,6 +10,7 @@ import qualified Data.Text as T
 import Data.Time.Clock.POSIX (getPOSIXTime)
 import qualified Data.Vector.Unboxed as VU
 import qualified DataFrame as D
+import qualified DataFrame.Functions as F
 import qualified DataFrame.Operations.Join as DJ
 import GHC.Stats (getRTSStats, max_live_bytes, getRTSStatsEnabled)
 import System.Directory (doesFileExist)
@@ -60,7 +61,7 @@ main = do
             , cfgDataName = dataName
             , cfgMachineType = machineType
             , cfgSolution = "haskell"
-            , cfgVer = "0.3.3"
+            , cfgVer = "0.4.0.4"
             , cfgGit = "dataframe"
             , cfgFun = "innerJoin"
             , cfgCache = "TRUE"
@@ -123,7 +124,7 @@ runJoin cfg leftDF rightDF qLabel joinFn = do
 
 sumCol :: String -> D.DataFrame -> Double
 sumCol name df = 
-    case D.columnAsDoubleVector (T.pack name) df of
+    case D.columnAsDoubleVector (F.toDouble (F.col @Int (T.pack name))) df of
         Right vec -> VU.sum vec
         Left _    -> 0.0
 

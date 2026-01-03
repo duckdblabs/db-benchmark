@@ -6,7 +6,7 @@ cabal-version:       >=1.10
 executable groupby-haskell
   main-is:             groupby-haskell.hs
   build-depends:       base >= 4.7 && < 5
-                     , dataframe >= 0.3
+                     , dataframe ^>= 0.4
                      , text >= 1.2
                      , vector >= 0.12
                      , time >= 1.9
@@ -19,7 +19,7 @@ executable groupby-haskell
 executable join-haskell
   main-is:             join-haskell.hs
   build-depends:       base >= 4.7 && < 5
-                     , dataframe >= 0.3
+                     , dataframe ^>= 0.4
                      , text >= 1.2
                      , vector >= 0.12
                      , time >= 1.9

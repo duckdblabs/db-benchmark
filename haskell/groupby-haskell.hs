@@ -12,6 +12,7 @@ import Data.Time.Clock.POSIX (getPOSIXTime)
 import qualified Data.Vector.Unboxed as VU
 import qualified DataFrame as D
 import qualified DataFrame.Functions as F
+import DataFrame.Functions ((.=))
 import GHC.Stats (getRTSStats, max_live_bytes, getRTSStatsEnabled)
 import System.Directory (doesFileExist)
 import System.Environment (getEnv, lookupEnv)
@@ -57,15 +58,25 @@ runBenchmark srcFile dataName machineType = do
 
     df <- D.readCsv srcFile
     let (inRows, _) = D.dimensions df
-    print inRows
-    print df
+    print $ D.summarize df
+
+    -- Columns
+    let id1 = F.col @Text "id1"
+        id2 = F.col @Text "id2"
+        id3 = F.col @Text "id3"
+        id4 = F.col @Int "id4"
+        id5 = F.col @Int "id5"
+        id6 = F.col @Int "id6"
+        v1  = F.col @Int "v1"
+        v2  = F.col @Int "v2"
+        v3  = F.col @Double "v3"
 
     let config = BenchConfig 
             { cfgTask = "groupby"
             , cfgDataName = dataName
             , cfgMachineType = machineType
             , cfgSolution = "haskell"
-            , cfgVer = "0.3.3.9"
+            , cfgVer = "0.4.0.4"
             , cfgGit = "NA"
             , cfgFun = "groupBy"
             , cfgCache = "TRUE"
@@ -77,66 +88,66 @@ runBenchmark srcFile dataName machineType = do
     
     -- Q1: Sum v1 by id1
     runQuestion config df "sum v1 by id1" 
-        (\d -> D.groupBy ["id1"] d)
-        (\g -> D.aggregate [F.sum (F.col @Int "v1") `F.as` "v1_sum"] g)
+        (\d -> D.groupBy [F.name id1] d)
+        (\g -> D.aggregate [F.sum v1 `F.as` "v1_sum"] g)
         (\res -> [chkSumInt "v1_sum" res])
 
     -- Q2: Sum v1 by id1:id2
     runQuestion config df "sum v1 by id1:id2"
-        (\d -> D.groupBy ["id1", "id2"] d)
-        (\g -> D.aggregate [F.sum (F.col @Int "v1") `F.as` "v1_sum"] g)
+        (\d -> D.groupBy [F.name id1, F.name id2] d)
+        (\g -> D.aggregate ["v1_sum" .= F.sum v1] g)
         (\res -> [chkSumInt "v1_sum" res])
 
     -- Q3: Sum v1, Mean v3 by id3
     runQuestion config df "sum v1 mean v3 by id3"
-        (\d -> D.groupBy ["id3"] d)
+        (\d -> D.groupBy [F.name id3] d)
         (\g -> D.aggregate 
-                [ F.sum (F.col @Int "v1")   `F.as` "v1_sum"
-                , F.mean (F.col @Double "v3") `F.as` "v3_mean"
+                [ "v1_sum"  .= F.sum  v1
+                , "v3_mean" .= F.mean v3
                 ] g)
         (\res -> [chkSumInt "v1_sum" res, chkSumDbl "v3_mean" res])
 
     -- Q4: Mean v1, v2, v3 by id4
     runQuestion config df "mean v1:v3 by id4"
-        (\d -> D.groupBy ["id4"] d)
+        (\d -> D.groupBy [F.name id4] d)
         (\g -> D.aggregate
-                [ F.mean (F.col @Int "v1")    `F.as` "v1_mean"
-                , F.mean (F.col @Int "v2")    `F.as` "v2_mean"
-                , F.mean (F.col @Double "v3") `F.as` "v3_mean"
+                [ "v1_mean" .= F.mean v1
+                , "v2_mean" .= F.mean v2
+                , "v3_mean" .= F.mean v3
                 ] g)
         (\res -> [chkSumDbl "v1_mean" res, chkSumDbl "v2_mean" res, chkSumDbl "v3_mean" res])
 
     -- Q5 (Question 6 in original): Sum v1, v2, v3 by id6
     runQuestion config df "sum v1:v3 by id6"
-        (\d -> D.groupBy ["id6"] d)
+        (\d -> D.groupBy [F.name id6] d)
         (\g -> D.aggregate
-                [ F.sum (F.col @Int "v1")    `F.as` "v1_sum"
-                , F.sum (F.col @Int "v2")    `F.as` "v2_sum"
-                , F.sum (F.col @Double "v3") `F.as` "v3_sum"
+                [ "v1_sum" .= F.sum v1
+                , "v2_sum" .= F.sum v2
+                , "v3_sum" .= F.sum v3
                 ] g)
         (\res -> [chkSumInt "v1_sum" res, chkSumInt "v2_sum" res, chkSumDbl "v3_sum" res])
 
     -- Q6: median v3, sd v3 by id4, id5
     runQuestion config df "median v3 sd v3 by id4 id5"
-        (\d -> D.groupBy ["id4", "id5"] d)
+        (\d -> D.groupBy [F.name id4, F.name id5] d)
         (\g -> D.aggregate
-                [ F.median (F.col @Double "v3") `F.as` "v3_median"
-                , F.stddev (F.col @Double "v3") `F.as` "v3_sd"
+                [ "v3_median" .= F.median v3
+                , "v3_sd"     .= F.stddev v3
                 ] g)
         (\res -> [chkSumDbl "v3_median" res, chkSumDbl "v3_sd" res])
 
     -- Q7: max v1 - min v2 by id3
     runQuestion config df "max v1 - min v2 by id3"
-        (\d -> D.groupBy ["id3"] d)
+        (\d -> D.groupBy [F.name id3] d)
         (\g -> D.aggregate
-                [ (F.maximum (F.col @Int "v1") - F.minimum (F.col @Int "v2")) `F.as` "diff" 
+                [ "diff" .= F.maximum v1 - F.minimum v2 
                 ] g)
         (\res -> [chkSumInt "diff" res])
 
     -- Q10: sum v3 count by id1:id6
     runQuestion config df "sum v3 count by id1:id6"
         (\d -> D.groupBy (zipWith (\i n -> i <> (T.pack . show) n) (cycle ["id"]) [1 .. 6]) d)
-        (\g -> D.aggregate [F.sum (F.col @Double "v3") `F.as` "v3_sum"] g)
+        (\g -> D.aggregate [F.sum v3 `F.as` "v3_sum"] g)
         (\res -> [chkSumDbl "v3_sum" res])
 
     putStrLn "Haskell dataframe groupby benchmark completed!"
@@ -172,13 +183,13 @@ runQuestion cfg inputDF qLabel groupFn aggFn chkFn = do
 
 chkSumInt :: String -> D.DataFrame -> Double
 chkSumInt col df = 
-    case D.columnAsIntVector (T.pack col) df of
+    case D.columnAsIntVector (F.col @Int (T.pack col)) df of
         Right vec -> fromIntegral $ VU.sum vec
         Left _    -> 0.0
 
 chkSumDbl :: String -> D.DataFrame -> Double
 chkSumDbl col df = 
-    case D.columnAsDoubleVector (T.pack col) df of
+    case D.columnAsDoubleVector (F.col @Double (T.pack col)) df of
         Right vec -> VU.sum vec
         Left _    -> 0.0
 
