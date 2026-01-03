@@ -153,7 +153,7 @@ setenv("SRC_DATANAME", d)
 
 ns = solution.path(s)
 ext = file.ext(s)
-localcmd = if (s %in% c("clickhouse","h2o","juliadf", "juliads", "haskell")) { # custom launcher bash script, for clickhouse h2o juliadf
+localcmd = if (s %in% c("clickhouse","h2o","juliadf", "juliads", "haskell")) { # custom launcher bash script, for clickhouse h2o juliadf juliads haskell
   sprintf("exec.sh %s", t)
 } else if (s %in% c("dask")) {
   sprintf("%s_%s.%s", t, ns, ext)
