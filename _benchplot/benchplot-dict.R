@@ -47,7 +47,7 @@ solution.dict = {list(
   "duckdb-latest" = list(name=c(short="duckdb-latest", long="duckdb-latest"), color=c(strong="#ddcd07", light="#fff100")),
   "datafusion" = list(name=c(short="datafusion", long="Datafusion"), color=c(strong="deepskyblue4", light="deepskyblue3")),
   "chdb" = list(name=c(short="chdb", long="chDB"), color=c(strong="hotpink4", light="hotpink1")),
-  "haskell" = list(name=c(short="haskell", long="Haskell"), color=c(strong="#3d0569ff", light="#61298bff")),
+  "haskell" = list(name=c(short="haskell", long="Haskell"), color=c(strong="#3d0569ff", light="#61298bff"))
 )}
 #barplot(rep(c(0L,1L,1L), length(solution.dict)),
 #        col=rev(c(rbind(sapply(solution.dict, `[[`, "color"), "black"))),
@@ -272,7 +272,7 @@ groupby.syntax.dict = {list(
     "largest two v3 by id6" = "",
     "regression v1 v2 by id2 id4" = "",
     "sum v3 count by id1:id6" = "df |> D.groupBy [\"id1\",\"id2\",\"id3\",\"id4\",\"id5\",\"id6\"]).agg([F.sum (F.col @Double \"v3\") `F.as` \"v3\", F..count (F.col @Int \"v1\") `F.as` \"count\"]"
-  )},
+  )}
 )}
  groupby.query.exceptions = {list(
   "collapse" =    list(),
@@ -495,7 +495,7 @@ join.syntax.dict = {list(
     "medium outer on int" = "D.leftJoin [\"id2\"] medium medium",
     "medium inner on factor" = "D.innerJoin [\"id5\"] medium medium",
     "big inner on int" = "D.innerJoin [\"id3\"] big big"
-  )},
+  )}
 )}
 join.query.exceptions = {list(
   "collapse" =    list(),
