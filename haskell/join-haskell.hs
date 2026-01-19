@@ -7,6 +7,7 @@ import Control.Monad (forM_)
 import Data.List (intercalate)
 import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
+import Numeric (showEFloat)
 import Data.Time.Clock.POSIX (getPOSIXTime)
 import qualified Data.Vector.Unboxed as VU
 import qualified DataFrame as D
@@ -130,16 +131,23 @@ sumCol name df =
 
 determineAuxTables :: String -> [String]
 determineAuxTables dataName =
-    let parts = T.splitOn "_" (T.pack dataName)
-        xnStr = if length parts > 1 then T.unpack (parts !! 1) else "1e7"
-        xn = read xnStr :: Double
+  let parts = T.splitOn "_" (T.pack dataName)
+      raw = parts !! 1
+      x_n :: Int
+      x_n = truncate (read (T.unpack raw) :: Double)
 
-        yn1 = show (floor (xn / 1e6) :: Int) ++ "e4"
-        yn2 = show (floor (xn / 1e3) :: Int) ++ "e3"
-        yn3 = show (floor xn :: Int)
-        
-        replaceNA s = T.unpack $ T.replace "NA" (T.pack s) (T.pack dataName)
-    in [ replaceNA yn1, replaceNA yn2, replaceNA yn3 ]
+      fmtE0 :: Double -> T.Text
+      fmtE0 x =
+        let s = T.pack (showEFloat (Just 0) x "")
+        in T.replace "+0" "" s
+
+      y0 = fmtE0 (fromIntegral x_n / 1e6)
+      y1 = fmtE0 (fromIntegral x_n / 1e3)
+      y2 = fmtE0 (fromIntegral x_n)
+
+      replaceNA :: T.Text -> String
+      replaceNA rep = T.unpack $ T.replace "NA" rep (T.pack dataName)
+  in [ replaceNA y0, replaceNA y1, replaceNA y2 ]
 
 getMemoryUsage :: IO Double
 getMemoryUsage = do
