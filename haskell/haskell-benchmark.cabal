@@ -6,6 +6,8 @@ cabal-version:       >=2.0
 executable groupby-haskell
   main-is:             groupby-haskell.hs
   build-depends:       base >= 4.7 && < 5
+                     , bytestring >= 0.11 && < 0.13
+                     , cassava >= 0.1 && < 1
                      , dataframe ^>= 0.4
                      , text >= 1.2
                      , vector >= 0.12
@@ -19,6 +21,8 @@ executable groupby-haskell
 executable join-haskell
   main-is:             join-haskell.hs
   build-depends:       base >= 4.7 && < 5
+                     , bytestring >= 0.11 && < 0.13
+                     , cassava >= 0.1 && < 1
                      , dataframe ^>= 0.4
                      , text >= 1.2
                      , vector >= 0.12

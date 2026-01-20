@@ -3,19 +3,25 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-import Control.Exception (evaluate)
+import Control.Exception (evaluate, catch, SomeException)
 import Control.Monad (forM_, when)
+import Data.Char
+import Data.Csv (encode, toField, toRecord, record, defaultEncodeOptions, encodeWith)
+import qualified Data.ByteString.Lazy as BL
+import qualified Data.ByteString.Lazy.Char8 as BLC
+import System.Posix.Files (getFileStatus, fileSize, removeLink)
 import Data.List (intercalate)
 import Data.Maybe (fromMaybe)
 import Data.Text (Text)
 import qualified Data.Text as T
 import Data.Time.Clock.POSIX (getPOSIXTime)
+import qualified Data.Vector as V
 import qualified Data.Vector.Unboxed as VU
 import qualified DataFrame as D
 import qualified DataFrame.Functions as F
 import DataFrame.Functions ((.=))
 import GHC.Stats (getRTSStats, max_live_bytes, getRTSStatsEnabled)
-import System.Directory (doesFileExist)
+import System.Directory (doesFileExist, removeFile)
 import System.Environment (getEnv, lookupEnv)
 import System.IO (hFlush, hPutStrLn, stderr, stdout, withFile, IOMode(..), hSetBuffering, BufferMode(..), hPutStr)
 import System.Posix.Process (getProcessID)
@@ -219,49 +225,51 @@ writeLog BenchConfig{..} question outRows outCols run timeSec memGb chkValues ch
     batch <- lookupEnv "BATCH" >>= return . fromMaybe ""
     timestamp <- getPOSIXTime
     csvFile <- lookupEnv "CSV_TIME_FILE" >>= return . fromMaybe "time.csv"
+    csvVerbose <- lookupEnv "CSV_VERBOSE" >>= return . fromMaybe "false"
     nodename <- fmap init (readProcess "hostname" [] "")
 
-    let formatNum x = show (roundTo 3 x)
+    let formatNum x 
+          | isNaN x = ""
+          | otherwise = show (roundTo 3 x)
+    
     let chkStr = intercalate ";" $ map (map (\c -> if c == ',' then '_' else c) . formatNum) chkValues
 
-    let logRow = intercalate ","
-            [ nodename
-            , batch
-            , show timestamp
-            , cfgTask
-            , cfgDataName
-            , show cfgInRows
-            , question
-            , show outRows
-            , show outCols
-            , cfgSolution
-            , cfgVer
-            , cfgGit
-            , cfgFun
-            , show run
-            , formatNum timeSec
-            , formatNum memGb
-            , cfgCache
-            , chkStr
-            , formatNum chkTime
-            , "" -- comment
-            , cfgOnDisk
-            , cfgMachineType
+    let logRow = V.fromList
+            [ nodename, batch, show timestamp, cfgTask, cfgDataName
+            , show cfgInRows, question, show outRows, show outCols
+            , cfgSolution, cfgVer, cfgGit, cfgFun, show run
+            , formatNum timeSec, formatNum memGb, cfgCache
+            , chkStr, formatNum chkTime, "", cfgOnDisk, cfgMachineType
             ]
 
-    exists <- doesFileExist csvFile
-    let header = "nodename,batch,timestamp,task,data,in_rows,question,out_rows,out_cols,solution,version,git,fun,run,time_sec,mem_gb,cache,chk,chk_time_sec,comment,on_disk,machine_type\n"
+    let logHeader = V.fromList
+            ["nodename","batch","timestamp","task","data","in_rows"
+            ,"question","out_rows","out_cols","solution","version","git"
+            ,"fun","run","time_sec","mem_gb","cache","chk","chk_time_sec"
+            ,"comment","on_disk","machine_type"]
+
+    -- Remove empty file
+    catch (do
+        exists <- doesFileExist csvFile
+        when exists $ do
+            size <- fileSize <$> getFileStatus csvFile
+            when (size == 0) $ removeFile csvFile
+        ) (\(_ :: SomeException) -> return ())
+
+    append <- doesFileExist csvFile
+
+    when (map toLower csvVerbose == "true") $
+        putStrLn $ "# " ++ intercalate "," (V.toList logRow)
+
+    let csvData = if append 
+                  then encodeWith defaultEncodeOptions [logRow]
+                  else encodeWith defaultEncodeOptions [logHeader, logRow]
     
-    evaluate logRow
-    print csvFile
-    forceAppend csvFile $ (if not exists then header else "") ++ logRow ++ "\n"
+    if append
+        then BL.appendFile csvFile csvData
+        else BL.writeFile csvFile csvData
+
+    return ()
 
 roundTo :: Int -> Double -> Double
 roundTo n x = (fromInteger $ round $ x * (10 ^ n)) / (10.0 ^^ n)
-
-forceAppend :: FilePath -> String -> IO ()
-forceAppend path content = 
-    withFile path AppendMode $ \h -> do
-        hSetBuffering h NoBuffering
-        hPutStr h content
-        hFlush h
