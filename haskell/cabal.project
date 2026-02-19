@@ -1,2 +1,2 @@
 packages: .
-with-compiler: ghc-9.6.7
+allow-newer: all
