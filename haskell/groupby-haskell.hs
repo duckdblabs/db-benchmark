@@ -307,7 +307,7 @@ writeLog BenchConfig{..} question outRows outCols run timeSec memGb chkValues ch
             V.fromList
                 [ nodename
                 , batch
-                , show timestamp
+                , showFFloat (Just 5) (realToFrac timestamp) ""
                 , cfgTask
                 , cfgDataName
                 , show cfgInRows

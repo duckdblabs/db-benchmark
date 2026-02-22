@@ -7,7 +7,7 @@ DF_PKG_ID="$(
   cabal v2-exec -- ghc-pkg latest --simple-output dataframe 2>/dev/null || true
 )"
 
-DF_VERSION="0.4.0.8"
+DF_VERSION="0.4.1"
 if [ -n "${DF_PKG_ID}" ]; then
   DF_VERSION="${DF_PKG_ID#dataframe-}"
 fi
