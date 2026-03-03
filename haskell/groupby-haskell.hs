@@ -83,8 +83,9 @@ runBenchmark :: String -> String -> String -> IO ()
 runBenchmark srcFile dataName machineType = do
     putStrLn $ "loading dataset " ++ dataName
 
-    df <- D.readCsvUnstable srcFile
+    df <- D.readCsv srcFile
     let (inRows, _) = D.dimensions df
+    print inRows
     print $ D.summarize df
 
     -- Columns
