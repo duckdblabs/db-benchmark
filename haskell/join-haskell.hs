@@ -10,6 +10,7 @@ import qualified Data.ByteString.Lazy.Char8 as BLC
 import Data.Char
 import Data.Csv (
     defaultEncodeOptions,
+    encUseCrLf,
     encode,
     encodeWith,
     record,
@@ -323,10 +324,11 @@ writeLog BenchConfig{..} question outRows outCols run timeSec memGb chkValues ch
         putStrLn $
             "# " ++ intercalate "," (V.toList logRow)
 
+    let csvEncodeOptions = defaultEncodeOptions { encUseCrLf = False }
     let csvData =
             if append
-                then encodeWith defaultEncodeOptions [logRow]
-                else encodeWith defaultEncodeOptions [logHeader, logRow]
+                then encodeWith csvEncodeOptions [logRow]
+                else encodeWith csvEncodeOptions [logHeader, logRow]
 
     if append
         then BL.appendFile csvFile csvData
@@ -372,6 +374,7 @@ writeToLogFile BenchConfig{..} action = do
                 ]
     append <- doesFileExist logFile
 
+    let csvEncodeOptions = defaultEncodeOptions { encUseCrLf = False }
     let csvData =
             if append
                 then encodeWith defaultEncodeOptions [logFileRow]
