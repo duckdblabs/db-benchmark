@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+unset CC
+unset CXX
+unset LD
+
 # Install Cabal (Haskell build tool) if not present
 if ! command -v ghcup &> /dev/null; then
     echo "Installing Cabal..."
