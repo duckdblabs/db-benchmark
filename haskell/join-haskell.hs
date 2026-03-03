@@ -78,7 +78,7 @@ main = do
     dfX <- D.readCsv srcMain
     dfSmall <- D.readCsv (srcAux !! 0)
     dfMedium <- D.readCsv (srcAux !! 1)
-    dfBig <- D.readCsv (srcAux !! 2)
+    dfBig <- D.readCsvUnstable (srcAux !! 2)
 
     let (rowsX, _) = D.dimensions dfX
     print
