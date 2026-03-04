@@ -202,7 +202,7 @@ launch = function(dt, mockup, out_dir="out") {
           if (file.exists(err_file)) file.remove(err_file)
           if (file.exists(ret_file)) file.remove(ret_file)
         }
-        cmd = sprintf("%s > %s 2> %s", solution.cmd(s, t, d), out_file, err_file)
+        cmd = sprintf("%s > %s 2> %s", solution.cmd(s, t, d), std_out, std_err) # ./_launcher/solution.R ... > out 2> err
         shcmd = sprintf("/bin/bash -c \"%s%s\"", venv, cmd) # this is needed to source python venv
         if (mockup) {
           cat(cmd)
