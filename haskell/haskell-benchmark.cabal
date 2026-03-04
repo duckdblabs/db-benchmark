@@ -8,7 +8,7 @@ executable groupby-haskell
   build-depends:       base >= 4.7 && < 5
                      , bytestring >= 0.11 && < 0.13
                      , cassava >= 0.1 && < 1
-                     , dataframe == 0.4.1.0
+                     , dataframe ^>= 0.6
                      , text >= 1.2
                      , vector >= 0.12
                      , time >= 1.9
@@ -23,7 +23,7 @@ executable join-haskell
   build-depends:       base >= 4.7 && < 5
                      , bytestring >= 0.11 && < 0.13
                      , cassava >= 0.1 && < 1
-                     , dataframe ^>= 0.4
+                     , dataframe ^>= 0.6
                      , text >= 1.2
                      , vector >= 0.12
                      , time >= 1.9
