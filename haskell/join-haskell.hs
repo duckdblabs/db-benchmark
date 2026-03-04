@@ -20,6 +20,7 @@ import Data.Csv (
 import Data.Functor
 import Data.List (intercalate)
 import Data.Maybe (fromMaybe)
+import Data.Text (Text)
 import qualified Data.Text as T
 import Data.Time.Clock.POSIX (getPOSIXTime)
 import qualified Data.Vector as V
@@ -76,10 +77,56 @@ main = do
     putStrLn $
         "loading datasets: " ++ dataName ++ ", " ++ intercalate ", " auxTableNames
 
-    dfX <- D.readCsv srcMain
-    dfSmall <- D.readCsv (srcAux !! 0)
-    dfMedium <- D.readCsv (srcAux !! 1)
-    dfBig <- D.readCsvUnstable (srcAux !! 2)
+    dfX <- D.readCsvWithOpts
+            ( D.defaultReadOptions
+                { D.typeSpec =
+                    D.SpecifyTypes
+                        [ D.schemaType @Int
+                        , D.schemaType @Int
+                        , D.schemaType @Int
+                        , D.schemaType @Text
+                        , D.schemaType @Text
+                        , D.schemaType @Text
+                        , D.schemaType @Double
+                        ]
+                }
+            ) srcMain
+    dfSmall <- D.readCsvWithOpts
+                ( D.defaultReadOptions
+                    { D.typeSpec =
+                        D.SpecifyTypes
+                            [ D.schemaType @Int
+                            , D.schemaType @Text
+                            , D.schemaType @Double
+                            ]
+                    }
+                )  (head srcAux)
+    dfMedium <- D.readCsvWithOpts
+                ( D.defaultReadOptions
+                    { D.typeSpec =
+                        D.SpecifyTypes
+                            [ D.schemaType @Int
+                            , D.schemaType @Int
+                            , D.schemaType @Text
+                            , D.schemaType @Text
+                            , D.schemaType @Double
+                            ]
+                    }
+                ) (srcAux !! 1)
+    dfBig <- D.readCsvWithOpts
+                ( D.defaultReadOptions
+                    { D.typeSpec =
+                        D.SpecifyTypes
+                            [ D.schemaType @Int
+                            , D.schemaType @Int
+                            , D.schemaType @Int
+                            , D.schemaType @Text
+                            , D.schemaType @Text
+                            , D.schemaType @Text
+                            , D.schemaType @Double
+                            ]
+                    }
+                ) (srcAux !! 2)
 
     let (rowsX, _) = D.dimensions dfX
     print
@@ -113,7 +160,7 @@ main = do
         dfX
         dfSmall
         "small inner on int"
-        (\l r -> DJ.innerJoin ["id1"] l r)
+        (\l r -> DJ.innerJoin ["id1"] r l)
 
     -- Q2: medium inner on int
     runJoin
@@ -121,7 +168,7 @@ main = do
         dfX
         dfMedium
         "medium inner on int"
-        (\l r -> DJ.innerJoin ["id1"] l r)
+        (\l r -> DJ.innerJoin ["id1"] r l)
 
     -- Q3: medium outer on int
     -- Note: We update the function name in the config for logging accuracy
@@ -130,7 +177,7 @@ main = do
         dfX
         dfMedium
         "medium outer on int"
-        (\l r -> DJ.leftJoin ["id1"] l r)
+        (\l r -> DJ.leftJoin ["id1"] r l)
 
     -- Q4: medium inner on factor (id4)
     runJoin
@@ -138,7 +185,7 @@ main = do
         dfX
         dfMedium
         "medium inner on factor"
-        (\l r -> DJ.innerJoin ["id4"] l r)
+        (\l r -> DJ.innerJoin ["id4"] r l)
 
     -- Q5: big inner on int
     runJoin
@@ -146,7 +193,7 @@ main = do
         dfX
         dfBig
         "big inner on int"
-        (\l r -> DJ.innerJoin ["id1"] l r)
+        (\l r -> DJ.innerJoin ["id1"] r l)
 
     writeToLogFile config "finish"
     putStrLn "Haskell dataframe join benchmark completed!"
@@ -185,7 +232,7 @@ runJoin cfg leftDF rightDF qLabel joinFn = do
 
 sumCol :: String -> D.DataFrame -> Double
 sumCol name df =
-    case D.columnAsDoubleVector (F.toDouble (F.col @Int (T.pack name))) df of
+    case D.columnAsDoubleVector (F.col @Double (T.pack name)) df of
         Right vec -> VU.sum vec
         Left _ -> 0.0
 
