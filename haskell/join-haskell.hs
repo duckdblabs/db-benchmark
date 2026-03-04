@@ -324,7 +324,7 @@ writeLog BenchConfig{..} question outRows outCols run timeSec memGb chkValues ch
         putStrLn $
             "# " ++ intercalate "," (V.toList logRow)
 
-    let csvEncodeOptions = defaultEncodeOptions { encUseCrLf = False }
+    let csvEncodeOptions = defaultEncodeOptions{encUseCrLf = False}
     let csvData =
             if append
                 then encodeWith csvEncodeOptions [logRow]
@@ -374,7 +374,7 @@ writeToLogFile BenchConfig{..} action = do
                 ]
     append <- doesFileExist logFile
 
-    let csvEncodeOptions = defaultEncodeOptions { encUseCrLf = False }
+    let csvEncodeOptions = defaultEncodeOptions{encUseCrLf = False}
     let csvData =
             if append
                 then encodeWith defaultEncodeOptions [logFileRow]

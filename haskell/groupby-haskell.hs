@@ -83,7 +83,24 @@ runBenchmark :: String -> String -> String -> IO ()
 runBenchmark srcFile dataName machineType = do
     putStrLn $ "loading dataset " ++ dataName
 
-    df <- D.readCsv srcFile
+    df <-
+        D.readCsvWithOpts
+            ( D.defaultReadOptions
+                { D.typeSpec =
+                    D.SpecifyTypes
+                        [ D.schemaType @Text
+                        , D.schemaType @Text
+                        , D.schemaType @Text
+                        , D.schemaType @Int
+                        , D.schemaType @Int
+                        , D.schemaType @Int
+                        , D.schemaType @Int
+                        , D.schemaType @Int
+                        , D.schemaType @Double
+                        ]
+                }
+            )
+            srcFile
     let (inRows, _) = D.dimensions df
     print inRows
     print df
@@ -373,7 +390,7 @@ writeLog BenchConfig{..} question outRows outCols run timeSec memGb chkValues ch
         putStrLn $
             "# " ++ intercalate "," (V.toList logRow)
 
-    let csvEncodeOptions = defaultEncodeOptions { encUseCrLf = False }
+    let csvEncodeOptions = defaultEncodeOptions{encUseCrLf = False}
     let csvData =
             if append
                 then encodeWith csvEncodeOptions [logRow]
@@ -423,7 +440,7 @@ writeToLogFile BenchConfig{..} action = do
                 ]
     append <- doesFileExist logFile
 
-    let csvEncodeOptions = defaultEncodeOptions { encUseCrLf = False }
+    let csvEncodeOptions = defaultEncodeOptions{encUseCrLf = False}
     let csvData =
             if append
                 then encodeWith csvEncodeOptions [logFileRow]
