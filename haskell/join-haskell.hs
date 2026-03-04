@@ -60,8 +60,12 @@ data BenchConfig = BenchConfig
     , cfgInRows :: Int
     }
 
+-- TODO: Renable join for later versions.
 main :: IO ()
-main = do
+main = pure ()
+
+runJoin :: IO ()
+runJoin = do
     hSetBuffering stdout NoBuffering
     putStrLn "# join-haskell.hs"
 
