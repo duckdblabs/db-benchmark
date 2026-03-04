@@ -4,7 +4,7 @@ set -e
 cd haskell
 
 cabal update
-cabal build
+cabal build -O2
 
 cd ..
 

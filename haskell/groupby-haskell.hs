@@ -86,7 +86,7 @@ runBenchmark srcFile dataName machineType = do
     df <- D.readCsv srcFile
     let (inRows, _) = D.dimensions df
     print inRows
-    print $ D.summarize df
+    print df
 
     -- Columns
     let id1 = F.col @Text "id1"
