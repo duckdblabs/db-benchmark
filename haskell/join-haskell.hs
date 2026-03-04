@@ -64,8 +64,8 @@ data BenchConfig = BenchConfig
 main :: IO ()
 main = pure ()
 
-runJoin :: IO ()
-runJoin = do
+runJoinMain :: IO ()
+runJoinMain = do
     hSetBuffering stdout NoBuffering
     putStrLn "# join-haskell.hs"
 
