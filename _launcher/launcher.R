@@ -16,7 +16,7 @@ file.ext = function(x) {
     x,
     "collapse"=, "data.table"=, "dplyr"=, "h2o"=, "R-arrow"=, "duckdb"="R", "duckdb-latest"="R",
     "pandas"=, "spark"=, "pydatatable"=, "modin"=, "dask"=, "datafusion"=, "polars"="py",
-    "clickhouse"="sh", "juliadf"="jl", "juliads"="jl", "chdb"="py"
+    "clickhouse"="sh", "juliadf"="jl", "juliads"="jl", "chdb"="py", "haskell"="hs",
   )
   if (is.null(ans)) stop(sprintf("solution %s does not have file extension defined in file.ext helper function", x))
   ans
