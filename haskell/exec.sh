@@ -18,4 +18,6 @@ ghcup install ghc 9.6.7
 # Set 9.6.7 as the active 'ghc' version
 ghcup set ghc 9.6.7
 
+source ./haskell/ver-haskell.sh
+
 cabal --project-dir=./haskell run -O2 "$1-haskell"
