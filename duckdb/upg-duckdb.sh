@@ -8,12 +8,8 @@ mkdir -p ./duckdb/r-duckdb
 cd duckdb
 rm -rf duckdb-r
 git clone https://github.com/duckdb/duckdb-r
-cd duckdb-r 
-git checkout v1.2.0
-cd ..
 ncores=$(nproc --all)
 MAKE="make -j$ncores" R CMD INSTALL -l "./r-duckdb" duckdb-r
-rm -rf duckdb-r
 cd ..
 
 
