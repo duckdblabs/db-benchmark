@@ -4,10 +4,12 @@ on:
     inputs:
       solutions:
         type: string
+        default: "clickhouse duckdb polars datafusion collapse spark"
       instance_id:
         type: string
       sizes:
         type: string
+        default: "small medium large"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.head_ref || '' }}-${{ github.base_ref || '' }}-${{ github.ref != 'refs/heads/master' || github.sha }}
