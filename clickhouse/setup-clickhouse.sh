@@ -2,6 +2,8 @@
 # install
 cd clickhouse
 
+sudo apt-get install -y expect
+
 sudo mkdir -p /var/lib/mount/clickhouse-nvme-mount/
 
 rm -rf clickhouse
