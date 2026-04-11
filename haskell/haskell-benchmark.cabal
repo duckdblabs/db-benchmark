@@ -5,10 +5,12 @@ cabal-version:       >=2.0
 
 executable groupby-haskell
   main-is:             groupby-haskell.hs
+  hs-source-dirs:      .
+  other-modules:       BenchmarkCommon
   build-depends:       base >= 4.7 && < 5
                      , bytestring >= 0.11 && < 0.13
                      , cassava >= 0.1 && < 1
-                     , dataframe ^>= 0.6
+                     , dataframe ^>= 0.7
                      , text >= 1.2
                      , vector >= 0.12
                      , time >= 1.9
@@ -20,10 +22,12 @@ executable groupby-haskell
 
 executable join-haskell
   main-is:             join-haskell.hs
+  hs-source-dirs:      .
+  other-modules:       BenchmarkCommon
   build-depends:       base >= 4.7 && < 5
                      , bytestring >= 0.11 && < 0.13
                      , cassava >= 0.1 && < 1
-                     , dataframe ^>= 0.6
+                     , dataframe ^>= 0.7
                      , text >= 1.2
                      , vector >= 0.12
                      , time >= 1.9

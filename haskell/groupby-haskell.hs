@@ -1,66 +1,20 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 
-import Control.Exception (SomeException, catch, evaluate)
-import Control.Monad (forM_, when)
-import qualified Data.ByteString.Lazy as BL
-import qualified Data.ByteString.Lazy.Char8 as BLC
-import Data.Char
-import Data.Csv (
-    defaultEncodeOptions,
-    encUseCrLf,
-    encode,
-    encodeWith,
-    record,
-    toField,
-    toRecord,
- )
-import Data.Functor
-import Data.List (intercalate)
+import BenchmarkCommon
+import Control.Arrow ((>>>))
+import Control.Monad (forM_)
+import Data.Functor ((<&>))
 import Data.Maybe (fromMaybe)
 import Data.Text (Text)
 import qualified Data.Text as T
-import Data.Time.Clock.POSIX (getPOSIXTime)
-import qualified Data.Vector as V
 import qualified Data.Vector.Unboxed as VU
 import qualified DataFrame as D
 import DataFrame.Functions ((.=))
 import qualified DataFrame.Functions as F
-import GHC.Stats (getRTSStats, getRTSStatsEnabled, max_live_bytes)
-import Numeric (showFFloat)
-import System.Directory (doesFileExist, removeFile)
 import System.Environment (getEnv, lookupEnv)
-import System.IO (
-    BufferMode (..),
-    IOMode (..),
-    hFlush,
-    hPutStr,
-    hPutStrLn,
-    hSetBuffering,
-    stderr,
-    stdout,
-    withFile,
- )
-import System.Posix.Files (fileSize, getFileStatus, removeLink)
-import System.Posix.Process (getProcessID)
-import System.Process (readProcess)
-import Text.Read (readMaybe)
-
--- | Configuration context for the benchmark.
-data BenchConfig = BenchConfig
-    { cfgTask :: String
-    , cfgDataName :: String
-    , cfgMachineType :: String
-    , cfgSolution :: String
-    , cfgVer :: String
-    , cfgGit :: String
-    , cfgFun :: String
-    , cfgCache :: String
-    , cfgOnDisk :: String
-    , cfgInRows :: Int
-    }
+import System.IO (BufferMode (..), hPutStrLn, hSetBuffering, stderr, stdout)
 
 main :: IO ()
 main = do
@@ -68,7 +22,7 @@ main = do
     putStrLn "# groupby-haskell.hs"
 
     dataName <- getEnv "SRC_DATANAME"
-    machineType <- getEnv "MACHINE_TYPE"
+    machineType <- lookupEnv "MACHINE_TYPE" <&> fromMaybe "UNSET"
     let srcFile = "./data/" ++ dataName ++ ".csv"
 
     -- Check NA Flag
@@ -83,28 +37,6 @@ runBenchmark :: String -> String -> String -> IO ()
 runBenchmark srcFile dataName machineType = do
     putStrLn $ "loading dataset " ++ dataName
 
-    df <-
-        D.readCsvWithOpts
-            ( D.defaultReadOptions
-                { D.typeSpec =
-                    D.SpecifyTypes
-                        [ D.schemaType @Text
-                        , D.schemaType @Text
-                        , D.schemaType @Text
-                        , D.schemaType @Int
-                        , D.schemaType @Int
-                        , D.schemaType @Int
-                        , D.schemaType @Int
-                        , D.schemaType @Int
-                        , D.schemaType @Double
-                        ]
-                }
-            )
-            srcFile
-    let (inRows, _) = D.dimensions df
-    print inRows
-    print df
-
     -- Columns
     let id1 = F.col @Text "id1"
         id2 = F.col @Text "id2"
@@ -116,13 +48,37 @@ runBenchmark srcFile dataName machineType = do
         v2 = F.col @Int "v2"
         v3 = F.col @Double "v3"
 
+    df <-
+        D.readCsvWithOpts
+            ( D.defaultReadOptions
+                { D.typeSpec =
+                    D.SpecifyTypes
+                        [ (F.name id1, D.schemaType @Text)
+                        , (F.name id2, D.schemaType @Text)
+                        , (F.name id3, D.schemaType @Text)
+                        , (F.name id4, D.schemaType @Int)
+                        , (F.name id5, D.schemaType @Int)
+                        , (F.name id6, D.schemaType @Int)
+                        , (F.name v1, D.schemaType @Int)
+                        , (F.name v2, D.schemaType @Int)
+                        , (F.name v3, D.schemaType @Double)
+                        ]
+                }
+            )
+            srcFile
+    let (inRows, _) = D.dimensions df
+    print inRows
+    print df
+
+    ver <- lookupEnv "HASKELL_DF_VERSION" <&> fromMaybe ""
+
     let config =
             BenchConfig
                 { cfgTask = "groupby"
                 , cfgDataName = dataName
                 , cfgMachineType = machineType
                 , cfgSolution = "haskell"
-                , cfgVer = "0.4.1"
+                , cfgVer = ver
                 , cfgGit = "NA"
                 , cfgFun = "groupBy"
                 , cfgCache = "TRUE"
@@ -138,8 +94,7 @@ runBenchmark srcFile dataName machineType = do
         config
         df
         "sum v1 by id1"
-        (D.groupBy [F.name id1])
-        (D.aggregate [F.sum v1 `F.as` "v1_sum"])
+        (D.groupBy [F.name id1] >>> D.aggregate [F.sum v1 `F.as` "v1_sum"])
         (\res -> [chkSumInt "v1_sum" res])
 
     -- Q2: Sum v1 by id1:id2
@@ -147,8 +102,7 @@ runBenchmark srcFile dataName machineType = do
         config
         df
         "sum v1 by id1:id2"
-        (D.groupBy [F.name id1, F.name id2])
-        (D.aggregate ["v1_sum" .= F.sum v1])
+        (D.groupBy [F.name id1, F.name id2] >>> D.aggregate ["v1_sum" .= F.sum v1])
         (\res -> [chkSumInt "v1_sum" res])
 
     -- Q3: Sum v1, Mean v3 by id3
@@ -156,11 +110,8 @@ runBenchmark srcFile dataName machineType = do
         config
         df
         "sum v1 mean v3 by id3"
-        (D.groupBy [F.name id3])
-        ( D.aggregate
-            [ "v1_sum" .= F.sum v1
-            , "v3_mean" .= F.mean v3
-            ]
+        ( D.groupBy [F.name id3]
+            >>> D.aggregate ["v1_sum" .= F.sum v1, "v3_mean" .= F.mean v3]
         )
         (\res -> [chkSumInt "v1_sum" res, chkSumDbl "v3_mean" res])
 
@@ -169,62 +120,51 @@ runBenchmark srcFile dataName machineType = do
         config
         df
         "mean v1:v3 by id4"
-        (D.groupBy [F.name id4])
-        ( D.aggregate
-            [ "v1_mean" .= F.mean v1
-            , "v2_mean" .= F.mean v2
-            , "v3_mean" .= F.mean v3
-            ]
+        ( D.groupBy [F.name id4]
+            >>> D.aggregate
+                ["v1_mean" .= F.mean v1, "v2_mean" .= F.mean v2, "v3_mean" .= F.mean v3]
         )
         ( \res -> [chkSumDbl "v1_mean" res, chkSumDbl "v2_mean" res, chkSumDbl "v3_mean" res]
         )
 
-    -- Q5 (Question 6 in original): Sum v1, v2, v3 by id6
+    -- Q5: Sum v1, v2, v3 by id6
     runQuestion
         config
         df
         "sum v1:v3 by id6"
-        (D.groupBy [F.name id6])
-        ( D.aggregate
-            [ "v1_sum" .= F.sum v1
-            , "v2_sum" .= F.sum v2
-            , "v3_sum" .= F.sum v3
-            ]
+        ( D.groupBy [F.name id6]
+            >>> D.aggregate
+                ["v1_sum" .= F.sum v1, "v2_sum" .= F.sum v2, "v3_sum" .= F.sum v3]
         )
         (\res -> [chkSumInt "v1_sum" res, chkSumInt "v2_sum" res, chkSumDbl "v3_sum" res])
 
-    -- Q6: median v3, sd v3 by id4, id5
+    -- Q6: Median v3, sd v3 by id4, id5
     runQuestion
         config
         df
         "median v3 sd v3 by id4 id5"
-        (D.groupBy [F.name id4, F.name id5])
-        ( D.aggregate
-            [ "v3_median" .= F.median v3
-            , "v3_sd" .= F.stddev v3
-            ]
+        ( D.groupBy [F.name id4, F.name id5]
+            >>> D.aggregate
+                ["v3_median" .= F.median v3, "v3_sd" .= F.stddev v3]
         )
         (\res -> [chkSumDbl "v3_median" res, chkSumDbl "v3_sd" res])
 
-    -- Q7: max v1 - min v2 by id3
+    -- Q7: Max v1 - min v2 by id3
     runQuestion
         config
         df
         "max v1 - min v2 by id3"
-        (D.groupBy [F.name id3])
-        ( D.aggregate
-            [ "diff" .= F.maximum v1 - F.minimum v2
-            ]
-        )
+        (D.groupBy [F.name id3] >>> D.aggregate ["diff" .= F.maximum v1 - F.minimum v2])
         (\res -> [chkSumInt "diff" res])
 
-    -- Q10: sum v3 count by id1:id6
+    -- Q10: Sum v3 count by id1:id6
     runQuestion
         config
         df
         "sum v3 count by id1:id6"
-        (D.groupBy (zipWith (\i n -> i <> (T.pack . show) n) (cycle ["id"]) [1 .. 6]))
-        (D.aggregate [F.sum v3 `F.as` "v3_sum"])
+        ( D.groupBy (map ((\i n -> i <> (T.pack . show) n) "id") [1 .. 6])
+            >>> D.aggregate [F.sum v3 `F.as` "v3_sum"]
+        )
         (\res -> [chkSumDbl "v3_sum" res])
 
     writeToLogFile config "finish"
@@ -233,34 +173,23 @@ runBenchmark srcFile dataName machineType = do
 runQuestion ::
     BenchConfig ->
     D.DataFrame ->
-    -- | Question label
     String ->
-    -- | Grouping logic
-    (D.DataFrame -> D.GroupedDataFrame) ->
-    -- | Aggregation logic
-    (D.GroupedDataFrame -> D.DataFrame) ->
-    -- | Checksum extractor
+    (D.DataFrame -> D.DataFrame) ->
     (D.DataFrame -> [Double]) ->
     IO ()
-runQuestion cfg inputDF qLabel groupFn aggFn chkFn = do
+runQuestion cfg inputDF qLabel transform chkFn = do
     forM_ [1, 2] $ \runNum -> do
         (resultDF, calcTime) <- timeIt $ do
-            let grouped = groupFn inputDF
-            let aggregated = aggFn grouped
-            print aggregated
-            return aggregated
-
+            let result = transform inputDF
+            print result
+            return result
         memUsage <- getMemoryUsage
-
         let (outRows, outCols) = D.dimensions resultDF
-
         (chkValues, chkTime) <- timeIt $ do
             let vals = chkFn resultDF
             print vals
             return vals
-
         writeLog cfg qLabel outRows outCols runNum calcTime memUsage chkValues chkTime
-
     putStrLn $ qLabel ++ " completed."
 
 chkSumInt :: String -> D.DataFrame -> Double
@@ -274,181 +203,3 @@ chkSumDbl col df =
     case D.columnAsDoubleVector (F.col @Double (T.pack col)) df of
         Right vec -> VU.sum vec
         Left _ -> 0.0
-
-getMemoryUsage :: IO Double
-getMemoryUsage = do
-    isStats <- getRTSStatsEnabled
-    if isStats
-        then do
-            s <- getRTSStats
-            return $ fromIntegral (max_live_bytes s) / (1024 * 1024)
-        else do
-            pid <- getProcessID
-            raw <- readProcess "ps" ["-p", show pid, "-o", "rss="] ""
-            case readMaybe @Double (filter (/= '\n') raw) of
-                Just kb -> return (kb / 1024)
-                Nothing -> return 0.0
-
-timeIt :: IO a -> IO (a, Double)
-timeIt action = do
-    start <- getPOSIXTime
-    result <- action
-    end <- getPOSIXTime
-    return (result, realToFrac (end - start))
-
-writeLog ::
-    BenchConfig ->
-    String ->
-    Int ->
-    Int ->
-    Int ->
-    Double ->
-    Double ->
-    [Double] ->
-    Double ->
-    IO ()
-writeLog BenchConfig{..} question outRows outCols run timeSec memGb chkValues chkTime = do
-    batch <- lookupEnv "BATCH" <&> fromMaybe ""
-    timestamp <- getPOSIXTime
-    csvFile <- lookupEnv "CSV_TIME_FILE" <&> fromMaybe "time.csv"
-    csvVerbose <- lookupEnv "CSV_VERBOSE" <&> fromMaybe "false"
-    nodename <- fmap init (readProcess "hostname" [] "")
-
-    let formatNum x
-            | isNaN x = ""
-            | otherwise = show (roundTo 3 x)
-
-    let chkStr =
-            intercalate ";" $
-                map (map (\c -> if c == ',' then '_' else c) . formatNum) chkValues
-
-    let logRow =
-            V.fromList
-                [ nodename
-                , batch
-                , showFFloat (Just 5) (realToFrac timestamp) ""
-                , cfgTask
-                , cfgDataName
-                , show cfgInRows
-                , question
-                , show outRows
-                , show outCols
-                , cfgSolution
-                , cfgVer
-                , cfgGit
-                , cfgFun
-                , show run
-                , formatNum timeSec
-                , formatNum memGb
-                , cfgCache
-                , chkStr
-                , formatNum chkTime
-                , ""
-                , cfgOnDisk
-                , cfgMachineType
-                ]
-
-    let logHeader =
-            V.fromList
-                [ "nodename"
-                , "batch"
-                , "timestamp"
-                , "task"
-                , "data"
-                , "in_rows"
-                , "question"
-                , "out_rows"
-                , "out_cols"
-                , "solution"
-                , "version"
-                , "git"
-                , "fun"
-                , "run"
-                , "time_sec"
-                , "mem_gb"
-                , "cache"
-                , "chk"
-                , "chk_time_sec"
-                , "comment"
-                , "on_disk"
-                , "machine_type"
-                ]
-
-    -- Remove empty file
-    catch
-        ( do
-            exists <- doesFileExist csvFile
-            when exists $ do
-                size <- fileSize <$> getFileStatus csvFile
-                when (size == 0) $ removeFile csvFile
-        )
-        (\(_ :: SomeException) -> return ())
-
-    append <- doesFileExist csvFile
-
-    when (map toLower csvVerbose == "true") $
-        putStrLn $
-            "# " ++ intercalate "," (V.toList logRow)
-
-    let csvEncodeOptions = defaultEncodeOptions{encUseCrLf = False}
-    let csvData =
-            if append
-                then encodeWith csvEncodeOptions [logRow]
-                else encodeWith csvEncodeOptions [logHeader, logRow]
-
-    if append
-        then BL.appendFile csvFile csvData
-        else BL.writeFile csvFile csvData
-
-    return ()
-
-writeToLogFile :: BenchConfig -> String -> IO ()
-writeToLogFile BenchConfig{..} action = do
-    logFile <- lookupEnv "CSV_LOG_FILE" <&> fromMaybe "logs.csv"
-    batch <- lookupEnv "BATCH" <&> fromMaybe ""
-    timestamp <- getPOSIXTime
-    nodename <- fmap init (readProcess "hostname" [] "")
-    let logFileHeader =
-            V.fromList
-                [ "nodename"
-                , "batch"
-                , "solution"
-                , "version"
-                , "git"
-                , "task"
-                , "data"
-                , "timestamp"
-                , "action"
-                , "stderr"
-                , "ret"
-                , "machine_type"
-                ]
-    let logFileRow =
-            V.fromList
-                [ nodename
-                , batch
-                , cfgSolution
-                , cfgVer
-                , cfgGit
-                , cfgTask
-                , cfgDataName
-                , showFFloat (Just 5) (realToFrac timestamp) ""
-                , action
-                , if action == "finish" then "0" else ""
-                , if action == "finish" then "0" else ""
-                , cfgMachineType
-                ]
-    append <- doesFileExist logFile
-
-    let csvEncodeOptions = defaultEncodeOptions{encUseCrLf = False}
-    let csvData =
-            if append
-                then encodeWith csvEncodeOptions [logFileRow]
-                else encodeWith csvEncodeOptions [logFileHeader, logFileRow]
-
-    if append
-        then BL.appendFile logFile csvData
-        else BL.writeFile logFile csvData
-
-roundTo :: Int -> Double -> Double
-roundTo n x = fromInteger (round $ x * 10 ^ n) / 10.0 ^^ n

@@ -3,10 +3,10 @@ set -e
 
 cd haskell
 
-DF_VERSION="0.4.1"
+export HASKELL_DF_VERSION="0.7.0.0"
 
-echo "${DF_VERSION}" > VERSION
+echo "${HASKELL_DF_VERSION}" > VERSION
 
-echo "dataframe-${DF_VERSION}" > REVISION
+echo "dataframe-${HASKELL_DF_VERSION}" > REVISION
 
 cd ..
