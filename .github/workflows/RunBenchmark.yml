@@ -66,9 +66,6 @@ jobs:
         working-directory: /var/lib/mount/db-benchmark-metal
         run: |
           python3 _setup_utils/install_all_solutions.py ${{ env.solutions }}
-          # installing/updating clickhouse needs sudo priviledges
-          # always install/update clickhouse if you can
-          sudo python3 _setup_utils/install_all_solutions.py clickhouse
 
       - name: Modify run.conf to only have new versions
         shell: bash
