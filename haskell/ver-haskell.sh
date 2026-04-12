@@ -3,7 +3,7 @@ set -e
 
 cd haskell
 
-export HASKELL_DF_VERSION="0.7.0.0"
+export HASKELL_DF_VERSION="1.1.1.0"
 
 echo "${HASKELL_DF_VERSION}" > VERSION
 

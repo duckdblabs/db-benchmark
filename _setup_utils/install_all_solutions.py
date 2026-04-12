@@ -15,9 +15,9 @@ def install_solution(solution_name):
     get_version_filename = f"./{solution_name}/ver-{solution_name}.sh"
     print(f"Installing {solution_name}")
     if os.path.exists(min_setup_file_name):
-        subprocess.call([min_setup_file_name])
+        subprocess.check_call([min_setup_file_name])
     elif os.path.exists(setup_file_name):
-        subprocess.call([setup_file_name])
+        subprocess.check_call([setup_file_name])
     else:
         # print(f"no script for {setup_file_name} or {min_setup_file_name}")
         raise Exception(f"No script to install {solution_name}")

@@ -20,4 +20,5 @@ ghcup set ghc 9.6.7
 
 source ./haskell/ver-haskell.sh
 
+[ -d "$HOME/.cache/cabal/packages/hackage.haskell.org" ] || cabal update
 cabal --project-dir=./haskell run -O2 "$1-haskell"
