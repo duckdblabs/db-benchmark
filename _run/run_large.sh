@@ -1,11 +1,14 @@
 # download and expand large data
 
+# removing all data to make space for large data
 rm data/*.csv
 rm data/*.duckdb
 
 # get groupby large (50GB datasets)
+echo "Downloading groupby_large.duckdb"
 aws s3 cp s3://duckdb-data-for-ec2-regression-tests/db-benchmark-data/groupby_large.duckdb data/groupby_large.duckdb --quiet
 # get join small (50GB datasets)
+echo "Downloading join_large.duckdb"
 aws s3 cp s3://duckdb-data-for-ec2-regression-tests/db-benchmark-data/join_large.duckdb data/join_large.duckdb --quiet
 
 

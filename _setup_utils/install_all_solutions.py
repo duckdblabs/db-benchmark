@@ -14,24 +14,13 @@ def install_solution(solution_name):
     upgrade_file_name = f"./{solution_name}/upg-{solution_name}.sh"
     get_version_filename = f"./{solution_name}/ver-{solution_name}.sh"
     print(f"Installing {solution_name}")
-    do_install = False
-    try:
-        result = subprocess.call([get_version_filename], stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
-        if result != 0:
-            do_install = True
-    except Exception as e:
-        do_install = True
-
-    if do_install:
-        if os.path.exists(min_setup_file_name):
-            subprocess.call([min_setup_file_name])
-        elif os.path.exists(setup_file_name):
-            subprocess.call([setup_file_name])
-        else:
-            # print(f"no script for {setup_file_name} or {min_setup_file_name}")
-            raise Exception(f"No script to install {solution_name}")
+    if os.path.exists(min_setup_file_name):
+        subprocess.call([min_setup_file_name])
+    elif os.path.exists(setup_file_name):
+        subprocess.call([setup_file_name])
     else:
-        subprocess.call([upgrade_file_name])
+        # print(f"no script for {setup_file_name} or {min_setup_file_name}")
+        raise Exception(f"No script to install {solution_name}")
 
 # based on the name of the solution, run the {{solution}}/min-setup-{{solution}}.sh file.
 # if there is no min-setup-{{solution}}.sh, then run setup-{{solution}}.sh.
