@@ -15,6 +15,7 @@ ch_wait() {
 
 ch_start() {
   echo '# ch_start: starting clickhouse-server'
+  if ch_active; then ch_stop; fi
   sudo clickhouse start
   ch_wait
 }

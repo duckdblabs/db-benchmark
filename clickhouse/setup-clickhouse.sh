@@ -47,3 +47,6 @@ clickhouse-client --query "CREATE USER IF NOT EXISTS db_benchmark IDENTIFIED WIT
 clickhouse-client --query "GRANT select, insert, create, alter, alter user, create table, truncate, drop, system flush logs on *.* to db_benchmark;"
 
 ./clickhouse/ver-clickhouse.sh
+
+# stop clickhouse server to start
+sudo clickhouse stop
