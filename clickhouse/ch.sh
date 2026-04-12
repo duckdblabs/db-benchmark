@@ -15,13 +15,13 @@ ch_wait() {
 
 ch_start() {
   echo '# ch_start: starting clickhouse-server'
-  sudo service clickhouse-server start
+  sudo clickhouse start
   ch_wait
 }
 
 ch_stop() {
   echo '# ch_stop: stopping clickhouse-server'
-  sudo service clickhouse-server stop && sleep 15
+  sudo clickhouse stop && sleep 15
 }
 
 ch_query() {
