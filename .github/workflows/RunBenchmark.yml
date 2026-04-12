@@ -4,7 +4,7 @@ on:
     inputs:
       solutions:
         type: string
-        default: "clickhouse duckdb polars datafusion collapse spark"
+        default: "clickhouse duckdb polars datafusion collapse spark juliads juliadf R-arrow haskell"
       instance_id:
         type: string
       sizes:
