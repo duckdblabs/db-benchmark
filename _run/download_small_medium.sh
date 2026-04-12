@@ -2,11 +2,13 @@
 
 # get groupby small (0.5GB and 5GB datasets)
 if [ ! -f data/groupby_small.duckdb ]; then
+  echo "Downloading groupby_small.duckdb"
   aws s3 cp s3://duckdb-data-for-ec2-regression-tests/db-benchmark-data/groupby_small.duckdb data/groupby_small.duckdb --quiet
 fi
 
 # get join small (0.5GB and 5GB datasets)
 if [ ! -f data/join_small.duckdb ]; then
+  echo "Downloading join_small.duckdb "
   aws s3 cp s3://duckdb-data-for-ec2-regression-tests/db-benchmark-data/join_small.duckdb data/join_small.duckdb --quiet
 fi
 
