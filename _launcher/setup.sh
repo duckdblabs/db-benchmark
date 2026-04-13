@@ -13,6 +13,7 @@ sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD
 sudo apt-get update -qq
 sudo apt-get install -y r-base-dev
 sudo apt-get install python3-dev virtualenv
+sudo apt-get install -y cmake libuv1-dev
 
 sudo chmod a+w /usr/local/lib/R/site-library
 
@@ -23,16 +24,20 @@ echo 'CFLAGS=-O3 -mtune=native' > ~/.R/Makevars
 echo 'CXXFLAGS=-O3 -mtune=native' >> ~/.R/Makevars
 
 # packages used in launcher and report
-Rscript -e 'install.packages(c("bit64","rmarkdown","data.table","rpivotTable","formattable","lattice"))'
+Rscript -e 'install.packages(c("bit64","rmarkdown","data.table","rpivotTable","formattable","lattice"), repos="https://cloud.r-project.org/")'
+Rscript -e 'install.packages("remotes", repos="https://cloud.r-project.org/"); remotes::install_github("smartinsightsfromdata/rpivotTable")'
 Rscript -e 'sapply(c("bit64","rmarkdown","data.table","rpivotTable","formattable","lattice"), requireNamespace)'
 
-# install duckdb for unpacking data
-curl --fail --location --progress-bar --output duckdb_cli-linux-amd64.zip https://github.com/duckdb/duckdb/releases/download/v1.2.0/duckdb_cli-linux-amd64.zip
-sudo unzip duckdb_cli-linux-amd64.zip -d /usr/local/bin
+curl https://install.duckdb.org | sh
+export PATH="/home/ubuntu/.duckdb/cli/latest":$PATH
 
+# install the aws command (X86)
+# curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+# unzip awscliv2.zip
+# sudo ./aws/install
 
-# install aws client to download benchmark data
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+# install the aws command (ARM)
+curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
 sudo ./aws/install
 

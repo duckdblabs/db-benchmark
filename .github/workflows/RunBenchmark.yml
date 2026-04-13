@@ -4,7 +4,7 @@ on:
     inputs:
       solutions:
         type: string
-        default: "clickhouse duckdb polars datafusion collapse spark"
+        default: "clickhouse duckdb polars datafusion collapse spark juliads juliadf R-arrow haskell"
       instance_id:
         type: string
       sizes:
@@ -67,7 +67,7 @@ jobs:
         run: |
           python3 _setup_utils/install_all_solutions.py ${{ env.solutions }}
 
-      - name: Modify run.conf to only have new versions
+      - name: Modify run.conf to have solutions from Run Benchmark
         shell: bash
         working-directory: /var/lib/mount/db-benchmark-metal
         run: |

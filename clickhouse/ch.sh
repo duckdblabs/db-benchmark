@@ -1,5 +1,5 @@
 ch_installed() {
-  dpkg-query -Wf'${db:Status-abbrev}' clickhouse-server 2>/dev/null | grep -q '^i'
+  command -v clickhouse &>/dev/null
 }
 
 ch_active() {
@@ -15,6 +15,7 @@ ch_wait() {
 
 ch_start() {
   echo '# ch_start: starting clickhouse-server'
+  if ch_active; then ch_stop; fi
   sudo clickhouse start
   ch_wait
 }
@@ -32,13 +33,13 @@ ch_query() {
   if [ $ON_DISK -eq 1 ]; then
   ENGINE="MergeTree ORDER BY tuple()"
   fi
-  sudo touch '/var/lib/clickhouse/flags/force_drop_table' && sudo chmod 666 '/var/lib/clickhouse/flags/force_drop_table'
+  sudo mkdir -p '/var/lib/clickhouse/flags' && sudo touch '/var/lib/clickhouse/flags/force_drop_table' && sudo chmod 666 '/var/lib/clickhouse/flags/force_drop_table'
   clickhouse-client --user db_benchmark --query "DROP TABLE IF EXISTS ans;"
   clickhouse-client --user db_benchmark --log_comment ${RUNNAME} --query "CREATE TABLE ans ENGINE = ${ENGINE} AS ${QUERY} SETTINGS max_insert_threads=${THREADS}, max_threads=${THREADS};"
   local ret=$?;
   if [[ $ret -eq 0 ]]; then return 0; elif [[ $ret -eq 210 ]]; then return 1; else echo "Unexpected return code from clickhouse-client: $ret" >&2 && return 1; fi;
   clickhouse-client --user db_benchmark --query "SELECT * FROM ans LIMIT 3;"
-  sudo touch '/var/lib/clickhouse/flags/force_drop_table' && sudo chmod 666 '/var/lib/clickhouse/flags/force_drop_table'
+  sudo mkdir -p '/var/lib/clickhouse/flags' && sudo touch '/var/lib/clickhouse/flags/force_drop_table' && sudo chmod 666 '/var/lib/clickhouse/flags/force_drop_table'
   clickhouse-client --user db_benchmark --query "DROP TABLE ans;"
 }
 
