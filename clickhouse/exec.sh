@@ -23,7 +23,7 @@ ch_active || exit 1
 # tail -n+2 data/G1_1e7_1e2_0_0.csv | clickhouse-client --user db_benchmark --query="INSERT INTO G1_1e7_1e2_0_0 SELECT * FROM input('id1 Nullable(String), id2 Nullable(String), id3 Nullable(String), id4 Nullable(Int32), id5 Nullable(Int32), id6 Nullable(Int32), v1 Nullable(Int32), v2 Nullable(Int32), v3 Nullable(Float64)') FORMAT CSV"
 
 # tune CH settings and load data
-sudo touch '/var/lib/clickhouse/flags/force_drop_table' && sudo chmod 666 '/var/lib/clickhouse/flags/force_drop_table'
+sudo mkdir -p '/var/lib/clickhouse/flags' && sudo touch '/var/lib/clickhouse/flags/force_drop_table' && sudo chmod 666 '/var/lib/clickhouse/flags/force_drop_table'
 clickhouse-client --user db_benchmark --query 'DROP TABLE IF EXISTS ans'
 echo '# clickhouse/exec.sh: creating tables and loading data'
 # set ClickHouse parallelism at half of virtual cores
@@ -139,7 +139,7 @@ fi
 sleep 90
 
 # cleanup data
-sudo touch '/var/lib/clickhouse/flags/force_drop_table' && sudo chmod 666 '/var/lib/clickhouse/flags/force_drop_table'
+sudo mkdir -p '/var/lib/clickhouse/flags' && sudo touch '/var/lib/clickhouse/flags/force_drop_table' && sudo chmod 666 '/var/lib/clickhouse/flags/force_drop_table'
 ch_active && echo '# clickhouse/exec.sh: finishing, cleaning up' && clickhouse-client --user db_benchmark --query "DROP TABLE IF EXISTS ans" || echo '# clickhouse/exec.sh: finishing, clickhouse server down, could not clean up'
 ch_active && clickhouse-client --user db_benchmark --query "DROP TABLE IF EXISTS $SRC_DATANAME" || echo '# clickhouse/exec.sh: finishing, clickhouse server down, could not clean up'
 if [ $1 == 'join' ]; then
