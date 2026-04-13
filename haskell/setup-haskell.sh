@@ -12,6 +12,10 @@ fi
 
 [ -f "$HOME/.ghcup/env" ] && source "$HOME/.ghcup/env"
 
+unset CC
+unset CXX
+unset LD
+
 ghcup install ghc 9.6.7
 ghcup install cabal
 
