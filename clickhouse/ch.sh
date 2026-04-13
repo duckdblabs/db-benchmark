@@ -1,5 +1,5 @@
 ch_installed() {
-  dpkg-query -Wf'${db:Status-abbrev}' clickhouse-server 2>/dev/null | grep -q '^i'
+  command -v clickhouse &>/dev/null
 }
 
 ch_active() {
