@@ -100,12 +100,14 @@ jobs:
           fi
           
       - name: name new branch
+        if: always()
         shell: bash
         run: |
           echo "new_branch_name=results-`date +%Y-%m-%d-%Hh%Mm`" >> $GITHUB_ENV
           echo ${{ env.new_branch_name }}
 
       - name: Commit updates
+        if: always()
         shell: bash
         working-directory: /var/lib/mount/db-benchmark-metal
         run: |

@@ -27,10 +27,10 @@ if len(src_jn_y) != 3:
     raise Exception("Something went wrong in preparing files used for join")
 
 mem_usage = "220g"
-if "TEST_RUN" in os.environ:
-     mem_usage = "2g"
 if machine_type == 'c6id.4xlarge':
      mem_usage = "30g"
+if "TEST_RUN" in os.environ:
+     mem_usage = "2g"
 
 from pyspark.conf import SparkConf
 spark = SparkSession.builder \
