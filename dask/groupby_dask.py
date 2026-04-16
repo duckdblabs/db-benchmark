@@ -165,7 +165,7 @@ class QueryEight(Query):
 
     @staticmethod
     def query(x: dd.DataFrame) -> dd.DataFrame:
-        ans = x[~x['v3'].isna()][['id6','v3']].groupby('id6', dropna=False, observed=True).apply(lambda x: x.nlargest(2, columns='v3'), meta={'v3':'float64'})[['v3']].compute()
+        ans = x[~x['v3'].isna()][['id6','v3']].groupby('id6', dropna=False, observed=True).apply(lambda x: x.nlargest(2, columns='v3'), meta={'v3':'float64'}, include_groups=False)[['v3']].compute()
         ans.reset_index(level='id6', inplace=True)
         ans.reset_index(drop=True, inplace=True) # drop because nlargest creates some extra new index field
         return ans
@@ -179,7 +179,7 @@ class QueryNine(Query):
 
     @staticmethod
     def query(x: dd.DataFrame) -> dd.DataFrame:
-        ans = x[['id2','id4','v1','v2']].groupby(['id2','id4'], dropna=False, observed=True).apply(lambda x: pd.Series({'r2': x[['v1','v2']].corr()['v1']['v2']**2}), meta={'r2':'float64'}).compute()
+        ans = x[['id2','id4','v1','v2']].groupby(['id2','id4'], dropna=False, observed=True).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}), meta={'r2':'float64'}, include_groups=False).compute()
         ans.reset_index(inplace=True)
         return ans
 
