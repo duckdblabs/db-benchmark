@@ -153,14 +153,14 @@ def load_datasets(
     logging.info("Loading dataset: %s" % data_name)
 
     logging.info("Reading source: %s" % src_jn_x)
-    x = dd.read_csv(src_jn_x, engine="pyarrow", **kwargs).persist()
+    x = dd.read_csv(src_jn_x, **kwargs).persist()
 
     logging.info("Reading source: %s" % src_jn_y[0])
-    small = dd.read_csv(src_jn_y[0], engine="pyarrow", **kwargs).persist()
+    small = dd.read_csv(src_jn_y[0], **kwargs).persist()
     logging.info("Reading source: %s" % src_jn_y[1])
-    medium = dd.read_csv(src_jn_y[1], engine="pyarrow", **kwargs).persist()
+    medium = dd.read_csv(src_jn_y[1], **kwargs).persist()
     logging.info("Reading source: %s" % src_jn_y[2])
-    big = dd.read_csv(src_jn_y[2], engine="pyarrow", **kwargs).persist()
+    big = dd.read_csv(src_jn_y[2], **kwargs).persist()
 
     return [
         x,

@@ -63,7 +63,6 @@ def load_dataset(
     x = dd.read_csv(
         src_grp,
         dtype={"id1":"category","id2":"category","id3":"category","id4":"Int32","id5":"Int32","id6":"Int32","v1":"Int32","v2":"Int32","v3":"float64"},
-        engine="pyarrow",
         **kwargs
     )
     x = x.persist()
