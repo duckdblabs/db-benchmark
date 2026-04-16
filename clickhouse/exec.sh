@@ -52,7 +52,7 @@ if [ $1 == 'groupby' ]; then
   fi
   clickhouse-client --user db_benchmark --query "INSERT INTO $SRC_DATANAME FROM INFILE 'data/${SRC_DATANAME}.csv'"
   # confirm all data loaded
-  if [[ $TEST_RUN != "true" ]];
+  if [[ $TEST_RUN != "true" ]]; then
     echo -e "clickhouse-client --user db_benchmark --query 'SELECT count(*) FROM $SRC_DATANAME'\n$(echo $SRC_DATANAME | cut -d'_' -f2)" | Rscript -e 'stdin=readLines(file("stdin")); if ((loaded<-as.numeric(system(stdin[1L], intern=TRUE)))!=as.numeric(stdin[2L])) stop("incomplete data load, expected: ", stdin[2L],", loaded: ", loaded)'
   fi
   export THREADS
@@ -108,7 +108,7 @@ elif [ $1 == 'join' ]; then
   tail -n+2 data/$RHS3.csv | clickhouse-client --user db_benchmark --query "INSERT INTO $RHS3 SELECT * FROM input('id1 Nullable(Int32), id2 Nullable(Int32), id3 Nullable(Int32), id4 Nullable(String), id5 Nullable(String), id6 Nullable(String), v2 Nullable(Float64)') FORMAT CSV"
 
   # validate
-  if [[ $TEST_RUN != "true" ]]; 
+  if [[ $TEST_RUN != "true" ]]; then
     echo -e "clickhouse-client --user db_benchmark --query 'SELECT count(*) FROM $SRC_DATANAME'\n$(echo $SRC_DATANAME | cut -d'_' -f2)" | Rscript -e 'stdin=readLines(file("stdin")); if ((loaded<-as.numeric(system(stdin[1L], intern=TRUE)))!=as.numeric(stdin[2L])) stop("incomplete data load, expected: ", stdin[2L],", loaded: ", loaded)'
     echo -e "clickhouse-client --user db_benchmark --query 'SELECT count(*) FROM $RHS1'\n$(echo $RHS1 | cut -d'_' -f3)" | Rscript -e 'stdin=readLines(file("stdin")); if ((loaded<-as.numeric(system(stdin[1L], intern=TRUE)))!=as.numeric(stdin[2L])) stop("incomplete data load, expected: ", stdin[2L],", loaded: ", loaded)'
     echo -e "clickhouse-client --user db_benchmark --query 'SELECT count(*) FROM $RHS2'\n$(echo $RHS2 | cut -d'_' -f3)" | Rscript -e 'stdin=readLines(file("stdin")); if ((loaded<-as.numeric(system(stdin[1L], intern=TRUE)))!=as.numeric(stdin[2L])) stop("incomplete data load, expected: ", stdin[2L],", loaded: ", loaded)'
