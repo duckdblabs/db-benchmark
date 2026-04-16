@@ -209,12 +209,11 @@ launch = function(dt, mockup, out_dir="out") {
         # MemoryMax is set to 90% of total physical RAM.
         mem_max = tryCatch({
           meminfo = readLines("/proc/meminfo")
-          total_kb = as.integer(sub(".*:\\s*(\\d+)\\s*kB", "\\1", meminfo[grepl("^MemTotal", meminfo)]))
-          as.integer(total_kb * 1024 * 0.9)
-        }, error = function(e) NA_integer_)
-        cat(sprintf("systemd-run MemoryMax: %s\n", if (is.na(mem_max)) "NA (/proc/meminfo unavailable, scope wrapping disabled)" else sprintf("%d bytes (%.1f GB)", mem_max, mem_max/1024^3)))
+          total_kb = as.numeric(sub(".*:\\s*(\\d+)\\s*kB", "\\1", meminfo[grepl("^MemTotal", meminfo)]))
+          total_kb * 1024 * 0.9
+        }, error = function(e) NA_real_)
         if (!is.na(mem_max) && nzchar(Sys.which("systemd-run"))) {
-          shcmd = sprintf("systemd-run --scope -p MemoryMax=%d %s", mem_max, inner)
+          shcmd = sprintf("systemd-run --scope -p MemoryMax=%.0f %s", mem_max, inner)
         } else {
           shcmd = inner
         }
