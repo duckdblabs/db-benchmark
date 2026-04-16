@@ -138,7 +138,7 @@ class QuerySix(Query):
 
     @staticmethod
     def query(x: dd.DataFrame) -> dd.DataFrame:
-        ans = x.groupby(['id4','id5'], dropna=False, observed=True).agg({'v3': ['median','std']}, shuffle='p2p').compute()
+        ans = x.groupby(['id4','id5'], dropna=False, observed=True).agg({'v3': ['median','std']}, shuffle='tasks').compute()
         ans.reset_index(inplace=True) # #68
         return ans
 
