@@ -25,10 +25,10 @@ src_grp = os.path.join("data", data_name+".csv")
 print("loading dataset %s" % data_name, flush=True)
 
 mem_usage = "240g"
-if "TEST_RUN" in os.environ:
-     mem_usage = "2g"
 if machine_type == 'c6id.4xlarge':
      mem_usage = "30g"
+if "TEST_RUN" in os.environ:
+     mem_usage = "2g"
 
 
 from pyspark.conf import SparkConf
