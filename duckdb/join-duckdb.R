@@ -37,6 +37,9 @@ if (on_disk) {
   con = dbConnect(duckdb::duckdb())
 }
 
+# set to latest storage compatibility version
+
+dbExecute(con, "set storage_compatibility_version='latest'")
 if (machine_type == 'c6id.4xlarge') {
   dbExecute(con, "pragma memory_limit='25G'")
 }
@@ -210,7 +213,7 @@ invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 dbDisconnect(con, shutdown=TRUE)
 
 if (on_disk) {
-  unlink(db_file)
+  unlink(duckdb_join_db)
 }
 
 cat(sprintf("joining finished, took %.0fs\n", proc.time()[["elapsed"]]-task_init))
