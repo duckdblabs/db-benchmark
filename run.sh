@@ -98,7 +98,13 @@ if [[ "$RUN_SOLUTIONS" =~ "haskell" ]]; then ./haskell/ver-haskell.sh; fi;
 # run
 if [[ -f ./stop ]]; then echo "# Benchmark run $BATCH has been interrupted after $(($(date +%s)-$BATCH))s due to 'stop' file" && rm -f ./stop && rm -f ./run.lock && exit; fi;
 echo "# Running benchmark scripts launcher"
+set +e
 Rscript ./_launcher/launch.R
+LAUNCH_EXIT=$?
+set -e
+if [ $LAUNCH_EXIT -ne 0 ]; then
+  echo "# WARNING: launcher exited with code $LAUNCH_EXIT (possible OOM or crash), partial results may have been recorded"
+fi
 if [[ -f ./stop ]]; then echo "# Benchmark run $BATCH has been interrupted after $(($(date +%s)-$BATCH))s due to 'stop' file" && rm -f ./stop && rm -f ./run.lock && exit; fi;
 
 # publish report for all tasks
