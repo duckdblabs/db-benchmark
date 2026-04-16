@@ -1,7 +1,8 @@
 #!/bin/bash
 set -e
 
-sudo apt-get -qq install -y curl ca-certificates libtinfo5
+sudo apt-get -qq install -y curl ca-certificates libtinfo6 || \
+  sudo apt-get -qq install -y curl ca-certificates libtinfo5
 
 # Install Cabal (Haskell build tool) if not present
 if ! command -v ghcup &> /dev/null; then
@@ -10,6 +11,10 @@ if ! command -v ghcup &> /dev/null; then
 fi
 
 [ -f "$HOME/.ghcup/env" ] && source "$HOME/.ghcup/env"
+
+unset CC
+unset CXX
+unset LD
 
 ghcup install ghc 9.6.7
 ghcup install cabal

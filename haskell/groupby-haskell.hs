@@ -63,6 +63,7 @@ runBenchmark srcFile dataName machineType = do
                         , (F.name v2, D.schemaType @Int)
                         , (F.name v3, D.schemaType @Double)
                         ]
+                        D.NoInference
                 }
             )
             srcFile
