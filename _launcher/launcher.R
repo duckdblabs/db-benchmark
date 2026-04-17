@@ -203,20 +203,7 @@ launch = function(dt, mockup, out_dir="out") {
           if (file.exists(ret_file)) file.remove(ret_file)
         }
         cmd = sprintf("%s > %s 2> %s", solution.cmd(s, t, d), out_file, err_file) # ./_launcher/solution.R ... > out 2> err
-        inner = sprintf("/bin/bash -c \"%s%s\"", venv, cmd) # this is needed to source python venv
-        # Run each solution in its own transient systemd scope so the OOM killer
-        # targets only that scope and cannot propagate to the R launcher process.
-        # MemoryMax is set to 90% of total physical RAM.
-        mem_max = tryCatch({
-          meminfo = readLines("/proc/meminfo")
-          total_kb = as.numeric(sub(".*:\\s*(\\d+)\\s*kB", "\\1", meminfo[grepl("^MemTotal", meminfo)]))
-          total_kb * 1024 * 0.9
-        }, error = function(e) NA_real_)
-        if (!is.na(mem_max) && nzchar(Sys.which("systemd-run"))) {
-          shcmd = sprintf("systemd-run --scope -p MemoryMax=%.0f %s", mem_max, inner)
-        } else {
-          shcmd = inner
-        }
+        shcmd = sprintf("/bin/bash -c \"%s%s\"", venv, cmd) # this is needed to source python venv
         if (mockup) {
           cat(cmd)
           cat(shcmd)

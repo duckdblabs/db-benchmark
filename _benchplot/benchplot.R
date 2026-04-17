@@ -154,7 +154,9 @@ data_spec = function(file, nrow=NULL) {
     ncol = length(strsplit(system(sprintf("head -1 %s", file), intern=TRUE), ",", fixed=TRUE)[[1L]])
     if (is.null(nrow)) nrow = as.numeric(strsplit(system(sprintf("wc -l %s", file), intern=TRUE), " ", fixed=TRUE)[[1L]][1L])-1
   } else {
-    gb = NA_real_
+    fname = tools::file_path_sans_ext(basename(file))
+    parts = strsplit(fname, "_", fixed=TRUE)[[1L]]
+    gb = switch(parts[2L], "1e7"=0.5, "1e8"=5, "1e9"=50, NA_real_)
     ncol = NA_real_
     if (is.null(nrow)) nrow = NA_real_
   }
