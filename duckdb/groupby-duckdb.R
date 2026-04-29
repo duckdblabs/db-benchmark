@@ -208,7 +208,10 @@ print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                             
 print(dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT count(*) FROM ans) - 4")) ## tail
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 
-
+if (machine_type == 'c6id.4xlarge' && on_disk) {
+  dbExecute(con, "pragma memory_limit='20G'")
+  table_type=""
+}
 question = "largest two v3 by id6" # q8
 t = system.time({
 dbExecute(con, sprintf("CREATE %s TABLE ans AS SELECT id6, unnest(max(v3, 2)) largest2_v3 FROM x WHERE v3 IS NOT NULL GROUP BY id6", table_type))
