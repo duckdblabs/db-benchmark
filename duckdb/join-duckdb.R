@@ -41,7 +41,8 @@ if (on_disk) {
 
 dbExecute(con, "set storage_compatibility_version='latest'")
 if (machine_type == 'c6id.4xlarge') {
-  dbExecute(con, "pragma memory_limit='25G'")
+  dbExecute(con, "pragma memory_limit='20G'")
+  table_type = ""
 }
 
 ncores = parallel::detectCores()
