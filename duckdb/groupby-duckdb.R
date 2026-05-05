@@ -38,7 +38,7 @@ dbExecute(con, "set storage_compatibility_version='latest'")
 
 table_type = "TEMP"
 if (machine_type == 'c6id.4xlarge' && on_disk) {
-  dbExecute(con, "pragma memory_limit='20G'")
+  dbExecute(con, "pragma memory_limit='22G'")
   table_type = ""
 }
 
@@ -169,6 +169,9 @@ print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                             
 print(dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT count(*) FROM ans) - 4")) ## tail
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 
+
+Sys.sleep(60)
+
 question = "median v3 sd v3 by id4 id5" # q6
 t = system.time({
   dbExecute(con, sprintf("CREATE %s TABLE ans AS SELECT id4, id5, quantile_cont(v3, 0.5) AS median_v3, stddev(v3) AS sd_v3 FROM x GROUP BY id4, id5", table_type))
@@ -188,6 +191,8 @@ write.log(run=2L, task=task, data=data_name, in_rows=in_nr, question=question, o
 print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                                      ## head
 print(dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT count(*) FROM ans) - 4")) ## tail
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
+
+Sys.sleep(60)
 
 question = "max v1 - min v2 by id3" # q7
 t = system.time({
@@ -209,6 +214,8 @@ print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                             
 print(dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT count(*) FROM ans) - 4")) ## tail
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 
+Sys.sleep(60)
+
 question = "largest two v3 by id6" # q8
 t = system.time({
 dbExecute(con, sprintf("CREATE %s TABLE ans AS SELECT id6, unnest(max(v3, 2)) largest2_v3 FROM x WHERE v3 IS NOT NULL GROUP BY id6", table_type))
@@ -229,6 +236,8 @@ print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                             
 print(dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT count(*) FROM ans) - 4")) ## tail
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 
+Sys.sleep(60)
+
 question = "regression v1 v2 by id2 id4" # q9
 t = system.time({
   dbExecute(con, sprintf("CREATE %s TABLE ans AS SELECT id2, id4, pow(corr(v1, v2), 2) AS r2 FROM x GROUP BY id2, id4", table_type))
@@ -248,6 +257,8 @@ write.log(run=2L, task=task, data=data_name, in_rows=in_nr, question=question, o
 print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                                      ## head
 print(dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT count(*) FROM ans) - 4")) ## tail
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
+
+Sys.sleep(60)
 
 question = "sum v3 count by id1:id6" # q10
 t = system.time({
