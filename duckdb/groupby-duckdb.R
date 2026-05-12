@@ -38,7 +38,7 @@ dbExecute(con, "set storage_compatibility_version='latest'")
 
 table_type = "TEMP"
 if (machine_type == 'c6id.4xlarge' && on_disk) {
-  dbExecute(con, "pragma memory_limit='22G'")
+  dbExecute(con, "pragma memory_limit='20G'")
   table_type = ""
 }
 
