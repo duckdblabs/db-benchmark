@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -10,6 +11,7 @@ module BenchmarkCommon (
     writeLog,
     writeToLogFile,
     roundTo,
+    freshRun,
 ) where
 
 import Control.Exception (SomeException, catch, evaluate)
@@ -58,6 +60,22 @@ getMemoryUsage = do
             case readMaybe @Double (filter (/= '\n') raw) of
                 Just kb -> return (kb / 1024)
                 Nothing -> return 0.0
+
+{- | Defeat cross-iteration result sharing in the two-run loop.
+
+The benchmark times the SAME pure transform twice. Because the transform is a
+pure function of loop-invariant inputs, GHC happily computes it once and shares
+the forced result, so run=2 measured ~0.001s (a meaningless cache hit) in
+Round 4. We thread the per-run number through a NOINLINE call so the optimizer
+cannot prove the two applications are equal and float/CSE the result out of the
+loop: each run is forced to recompute from scratch. The Int is otherwise inert
+(it only selects the identical value), so results and checksums are unchanged.
+-}
+{-# NOINLINE freshRun #-}
+freshRun :: Int -> (a -> b) -> a -> b
+freshRun !n f x
+    | n < 0 = error "freshRun: unreachable"
+    | otherwise = f x
 
 timeIt :: IO a -> IO (a, Double)
 timeIt action = do

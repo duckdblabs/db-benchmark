@@ -16,11 +16,11 @@ unset CC
 unset CXX
 unset LD
 
-ghcup install ghc 9.6.7
+ghcup install ghc 9.12.2
 ghcup install cabal
 
-# Set 9.6.7 as the active 'ghc' version
-ghcup set ghc 9.6.7
+# Set 9.12.2 as the active 'ghc' version
+ghcup set ghc 9.12.2
 
 cd haskell
 

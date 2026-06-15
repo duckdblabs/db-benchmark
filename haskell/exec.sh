@@ -13,12 +13,12 @@ fi
 
 [ -f "$HOME/.ghcup/env" ] && source "$HOME/.ghcup/env"
 
-# Only install and set GHC if 9.6.7 isn't already the active version.
+# Only install and set GHC if 9.12.2 isn't already the active version.
 # Re-running these on every benchmark invocation emits warnings to stderr
 # that then get flagged by validate_no_errors.sh.
-if ! ghc --version 2>/dev/null | grep -q "9.6.7"; then
-    ghcup install ghc 9.6.7
-    ghcup set ghc 9.6.7
+if ! ghc --version 2>/dev/null | grep -q "9.12.2"; then
+    ghcup install ghc 9.12.2
+    ghcup set ghc 9.12.2
 fi
 
 source ./haskell/ver-haskell.sh
