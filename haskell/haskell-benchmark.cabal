@@ -1,38 +1,40 @@
+cabal-version:       2.4
 name:                haskell-benchmark
 version:             0.1.0.0
 build-type:          Simple
-cabal-version:       >=2.0
+
+common df-deps
+  build-depends:       base >= 4.7 && < 5
+                     , bytestring >= 0.11 && < 0.13
+                     , cassava >= 0.1 && < 1
+                     , dataframe-core ^>= 1.0.2
+                     , dataframe-parsing ^>= 1.0
+                     , dataframe-csv ^>= 1.0
+                     , dataframe-operations ^>= 1.1
+                     , dataframe-fastcsv ^>= 1.1
+                     , text >= 2.1
+                     , vector >= 0.12
+                     , time >= 1.9
+                     , process >= 1.6
+                     , directory >= 1.3
+                     , unix
+  default-language:    Haskell2010
+  ghc-options:         -O2 -threaded -rtsopts -with-rtsopts=-N
 
 executable groupby-haskell
+  import:              df-deps
   main-is:             groupby-haskell.hs
   hs-source-dirs:      .
   other-modules:       BenchmarkCommon
-  build-depends:       base >= 4.7 && < 5
-                     , bytestring >= 0.11 && < 0.13
-                     , cassava >= 0.1 && < 1
-                     , dataframe ^>= 1.1
-                     , text >= 1.2
-                     , vector >= 0.12
-                     , time >= 1.9
-                     , process >= 1.6
-                     , directory >= 1.3
-                     , unix
-  default-language:    Haskell2010
-  ghc-options:         -O2 -threaded -rtsopts -with-rtsopts=-N
 
 executable join-haskell
+  import:              df-deps
   main-is:             join-haskell.hs
   hs-source-dirs:      .
   other-modules:       BenchmarkCommon
-  build-depends:       base >= 4.7 && < 5
-                     , bytestring >= 0.11 && < 0.13
-                     , cassava >= 0.1 && < 1
-                     , dataframe ^>= 1.1
-                     , text >= 1.2
-                     , vector >= 0.12
-                     , time >= 1.9
-                     , process >= 1.6
-                     , directory >= 1.3
-                     , unix
-  default-language:    Haskell2010
-  ghc-options:         -O2 -threaded -rtsopts -with-rtsopts=-N
+
+executable timeq
+  import:              df-deps
+  main-is:             timeq.hs
+  hs-source-dirs:      .
+  build-depends:       deepseq

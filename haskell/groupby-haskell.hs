@@ -6,13 +6,27 @@ import BenchmarkCommon
 import Control.Arrow ((>>>))
 import Control.Monad (forM_)
 import Data.Functor ((<&>))
+import qualified Data.List as L
 import Data.Maybe (fromMaybe)
 import Data.Text (Text)
 import qualified Data.Text as T
+import qualified Data.Vector as V
 import qualified Data.Vector.Unboxed as VU
-import qualified DataFrame as D
 import DataFrame.Functions ((.=))
 import qualified DataFrame.Functions as F
+import DataFrame.IO.CSV (
+    ReadOptions (..),
+    TypeSpec (..),
+    defaultReadOptions,
+ )
+import DataFrame.IO.CSV.Fast
+import DataFrame.Internal.DataFrame (DataFrame)
+import DataFrame.Internal.Expression (AggStrategy (..), Expr (..))
+import DataFrame.Internal.Schema (schemaType)
+import qualified DataFrame.Operations.Aggregation as D
+import qualified DataFrame.Operations.Core as D
+import qualified DataFrame.Operations.Subset as D
+import qualified DataFrame.Operations.Transformations as D
 import System.Environment (getEnv, lookupEnv)
 import System.IO (BufferMode (..), hPutStrLn, hSetBuffering, stderr, stdout)
 
@@ -47,23 +61,25 @@ runBenchmark srcFile dataName machineType = do
         v1 = F.col @Int "v1"
         v2 = F.col @Int "v2"
         v3 = F.col @Double "v3"
+        dv1 = F.toDouble v1
+        dv2 = F.toDouble v2
 
     df <-
-        D.readCsvWithOpts
-            ( D.defaultReadOptions
-                { D.typeSpec =
-                    D.SpecifyTypes
-                        [ (F.name id1, D.schemaType @Text)
-                        , (F.name id2, D.schemaType @Text)
-                        , (F.name id3, D.schemaType @Text)
-                        , (F.name id4, D.schemaType @Int)
-                        , (F.name id5, D.schemaType @Int)
-                        , (F.name id6, D.schemaType @Int)
-                        , (F.name v1, D.schemaType @Int)
-                        , (F.name v2, D.schemaType @Int)
-                        , (F.name v3, D.schemaType @Double)
+        fastReadCsvWithOpts
+            ( defaultReadOptions
+                { typeSpec =
+                    SpecifyTypes
+                        [ (F.name id1, schemaType @Text)
+                        , (F.name id2, schemaType @Text)
+                        , (F.name id3, schemaType @Text)
+                        , (F.name id4, schemaType @Int)
+                        , (F.name id5, schemaType @Int)
+                        , (F.name id6, schemaType @Int)
+                        , (F.name v1, schemaType @Int)
+                        , (F.name v2, schemaType @Int)
+                        , (F.name v3, schemaType @Double)
                         ]
-                        D.NoInference
+                        NoInference
                 }
             )
             srcFile
@@ -158,6 +174,41 @@ runBenchmark srcFile dataName machineType = do
         (D.groupBy [F.name id3] >>> D.aggregate ["diff" .= F.maximum v1 - F.minimum v2])
         (\res -> [chkSumInt "diff" res])
 
+    -- Q8: Largest two v3 by id6.
+    -- Polars takes top_k(2) per group then explodes and sums; the sum of the
+    -- exploded values equals the sum of (max + 2nd-max) per group, which is
+    -- what 'top2Sum' computes per group. Checksum parity is preserved.
+    runQuestion
+        config
+        df
+        "largest two v3 by id6"
+        (D.groupBy [F.name id6] >>> D.aggregate ["largest2_v3" .= top2Sum v3])
+        (\res -> [chkSumDbl "largest2_v3" res])
+
+    -- Q9: Regression (r^2 of v1 vs v2) by id2, id4.
+    -- corr(v1,v2)^2 from the per-group sums of v1, v2, v1*v2, v1^2, v2^2 and the
+    -- group count, then summed. Matches polars pl.corr(...)**2 then .sum().
+    runQuestion
+        config
+        ( D.derive
+            "v2v2"
+            (dv2 * dv2)
+            (D.derive "v1v1" (dv1 * dv1) (D.derive "v1v2" (dv1 * dv2) df))
+        )
+        "regression v1 v2 by id2 id4"
+        ( D.groupBy [F.name id2, F.name id4]
+            >>> D.aggregate
+                [ "n" .= F.count v1
+                , "sx" .= F.sum dv1
+                , "sy" .= F.sum dv2
+                , "sxy" .= F.sum (F.col @Double "v1v2")
+                , "sxx" .= F.sum (F.col @Double "v1v1")
+                , "syy" .= F.sum (F.col @Double "v2v2")
+                ]
+            >>> D.derive "r2" r2Expr
+        )
+        (\res -> [chkSumDbl "r2" res])
+
     -- Q10: Sum v3 count by id1:id6
     runQuestion
         config
@@ -173,15 +224,15 @@ runBenchmark srcFile dataName machineType = do
 
 runQuestion ::
     BenchConfig ->
-    D.DataFrame ->
+    DataFrame ->
     String ->
-    (D.DataFrame -> D.DataFrame) ->
-    (D.DataFrame -> [Double]) ->
+    (DataFrame -> DataFrame) ->
+    (DataFrame -> [Double]) ->
     IO ()
 runQuestion cfg inputDF qLabel transform chkFn = do
     forM_ [1, 2] $ \runNum -> do
         (resultDF, calcTime) <- timeIt $ do
-            let result = transform inputDF
+            let result = freshRun runNum transform inputDF
             print result
             return result
         memUsage <- getMemoryUsage
@@ -193,14 +244,37 @@ runQuestion cfg inputDF qLabel transform chkFn = do
         writeLog cfg qLabel outRows outCols runNum calcTime memUsage chkValues chkTime
     putStrLn $ qLabel ++ " completed."
 
-chkSumInt :: String -> D.DataFrame -> Double
+chkSumInt :: String -> DataFrame -> Double
 chkSumInt col df =
     case D.columnAsIntVector (F.col @Int (T.pack col)) df of
         Right vec -> fromIntegral $ VU.sum vec
         Left _ -> 0.0
 
-chkSumDbl :: String -> D.DataFrame -> Double
+chkSumDbl :: String -> DataFrame -> Double
 chkSumDbl col df =
     case D.columnAsDoubleVector (F.col @Double (T.pack col)) df of
         Right vec -> VU.sum vec
         Left _ -> 0.0
+
+-- | Per-group sum of the two largest values (top_k(2) then sum, like polars Q8).
+top2Sum :: Expr Double -> Expr Double
+top2Sum = Agg (CollectAgg "top2Sum" f)
+  where
+    f :: V.Vector Double -> Double
+    f v = Prelude.sum (take 2 (L.sortBy (flip compare) (V.toList v)))
+
+{- | Squared Pearson correlation of v1,v2 from per-group moment sums (polars Q9).
+Degenerate groups (zero variance) contribute 0 rather than poisoning the sum
+with NaN; the 1e7 data has no such groups so the checksum is unaffected.
+-}
+r2Expr :: Expr Double
+r2Expr =
+    let n = F.toDouble (F.col @Int "n")
+        sx = F.col @Double "sx"
+        sy = F.col @Double "sy"
+        sxy = F.col @Double "sxy"
+        sxx = F.col @Double "sxx"
+        syy = F.col @Double "syy"
+        num = n * sxy - sx * sy
+        den = (n * sxx - sx * sx) * (n * syy - sy * sy)
+     in If (F.gt den (Lit 0)) ((num * num) / den) (Lit 0)
