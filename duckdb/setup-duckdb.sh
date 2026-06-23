@@ -1,13 +1,27 @@
 #!/bin/bash
 set -e
 
-# install stable duckdb
-rm -rf ./duckdb/r-duckdb
-mkdir -p ./duckdb/r-duckdb
-# Rscript -e  'withr::with_libpaths(new = "./duckdb/r-duckdb", devtools::install_github("duckdb/duckdb/tools/rpkg"))'
-# prevent errors when running 'ver-duckdb.sh'
-Rscript -e 'install.packages("DBI", lib="./duckdb/r-duckdb", repos = "http://cloud.r-project.org")'
-ncores=`python3 -c 'import multiprocessing as mp; print(mp.cpu_count())'`
-MAKEFLAGS="-j$ncores" Rscript -e 'install.packages("duckdb", lib="./duckdb/r-duckdb", repos = "http://cloud.r-project.org")'
+# install dependencies
+# sudo apt-get update -qq
+
+mkdir -p duckdb/py-duckdb
+
+virtualenv duckdb/py-duckdb --python=python3
+source duckdb/py-duckdb/bin/activate
+
+# install the latest released duckdb python package plus runtime deps
+python3 -m pip install --upgrade psutil duckdb
+
+deactivate
+
+./duckdb/upg-duckdb.sh
 
 ./duckdb/ver-duckdb.sh
+
+# check
+# source duckdb/py-duckdb/bin/activate
+# python3
+# import duckdb
+# duckdb.__version__
+# quit()
+# deactivate
