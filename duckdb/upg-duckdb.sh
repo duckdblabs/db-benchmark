@@ -1,16 +1,10 @@
 #!/bin/bash
 set -e
 
-rm -rf ./duckdb/r-duckdb
-mkdir -p ./duckdb/r-duckdb
+# upgrade the duckdb python package in the existing virtual environment to the
+# latest released version. If the venv is missing, run ./duckdb/setup-duckdb.py first.
+source ./duckdb/py-duckdb/bin/activate
+python3 -m pip install --upgrade duckdb
+deactivate
 
-
-cd duckdb
-rm -rf duckdb-r
-git clone https://github.com/duckdb/duckdb-r
-ncores=$(nproc --all)
-MAKE="make -j$ncores" R CMD INSTALL -l "./r-duckdb" duckdb-r
-cd ..
-
-
-# Rscript -e 'ap=available.packages(repos="https://cloud.r-project.org/"); if (ap["duckdb","Version"]!=packageVersion("duckdb", lib.loc="./duckdb/r-duckdb")) update.packages(lib.loc="./duckdb/r-duckdb", ask=FALSE, checkBuilt=TRUE, quiet=TRUE, repos="https://cloud.r-project.org/")'
+./duckdb/ver-duckdb.sh

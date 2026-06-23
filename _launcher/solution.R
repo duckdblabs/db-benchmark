@@ -110,8 +110,8 @@ if ("quiet" %in% names(args)) {
 file.ext = function(x) {
   ans = switch(
     x,
-    "collapse"=, "data.table"=, "dplyr"=, "h2o"=, "R-arrow"=, "duckdb"="R", "duckdb-latest"="R",
-    "pandas"="py", "spark"=, "pydatatable"=, "modin"=, "dask"=, "datafusion"=, "polars"="py",
+    "collapse"=, "data.table"=, "dplyr"=, "h2o"=, "R-arrow"=, "duckdb-latest"="R",
+    "duckdb"=, "pandas"="py", "spark"=, "pydatatable"=, "modin"=, "dask"=, "datafusion"=, "polars"="py",
     "clickhouse"="sh", "juliadf"="jl", "juliads"="jl", "chdb"="py", "haskell"="hs",
   )
   if (is.null(ans)) stop(sprintf("solution %s does not have file extension defined in file.ext helper function", x))
