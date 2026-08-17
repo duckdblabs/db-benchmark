@@ -7412,3 +7412,13 @@ ip-172-31-18-189,1786373702,haskell,2.2.0.0,dataframe-2.2.0.0,groupby,G1_1e8_1e2
 ip-172-31-18-189,1786373702,haskell,2.2.0.0,dataframe-2.2.0.0,groupby,G1_1e8_1e2_0_1,1786373869.93667,finish,10,251,c6id.4xlarge
 ip-172-31-18-189,1786373702,haskell,2.2.0.0,dataframe-2.2.0.0,groupby,G1_1e8_1e2_5_0,1786373884.95176,start,,,c6id.4xlarge
 ip-172-31-18-189,1786373702,haskell,2.2.0.0,dataframe-2.2.0.0,groupby,G1_1e8_1e2_5_0,1786373885.54634,finish,8,0,c6id.4xlarge
+ip-172-31-18-189,1786965551,haskell,2.2.0.0,dataframe-2.2.0.0,join,J1_1e7_NA_5_0,1786965553.22959,start,,,c6id.4xlarge
+ip-172-31-18-189,1786965551,haskell,2.2.0.0,dataframe-2.2.0.0,join,J1_1e7_NA_5_0,1786965581.75955,finish,11,0,c6id.4xlarge
+ip-172-31-18-189,1786965551,haskell,2.2.0.0,dataframe-2.2.0.0,join,J1_1e7_NA_0_1,1786965596.77465,start,,,c6id.4xlarge
+ip-172-31-18-189,1786965551,haskell,2.2.0.0,dataframe-2.2.0.0,join,J1_1e7_NA_0_1,1786965704.61974,finish,7,0,c6id.4xlarge
+ip-172-31-18-189,1786965808,haskell,2.2.0.0,dataframe-2.2.0.0,join,J1_1e8_NA_0_0,1786965808.782,start,,,c6id.4xlarge
+ip-172-31-18-189,1786965808,haskell,2.2.0.0,dataframe-2.2.0.0,join,J1_1e8_NA_0_0,1786966288.23106,finish,7,0,c6id.4xlarge
+ip-172-31-18-189,1786965808,haskell,2.2.0.0,dataframe-2.2.0.0,join,J1_1e8_NA_5_0,1786966303.24611,start,,,c6id.4xlarge
+ip-172-31-18-189,1786965808,haskell,2.2.0.0,dataframe-2.2.0.0,join,J1_1e8_NA_5_0,1786966784.02546,finish,11,0,c6id.4xlarge
+ip-172-31-18-189,1786965808,haskell,2.2.0.0,dataframe-2.2.0.0,join,J1_1e8_NA_0_1,1786966799.04051,start,,,c6id.4xlarge
+ip-172-31-18-189,1786965808,haskell,2.2.0.0,dataframe-2.2.0.0,join,J1_1e8_NA_0_1,1786967247.81789,finish,11,0,c6id.4xlarge
