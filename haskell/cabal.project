@@ -1,2 +1,3 @@
 packages: .
 allow-newer: all
+optimization: 2

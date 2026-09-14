@@ -19,13 +19,14 @@ import DataFrame.IO.CSV (
     defaultReadOptions,
  )
 import DataFrame.IO.CSV.Fast (fastReadCsvWithOpts)
-import DataFrame.Internal.DataFrame (DataFrame)
-import DataFrame.Schema (SchemaType, schemaType)
+import DataFrame.Internal.DataFrame (DataFrame, forceDataFrame)
 import qualified DataFrame.Operations.Core as D
 import qualified DataFrame.Operations.Join as DJ
+import DataFrame.Schema (SchemaType, schemaType)
 import Numeric (showEFloat)
 import System.Environment (getEnv, lookupEnv)
 import System.IO (BufferMode (..), hSetBuffering, stdout)
+import System.Mem (performGC)
 
 main :: IO ()
 main = do
@@ -148,10 +149,9 @@ runJoin ::
     IO ()
 runJoin cfg leftDF rightDF qLabel joinFn = do
     forM_ [1, 2] $ \runNum -> do
+        performGC
         (resultDF, calcTime) <- timeIt $ do
-            let res = freshRun runNum (uncurry joinFn) (leftDF, rightDF)
-            _ <- evaluate res
-            return res
+            evaluate (forceDataFrame (freshRun runNum (uncurry joinFn) (leftDF, rightDF)))
 
         memUsage <- getMemoryUsage
         let (outRows, outCols) = D.dimensions resultDF

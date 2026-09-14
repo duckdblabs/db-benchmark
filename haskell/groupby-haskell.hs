@@ -6,11 +6,9 @@ import BenchmarkCommon
 import Control.Arrow ((>>>))
 import Control.Monad (forM_)
 import Data.Functor ((<&>))
-import qualified Data.List as L
 import Data.Maybe (fromMaybe)
 import Data.Text (Text)
 import qualified Data.Text as T
-import qualified Data.Vector as V
 import qualified Data.Vector.Unboxed as VU
 import DataFrame.Functions ((.=))
 import qualified DataFrame.Functions as F
@@ -21,12 +19,14 @@ import DataFrame.IO.CSV (
  )
 import DataFrame.IO.CSV.Fast
 import DataFrame.Internal.DataFrame (DataFrame)
-import DataFrame.Internal.Expression (AggStrategy (..), Expr (..))
-import DataFrame.Schema (schemaType)
+import DataFrame.Internal.Expression (Expr (..))
 import qualified DataFrame.Operations.Aggregation as D
 import qualified DataFrame.Operations.Core as D
+-- Semigroup DataFrame (row concat)
+import DataFrame.Operations.Merge ()
 import qualified DataFrame.Operations.Subset as D
 import qualified DataFrame.Operations.Transformations as D
+import DataFrame.Schema (schemaType)
 import System.Environment (getEnv, lookupEnv)
 import System.IO (BufferMode (..), hPutStrLn, hSetBuffering, stderr, stdout)
 
@@ -111,7 +111,7 @@ runBenchmark srcFile dataName machineType = do
         config
         df
         "sum v1 by id1"
-        (D.groupBy [F.name id1] >>> D.aggregate [F.sum v1 `F.as` "v1_sum"])
+        (D.groupBy [F.name id1] >>> D.aggregate ["v1_sum" .= F.sum v1])
         (\res -> [chkSumInt "v1_sum" res])
 
     -- Q2: Sum v1 by id1:id2
@@ -174,36 +174,43 @@ runBenchmark srcFile dataName machineType = do
         (D.groupBy [F.name id3] >>> D.aggregate ["diff" .= F.maximum v1 - F.minimum v2])
         (\res -> [chkSumInt "diff" res])
 
-    -- Q8: Largest two v3 by id6.
-    -- Polars takes top_k(2) per group then explodes and sums; the sum of the
-    -- exploded values equals the sum of (max + 2nd-max) per group, which is
-    -- what 'top2Sum' computes per group. Checksum parity is preserved.
+    -- Q8: largest two v3 by id6, exploded to two rows per group
+    -- (polars reference shape: group_by(id6).agg(v3.top_k(2)).explode(v3)).
+    -- 'F.topK' returns the pair in descending order; the library has no explode,
+    -- so we take the two ends and stack the halves.
     runQuestion
         config
         df
         "largest two v3 by id6"
-        (D.groupBy [F.name id6] >>> D.aggregate ["largest2_v3" .= top2Sum v3])
-        (\res -> [chkSumDbl "largest2_v3" res])
+        ( \d ->
+            let top2 = F.col @[Double] "top2"
+                r =
+                    ( D.groupBy [F.name id6]
+                        >>> D.aggregate ["top2" .= F.topK 2 v3]
+                        >>> D.derive "v3" (F.fromMaybe nan (F.firstOrNothing top2))
+                        >>> D.derive "v3b" (F.fromMaybe nan (F.lastOrNothing top2))
+                    )
+                        d
+             in D.select ["id6", "v3"] r
+                    <> D.rename "v3b" "v3" (D.select ["id6", "v3b"] r)
+        )
+        (\res -> [chkSumDbl "v3" res])
 
     -- Q9: Regression (r^2 of v1 vs v2) by id2, id4.
     -- corr(v1,v2)^2 from the per-group sums of v1, v2, v1*v2, v1^2, v2^2 and the
     -- group count, then summed. Matches polars pl.corr(...)**2 then .sum().
     runQuestion
         config
-        ( D.derive
-            "v2v2"
-            (dv2 * dv2)
-            (D.derive "v1v1" (dv1 * dv1) (D.derive "v1v2" (dv1 * dv2) df))
-        )
+        df
         "regression v1 v2 by id2 id4"
         ( D.groupBy [F.name id2, F.name id4]
             >>> D.aggregate
                 [ "n" .= F.count v1
                 , "sx" .= F.sum dv1
                 , "sy" .= F.sum dv2
-                , "sxy" .= F.sum (F.col @Double "v1v2")
-                , "sxx" .= F.sum (F.col @Double "v1v1")
-                , "syy" .= F.sum (F.col @Double "v2v2")
+                , "sxy" .= F.sum (dv1 * dv2)
+                , "sxx" .= F.sum (dv1 * dv1)
+                , "syy" .= F.sum (dv2 * dv2)
                 ]
             >>> D.derive "r2" r2Expr
             >>> D.select [F.name id2, F.name id4, "r2"]
@@ -244,6 +251,12 @@ runQuestion cfg inputDF qLabel transform chkFn = do
         writeLog cfg qLabel outRows outCols runNum calcTime memUsage chkValues chkTime
     putStrLn $ qLabel ++ " completed."
 
+{- | Stand-in for a group with fewer than two values. The benchmark data has no
+size-1 id6 groups, so this never reaches the checksum.
+-}
+nan :: Double
+nan = 0 / 0
+
 chkSumInt :: String -> DataFrame -> Double
 chkSumInt col df =
     case D.columnAsIntVector (F.col @Int (T.pack col)) df of
@@ -255,13 +268,6 @@ chkSumDbl col df =
     case D.columnAsDoubleVector (F.col @Double (T.pack col)) df of
         Right vec -> VU.sum vec
         Left _ -> 0.0
-
--- | Per-group sum of the two largest values (top_k(2) then sum, like polars Q8).
-top2Sum :: Expr Double -> Expr Double
-top2Sum = Agg (CollectAgg "top2Sum" f)
-  where
-    f :: V.Vector Double -> Double
-    f v = Prelude.sum (take 2 (L.sortBy (flip compare) (V.toList v)))
 
 {- | Squared Pearson correlation of v1,v2 from per-group moment sums (polars Q9).
 Degenerate groups (zero variance) contribute 0 rather than poisoning the sum
