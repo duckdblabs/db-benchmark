@@ -6,7 +6,7 @@ import BenchmarkCommon
 import Control.Exception (evaluate)
 import Control.Monad (forM_)
 import Data.Functor ((<&>))
-import Data.List (intercalate)
+import Data.List (foldl', intercalate)
 import Data.Maybe (catMaybes, fromMaybe)
 import Data.Text (Text)
 import qualified Data.Text as T
@@ -19,7 +19,14 @@ import DataFrame.IO.CSV (
     defaultReadOptions,
  )
 import DataFrame.IO.CSV.Fast (fastReadCsvWithOpts)
-import DataFrame.Internal.DataFrame (DataFrame, forceDataFrame)
+import DataFrame.Internal.Column (Column (..))
+import DataFrame.Internal.DataFrame (
+    DataFrame,
+    columnNames,
+    forceDataFrame,
+    getColumn,
+    insertColumn,
+ )
 import qualified DataFrame.Operations.Core as D
 import qualified DataFrame.Operations.Join as DJ
 import DataFrame.Schema (SchemaType, schemaType)
@@ -151,7 +158,10 @@ runJoin cfg leftDF rightDF qLabel joinFn = do
     forM_ [1, 2] $ \runNum -> do
         performGC
         (resultDF, calcTime) <- timeIt $ do
-            evaluate (forceDataFrame (freshRun runNum (uncurry joinFn) (leftDF, rightDF)))
+            evaluate
+                ( forceDataFrame
+                    (splitMergedColumns (freshRun runNum (uncurry joinFn) (leftDF, rightDF)))
+                )
 
         memUsage <- getMemoryUsage
         let (outRows, outCols) = D.dimensions resultDF
@@ -179,6 +189,33 @@ sumCol name df =
             case D.columnAsVector (F.col @(Maybe Double) name) df of
                 Right vec -> Prelude.sum (catMaybes (V.toList vec))
                 Left _ -> 0.0
+
+splitMergedColumns :: DataFrame -> DataFrame
+splitMergedColumns df0 = foldl' splitOne df0 (columnNames df0)
+  where
+    splitOne df name = case getColumn name df of
+        Just col@(MergedColumn _ _) ->
+            foldl'
+                (\d (n, c) -> insertColumn n c d)
+                df
+                (zip (freshNames df name) (flattenMerged col))
+        _ -> df
+
+-- | The leaf columns of a (possibly nested) merged column, left to right.
+flattenMerged :: Column -> [Column]
+flattenMerged (MergedColumn a b) = flattenMerged a ++ flattenMerged b
+flattenMerged c = [c]
+
+{- | Names for a merged column's leaves: the original name for the left side,
+then @_right@ suffixes, skipping any name the frame already uses.
+-}
+freshNames :: DataFrame -> Text -> [Text]
+freshNames df name = name : go (1 :: Int)
+  where
+    taken = columnNames df
+    go i =
+        let cand = name <> "_right" <> (if i == 1 then "" else T.pack (show i))
+         in if cand `elem` taken then go (i + 1) else cand : go (i + 1)
 
 determineAuxTables :: String -> [String]
 determineAuxTables dataName =
