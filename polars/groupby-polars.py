@@ -5,6 +5,7 @@ print("# groupby-polars.py", flush=True)
 import os
 import gc
 import timeit
+import contextlib
 import polars as pl
 from polars import col
 
@@ -29,7 +30,8 @@ print("loading dataset %s" % data_name, flush=True)
 # Stream the CSV straight to IPC without ever materializing the full frame in RAM.
 # sink_ipc runs the streaming engine, so peak memory stays bounded regardless of file size.
 # compression="uncompressed" keeps the IPC file zero-copy mmap-able for the queries below.
-with pl.StringCache():
+# Newer polars encodes Categoricals globally (pl.Categories) and deprecates StringCache.
+with (contextlib.nullcontext() if hasattr(pl, "Categories") else pl.StringCache()):
     (pl.scan_csv(src_grp, schema_overrides={"id4":pl.Int32, "id5":pl.Int32, "id6":pl.Int32, "v1":pl.Int32, "v2":pl.Int32, "v3":pl.Float64})
        .with_columns(pl.col(["id1", "id2", "id3"]).cast(pl.Categorical))
        .sink_ipc(f"{spill_dir}/tmp.ipc", compression="uncompressed"))
@@ -39,7 +41,7 @@ on_disk = 'TRUE' if (machine_type == "c6id.4xlarge" and float(scale_factor) >= 1
 
 # Keep x lazy and backed by the memory-mapped IPC file; the queries below collect with the
 # streaming engine so group-by state can spill to disk instead of exhausting RAM.
-x = pl.scan_ipc(f"{spill_dir}/tmp.ipc", memory_map=True)
+x = pl.scan_ipc(f"{spill_dir}/tmp.ipc")
 
 # materialize row count without pulling the whole frame into memory
 in_rows = x.select(pl.len()).collect(engine="streaming").item()

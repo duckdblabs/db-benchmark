@@ -5,6 +5,7 @@ print("# join-polars.py", flush=True)
 import os
 import gc
 import timeit
+import contextlib
 import polars as pl
 
 exec(open("./_helpers/helpers.py").read())
@@ -39,7 +40,8 @@ os.makedirs(spill_dir, exist_ok=True)
 # All four sinks share one StringCache so the Categorical id columns are encoded consistently
 # across tables for the joins below. compression="uncompressed" keeps the IPC files zero-copy
 # mmap-able for the queries.
-with pl.StringCache():
+# Newer polars encodes Categoricals globally (pl.Categories) and deprecates StringCache.
+with (contextlib.nullcontext() if hasattr(pl, "Categories") else pl.StringCache()):
   (pl.scan_csv(src_jn_x, schema_overrides={"id1":pl.Int32, "id2":pl.Int32, "id3":pl.Int32, "v1":pl.Float32})
      .with_columns(pl.col(["id4", "id5", "id6"]).cast(pl.Categorical))
      .sink_ipc(f"{spill_dir}/x.ipc", compression="uncompressed"))
@@ -55,10 +57,10 @@ with pl.StringCache():
 
 # Keep everything lazy and backed by the memory-mapped IPC files; the joins below collect with
 # the streaming engine so join state can spill to disk instead of exhausting RAM.
-x = pl.scan_ipc(f"{spill_dir}/x.ipc", memory_map=True)
-small = pl.scan_ipc(f"{spill_dir}/small.ipc", memory_map=True)
-medium = pl.scan_ipc(f"{spill_dir}/medium.ipc", memory_map=True)
-big = pl.scan_ipc(f"{spill_dir}/big.ipc", memory_map=True)
+x = pl.scan_ipc(f"{spill_dir}/x.ipc")
+small = pl.scan_ipc(f"{spill_dir}/small.ipc")
+medium = pl.scan_ipc(f"{spill_dir}/medium.ipc")
+big = pl.scan_ipc(f"{spill_dir}/big.ipc")
 
 # materialize row counts without pulling the whole frames into memory
 in_rows = x.select(pl.len()).collect(engine="streaming").item()
