@@ -208,7 +208,10 @@ format_s_total_real_time_sec = function(data, solution, s_questions, s_total_rea
   data = unique1(data)
   na = is.na(s_total_real_time_sec)
   ans = vector("character", length(solution))
-  ans[!na] = sprintf("%.0fs", s_total_real_time_sec[!na])
+  ## totals below 10 seconds are shown with one decimal, otherwise close results are indistinguishable (6s, 6s, 6s)
+  ## decided on the rounded value, so that 9.96 is shown as "10s" and not as "10.0s"
+  secs = s_total_real_time_sec[!na]
+  ans[!na] = ifelse(round(secs, 1) < 10, sprintf("%.1fs", secs), sprintf("%.0fs", secs))
   if (sum(na)) {
     ans[na] = mapply(format_exception, s=solution[na], q=s_questions[na],
                      MoreArgs=list(ex=exceptions, d=data))
