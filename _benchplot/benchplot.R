@@ -370,7 +370,13 @@ benchplot = function(
       30              # footer
     ))
     if (!dir.exists(dirname(filename))) dir.create(dirname(filename), recursive=TRUE)
-    png(filename=filename, width=800, height=height)
+    ## a vector image stays sharp on high-DPI screens and when zoomed, while an 800 pixels wide bitmap is blurred there;
+    ## the size of the vector image in inches corresponds to the same 800 pixels at 72 dpi, so the layout is the same
+    if (grepl("\\.svg$", filename)) {
+      svg(filename=filename, width=800/72, height=height/72)
+    } else {
+      png(filename=filename, width=800, height=height)
+    }
   }
   margins(nsolutions, pending=pending)
   x[na_time_sec==FALSE, "max_time" := max(c(time1, time2)), by=c("solution","question")]
