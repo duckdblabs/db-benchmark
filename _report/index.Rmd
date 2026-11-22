@@ -61,7 +61,7 @@ loop_benchplot = function(dt_task, report_name, syntax.dict, exceptions, solutio
         message(sprintf("benchplot %s %s %s", report_name, data_name, q_group))
         benchplot(
           x = dt_task[data==data_name & question_group==q_group & machine_type==m_type],
-          filename = file.path("public", report_name, sprintf("%s_%s_%s.png", data_name, q_group, m_type)),
+          filename = file.path("public", report_name, sprintf("%s_%s_%s.svg", data_name, q_group, m_type)),
           solution.dict = solution.dict,
           syntax.dict = syntax.dict,
           exceptions = exceptions,
@@ -77,7 +77,7 @@ loop_benchplot = function(dt_task, report_name, syntax.dict, exceptions, solutio
   }
 }
 link = function(data_name, q_group, report_name, machine_type) {
-  fnam = sprintf("%s_%s_%s.png", data_name, q_group, machine_type)
+  fnam = sprintf("%s_%s_%s.svg", data_name, q_group, machine_type)
   paste(sprintf("[%s](%s)", q_group, file.path(report_name, fnam)), collapse=", ")
 }
 hours_took = function(lld) {
@@ -113,31 +113,31 @@ loop_benchplot(dt_join, report_name="join", syntax.dict=join.syntax.dict, except
 
 ####### **basic questions**
 
-![](./groupby/G1_1e7_1e2_0_0_basic_c6id.4xlarge.png)
+![](./groupby/G1_1e7_1e2_0_0_basic_c6id.4xlarge.svg){width=800px}
 
 ####### **advanced questions**
 
-![](./groupby/G1_1e7_1e2_0_0_advanced_c6id.4xlarge.png)
+![](./groupby/G1_1e7_1e2_0_0_advanced_c6id.4xlarge.svg){width=800px}
 
 ###### 5 GB {.active}
 
 ####### **basic questions**
 
-![](./groupby/G1_1e8_1e2_0_0_basic_c6id.4xlarge.png)
+![](./groupby/G1_1e8_1e2_0_0_basic_c6id.4xlarge.svg){width=800px}
 
 ####### **advanced questions**
 
-![](./groupby/G1_1e8_1e2_0_0_advanced_c6id.4xlarge.png)
+![](./groupby/G1_1e8_1e2_0_0_advanced_c6id.4xlarge.svg){width=800px}
 
 ###### 50 GB 
 
 ####### **basic questions**
 
-![](./groupby/G1_1e9_1e2_0_0_basic_c6id.4xlarge.png)
+![](./groupby/G1_1e9_1e2_0_0_basic_c6id.4xlarge.svg){width=800px}
 
 ####### **advanced questions**
 
-![](./groupby/G1_1e9_1e2_0_0_advanced_c6id.4xlarge.png)
+![](./groupby/G1_1e9_1e2_0_0_advanced_c6id.4xlarge.svg){width=800px}
 
 ##### join {.tabset .tabset-fade .tabset-pills}
 
@@ -145,19 +145,19 @@ loop_benchplot(dt_join, report_name="join", syntax.dict=join.syntax.dict, except
 
 ####### **basic questions**
 
-![](./join/J1_1e7_NA_0_0_basic_c6id.4xlarge.png)
+![](./join/J1_1e7_NA_0_0_basic_c6id.4xlarge.svg){width=800px}
 
 ###### 5 GB 
 
 ####### **basic questions**
 
-![](./join/J1_1e8_NA_0_0_basic_c6id.4xlarge.png)
+![](./join/J1_1e8_NA_0_0_basic_c6id.4xlarge.svg){width=800px}
 
 ###### 50 GB 
 
 ####### **basic questions**
 
-![](./join/J1_1e9_NA_0_0_basic_c6id.4xlarge.png)
+![](./join/J1_1e9_NA_0_0_basic_c6id.4xlarge.svg){width=800px}
 
 ### X-Large (128 cores / 256GB memory)
 
@@ -169,31 +169,31 @@ loop_benchplot(dt_join, report_name="join", syntax.dict=join.syntax.dict, except
 
 ####### **basic questions**
 
-![](./groupby/G1_1e7_1e2_0_0_basic_c6id.metal.png)
+![](./groupby/G1_1e7_1e2_0_0_basic_c6id.metal.svg){width=800px}
 
 ####### **advanced questions**
 
-![](./groupby/G1_1e7_1e2_0_0_advanced_c6id.metal.png)
+![](./groupby/G1_1e7_1e2_0_0_advanced_c6id.metal.svg){width=800px}
 
 ###### 5 GB
 
 ####### **basic questions**
 
-![](./groupby/G1_1e8_1e2_0_0_basic_c6id.metal.png)
+![](./groupby/G1_1e8_1e2_0_0_basic_c6id.metal.svg){width=800px}
 
 ####### **advanced questions**
 
-![](./groupby/G1_1e8_1e2_0_0_advanced_c6id.metal.png)
+![](./groupby/G1_1e8_1e2_0_0_advanced_c6id.metal.svg){width=800px}
 
 ###### 50 GB {.active}
 
 ####### **basic questions**
 
-![](./groupby/G1_1e9_1e2_0_0_basic_c6id.metal.png)
+![](./groupby/G1_1e9_1e2_0_0_basic_c6id.metal.svg){width=800px}
 
 ####### **advanced questions**
 
-![](./groupby/G1_1e9_1e2_0_0_advanced_c6id.metal.png)
+![](./groupby/G1_1e9_1e2_0_0_advanced_c6id.metal.svg){width=800px}
 
 ##### join {.tabset .tabset-fade .tabset-pills}
 
@@ -201,19 +201,19 @@ loop_benchplot(dt_join, report_name="join", syntax.dict=join.syntax.dict, except
 
 ####### **basic questions**
 
-![](./join/J1_1e7_NA_0_0_basic_c6id.metal.png)
+![](./join/J1_1e7_NA_0_0_basic_c6id.metal.svg){width=800px}
 
 ###### 5 GB
 
 ####### **basic questions**
 
-![](./join/J1_1e8_NA_0_0_basic_c6id.metal.png)
+![](./join/J1_1e8_NA_0_0_basic_c6id.metal.svg){width=800px}
 
 ###### 50 GB {.active}
 
 ####### **basic questions**
 
-![](./join/J1_1e9_NA_0_0_basic_c6id.metal.png)
+![](./join/J1_1e9_NA_0_0_basic_c6id.metal.svg){width=800px}
 
 <!--
 ##### **advanced questions**

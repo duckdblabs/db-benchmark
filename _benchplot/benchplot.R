@@ -208,7 +208,10 @@ format_s_total_real_time_sec = function(data, solution, s_questions, s_total_rea
   data = unique1(data)
   na = is.na(s_total_real_time_sec)
   ans = vector("character", length(solution))
-  ans[!na] = sprintf("%.0fs", s_total_real_time_sec[!na])
+  ## totals below 10 seconds are shown with one decimal, otherwise close results are indistinguishable (6s, 6s, 6s)
+  ## decided on the rounded value, so that 9.96 is shown as "10s" and not as "10.0s"
+  secs = s_total_real_time_sec[!na]
+  ans[!na] = ifelse(round(secs, 1) < 10, sprintf("%.1fs", secs), sprintf("%.0fs", secs))
   if (sum(na)) {
     ans[na] = mapply(format_exception, s=solution[na], q=s_questions[na],
                      MoreArgs=list(ex=exceptions, d=data))
@@ -367,7 +370,13 @@ benchplot = function(
       30              # footer
     ))
     if (!dir.exists(dirname(filename))) dir.create(dirname(filename), recursive=TRUE)
-    png(filename=filename, width=800, height=height)
+    ## a vector image stays sharp on high-DPI screens and when zoomed, while an 800 pixels wide bitmap is blurred there;
+    ## the size of the vector image in inches corresponds to the same 800 pixels at 72 dpi, so the layout is the same
+    if (grepl("\\.svg$", filename)) {
+      svg(filename=filename, width=800/72, height=height/72)
+    } else {
+      png(filename=filename, width=800, height=height)
+    }
   }
   margins(nsolutions, pending=pending)
   x[na_time_sec==FALSE, "max_time" := max(c(time1, time2)), by=c("solution","question")]
