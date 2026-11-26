@@ -13,16 +13,22 @@ ch_wait() {
   ch_active
 }
 
+# `clickhouse start/stop` re-runs itself with `sudo --preserve-env`, which sudo-rs (newer Ubuntu) ignores with a
+# warning on every call, drop that line from stderr so it doesn't fill the logs
+ch_sudo() {
+  sudo "$@" 2> >(grep -v "preserving the entire environment is not supported" >&2)
+}
+
 ch_start() {
   echo '# ch_start: starting clickhouse-server'
   if ch_active; then ch_stop; fi
-  sudo clickhouse start
+  ch_sudo clickhouse start
   ch_wait
 }
 
 ch_stop() {
   echo '# ch_stop: stopping clickhouse-server'
-  sudo clickhouse stop && sleep 15
+  ch_sudo clickhouse stop && sleep 15
 }
 
 ch_query() {

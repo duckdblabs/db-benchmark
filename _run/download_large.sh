@@ -8,10 +8,10 @@ fi
 
 echo "downloading groupby_large.duckdb"
 # get groupby large (50GB datasets)
-aws s3 cp s3://duckdb-data-for-ec2-regression-tests/db-benchmark-data/groupby_large.duckdb data/groupby_large.duckdb --quiet
+aws s3 cp s3://ducklabs-db-benchmark-data/data/groupby_large.duckdb data/groupby_large.duckdb --quiet
 # get join large (50GB datasets)
 echo "downloading join_large.duckdb"
-aws s3 cp s3://duckdb-data-for-ec2-regression-tests/db-benchmark-data/join_large.duckdb data/join_large.duckdb --quiet
+aws s3 cp s3://ducklabs-db-benchmark-data/data/join_large.duckdb data/join_large.duckdb --quiet
 echo "Done"
 
 
@@ -28,6 +28,4 @@ duckdb data/join_large.duckdb  -c "copy J1_1e9_NA_0_0 to 'data/J1_1e9_NA_0_0.csv
 duckdb data/join_large.duckdb  -c "copy J1_1e9_1e9_0_0 to 'data/J1_1e9_1e9_0_0.csv' (FORMAT CSV)"
 duckdb data/join_large.duckdb  -c "copy J1_1e9_1e6_0_0 to 'data/J1_1e9_1e6_0_0.csv' (FORMAT CSV)"
 duckdb data/join_large.duckdb  -c "copy J1_1e9_1e3_0_0 to 'data/J1_1e9_1e3_0_0.csv' (FORMAT CSV)"
-
-
 

@@ -5,7 +5,8 @@ export DEBIAN_FRONTEND=noninteractive
 export NEEDRESTART_MODE=a
 APT_OPTS='-y -qq -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold'
 
-cd ~/h2oai-db-benchmark
+# repo root, the solution setup scripts expect to be run from there
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 sudo -E apt-get -qq update
 sudo -E apt-get $APT_OPTS upgrade
@@ -19,6 +20,8 @@ sudo -E apt-get $APT_OPTS install libxml2-dev
 sudo -E apt-get $APT_OPTS install make
 sudo -E apt-get $APT_OPTS install libfontconfig1-dev
 sudo -E apt-get $APT_OPTS install libicu-dev pandoc zlib1g-dev libgit2-dev libcurl4-openssl-dev libssl-dev libjpeg-dev libpng-dev libtiff-dev
+# R fs package (needed by sass/bslib/rmarkdown) builds against libuv, its bundled copy needs cmake
+sudo -E apt-get $APT_OPTS install cmake libuv1-dev
 # CRAN signing key, without it apt-get update rejects the CRAN repository
 wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | sudo tee /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc > /dev/null
 sudo -E add-apt-repository -y "deb [arch=amd64,i386] https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/"
@@ -28,8 +31,13 @@ sudo -E apt-get $APT_OPTS install r-base-dev virtualenv
 # java for spark (JAVA_HOME in path.env)
 sudo -E apt-get $APT_OPTS install openjdk-17-jdk
 
-# duckdb cli, used to export the downloaded datasets to csv
+# duckdb cli (latest release), used to export the downloaded datasets to csv
 curl -fsSL https://install.duckdb.org | sh
+export PATH="$HOME/.duckdb/cli/latest:$PATH"
+grep -qxF 'export PATH="$HOME/.duckdb/cli/latest:$PATH"' ~/.bashrc || echo 'export PATH="$HOME/.duckdb/cli/latest:$PATH"' >> ~/.bashrc
+
+# duckdb benchmark solution: latest released python package in duckdb/py-duckdb, writes duckdb/VERSION
+(cd "$REPO_DIR" && ./duckdb/setup-duckdb.sh)
 
 # haskell: build dependencies for ghc, then ghcup, ghc 9.12.2 and cabal
 sudo -E apt-get $APT_OPTS install build-essential libffi-dev libgmp-dev libgmp10 libncurses-dev pkg-config
@@ -55,10 +63,16 @@ echo 'CXXFLAGS=-O3 -mtune=native' >> ~/.R/Makevars
 
 Rscript -e 'install.packages(c("jsonlite","bit64","devtools","rmarkdown"), dependecies=TRUE, repos="https://cloud.r-project.org")'
 
+# packages used in launcher and report
+Rscript -e 'install.packages(c("rpivotTable","formattable","lattice"), repos="https://cloud.r-project.org")'
+
 
 # install dplyr
 Rscript -e 'devtools::install_github(c("tidyverse/readr","tidyverse/dplyr"))'
 
 # install data.table
 Rscript -e 'install.packages("data.table", repos="https://rdatatable.gitlab.io/data.table/")'
+
+# fail early if anything the report needs did not install
+Rscript -e 'stopifnot(sapply(c("bit64","rmarkdown","data.table","rpivotTable","formattable","lattice"), requireNamespace))'
 

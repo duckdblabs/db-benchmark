@@ -9,7 +9,7 @@ task = args[1L]
 data_name = args[2L]
 machine_type = Sys.getenv("MACHINE_TYPE")
 
-library(data.table)
+suppressPackageStartupMessages(library(data.table))
 # sort files according to question and run
 sort_q_r = function(f) {
   tmp = strsplit(tools::file_path_sans_ext(basename(f)), "_", fixed=TRUE)

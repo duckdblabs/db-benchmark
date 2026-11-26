@@ -1,4 +1,4 @@
-library(data.table)
+suppressPackageStartupMessages(library(data.table))
 suppressPackageStartupMessages(library(dplyr))
 stopifnot(requireNamespace("knitr", quietly=TRUE))
 kk = knitr::kable

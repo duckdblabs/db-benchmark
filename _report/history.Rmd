@@ -21,7 +21,7 @@ knitr::opts_chunk$set(echo=FALSE, cache=FALSE)
 ```{r init, message=FALSE}
 source("./_report/report.R", chdir=TRUE)    ## get_report_status_file
 source("./_helpers/helpers.R", chdir=TRUE)  ## pretty_sci
-library(data.table)
+suppressPackageStartupMessages(library(data.table))
 library(lattice)
 fctr = function(x, rev=FALSE) {
   levels = unique(x)

@@ -24,7 +24,7 @@ echo 'CFLAGS=-O3 -mtune=native' > ~/.R/Makevars
 echo 'CXXFLAGS=-O3 -mtune=native' >> ~/.R/Makevars
 
 # packages used in launcher and report
-Rscript -e 'install.packages(c("bit64","rmarkdown","data.table","rpivotTable","formattable","lattice"), repos="https://cloud.r-project.org/")'
+Rscript -e 'install.packages(c("bit64","rmarkdown","data.table","rpivotTable","formattable","lattice", "dplyr"), repos="https://cloud.r-project.org/")'
 Rscript -e 'install.packages("remotes", repos="https://cloud.r-project.org/"); remotes::install_github("smartinsightsfromdata/rpivotTable")'
 Rscript -e 'sapply(c("bit64","rmarkdown","data.table","rpivotTable","formattable","lattice"), requireNamespace)'
 

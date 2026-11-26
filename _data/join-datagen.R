@@ -84,7 +84,7 @@ handle_batches = function(d, data_name) {
 
 # exec ----
 
-library(data.table)
+suppressPackageStartupMessages(library(data.table))
 setDTthreads(0L)
 set.seed(108)
 data_name = sprintf("J1_%s_%s_%s_%s", pretty_sci(N), "NA", nas, sort)

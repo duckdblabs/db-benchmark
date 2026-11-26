@@ -9,7 +9,7 @@ pretty_sci = function(x) {
   }
 }
 
-library(data.table)
+suppressPackageStartupMessages(library(data.table))
 N=as.integer(args[1L]); K=as.integer(args[2L]); nas=as.integer(args[3L]); sort=as.integer(args[4L])
 stopifnot(K==1e2L, nas==0L, sort==0L) ## 2014's setup
 set.seed(108)
